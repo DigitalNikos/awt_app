@@ -55,6 +55,7 @@ flutter:
     - assets/images/
     - assets/images/hero_section/
     - assets/images/header/
+    - assets/images/splash/
     - assets/lang/
 
 flutter_icons:

@@ -1,11 +1,13 @@
+// lib/presentation/screens/splash/splash_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/app_constants.dart';
+import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/home/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -21,9 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(AppConstants.splashDuration);
     if (mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     }
   }
@@ -37,17 +37,18 @@ class _SplashScreenState extends State<SplashScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            end: Alignment.bottomRight,
             colors: [
-              Color(0xFF003B70), // Vienna Airport Blue
-              Color(0xFF002A50),
+              AppColors.primaryDark,
+              AppColors.primaryLight,
+              AppColors.backgroundLight,
             ],
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo placeholder (replace with actual logo)
+            // ◀ replace the white box + Icon with our SVG
             Container(
               width: 150,
               height: 150,
@@ -56,18 +57,19 @@ class _SplashScreenState extends State<SplashScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
-                child: Icon(
-                  Icons.local_taxi,
-                  size: 80,
-                  color: Theme.of(context).primaryColor,
+                child: SvgPicture.asset(
+                  'assets/images/splash/splash_icon.svg',
+                  width: 80,
+                  height: 80,
                 ),
               ),
             ),
+
             const SizedBox(height: 24),
             Text(
               AppConstants.appName,
               style: AppTextStyles.heading1.copyWith(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 28,
               ),
             ),

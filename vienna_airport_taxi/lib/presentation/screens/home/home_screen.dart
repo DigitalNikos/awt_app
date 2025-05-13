@@ -8,6 +8,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'package:vienna_airport_taxi/presentation/screens/auth/login_screen.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/bottom_navbar.dart';
+import 'package:vienna_airport_taxi/core/localization/language_provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,12 +16,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
-    // Get the screen height to calculate proper centering
-    final screenHeight = MediaQuery.of(context).size.height;
+    final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
-      // Using a Stack to position the decorative circle
+      // Set background color to ensure consistency
+      backgroundColor: Colors.white,
+
+      // Remove default bottom padding since our navbar handles it
+      bottomNavigationBar: const SizedBox.shrink(),
+
+      // Using a Stack to position all elements
       body: Stack(
+        fit: StackFit.expand,
         children: [
           // Yellow circle background element
           Positioned(
@@ -40,30 +47,39 @@ class HomeScreen extends StatelessWidget {
           ),
 
           // Main content
-          LayoutBuilder(builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints
-                      .maxHeight, // Make content fill available height
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment
-                        .center, // This centers children vertically
-                    children: const [
-                      HeroSection(),
-                    ],
+          SafeArea(
+            child: LayoutBuilder(builder: (context, constraints) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints
+                        .maxHeight, // Make content fill available height
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // This centers children vertically
+                      children: const [
+                        HeroSection(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
+
+          // Floating bottom navbar positioned at the bottom of the screen
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: CustomBottomNavBar(
+              languageProvider: languageProvider,
+            ),
+          ),
         ],
       ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
 }
