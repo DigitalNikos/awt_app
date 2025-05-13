@@ -525,7 +525,7 @@ class DropdownFieldWithIcon extends StatelessWidget {
             value: value,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
+              hintStyle: TextStyle(color: AppColors.border),
               border: InputBorder.none,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 40, vertical: 16),

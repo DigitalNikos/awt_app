@@ -135,7 +135,7 @@ class OptionPanel extends StatelessWidget {
                     helperText!,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.accent,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ),

@@ -132,6 +132,7 @@ class _ToAirportScreenContent extends StatelessWidget {
         builder: (context, provider, child) {
           return Column(
             children: [
+              const SizedBox(height: 16),
               // Progress Bar
               ProgressBar(
                 currentStep: provider.currentStep + 1,
