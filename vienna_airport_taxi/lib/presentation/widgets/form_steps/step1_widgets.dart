@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:vienna_airport_taxi/core/constants/app_constants.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
@@ -43,8 +44,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
           children: [
             // Date picker
             Expanded(
-              child: InputFieldWithIcon(
-                icon: Icons.calendar_month,
+              child: InputFieldWithSvgIcon(
+                svgIconPath: 'assets/icons/inputs/calendar.svg',
                 hintText: 'Datum',
                 value: selectedDate != null
                     ? DateFormat('dd.MM.yyyy').format(selectedDate!)
@@ -58,8 +59,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
 
             // Time picker
             Expanded(
-              child: InputFieldWithIcon(
-                icon: Icons.access_time,
+              child: InputFieldWithSvgIcon(
+                svgIconPath: 'assets/icons/inputs/clock.svg',
                 hintText: 'Uhrzeit',
                 value: selectedTime,
                 onTap: () => _showTimePicker(context),
@@ -145,8 +146,8 @@ class AddressSelectionWidget extends StatelessWidget {
         const SizedBox(height: 16),
 
         // City selector
-        DropdownFieldWithIcon(
-          icon: Icons.location_on,
+        DropdownFieldWithSvgIcon(
+          svgIconPath: 'assets/icons/inputs/location.svg',
           hintText: 'Ort',
           value: selectedCity,
           errorText: cityError,
@@ -167,8 +168,8 @@ class AddressSelectionWidget extends StatelessWidget {
         if (selectedCity == 'Wien')
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: DropdownFieldWithIcon(
-              icon: Icons.markunread_mailbox,
+            child: DropdownFieldWithSvgIcon(
+              svgIconPath: 'assets/icons/inputs/postal-code.svg',
               hintText: 'PLZ',
               value: selectedPostalCode != null
                   ? '$selectedPostalCode - ${_getDistrictName(selectedPostalCode!)}'
@@ -208,8 +209,8 @@ class AddressSelectionWidget extends StatelessWidget {
           ),
 
         // Address input
-        InputFieldWithIcon(
-          icon: Icons.home,
+        InputFieldWithSvgIcon(
+          svgIconPath: 'assets/icons/inputs/address.svg',
           hintText: 'Adresse',
           value: address,
           onChanged: onAddressChanged,
@@ -275,8 +276,8 @@ class PassengerAndLuggageWidget extends StatelessWidget {
       children: [
         // Passenger count
         Expanded(
-          child: DropdownFieldWithIcon(
-            icon: Icons.people,
+          child: DropdownFieldWithSvgIcon(
+            svgIconPath: 'assets/icons/inputs/people.svg',
             hintText: 'Personen',
             value: passengerCount.toString(),
             errorText: passengerError,
@@ -289,8 +290,8 @@ class PassengerAndLuggageWidget extends StatelessWidget {
 
         // Luggage count
         Expanded(
-          child: DropdownFieldWithIcon(
-            icon: Icons.luggage,
+          child: DropdownFieldWithSvgIcon(
+            svgIconPath: 'assets/icons/inputs/luggage.svg',
             hintText: 'Koffer',
             value: luggageCount.toString(),
             errorText: luggageError,
@@ -341,8 +342,8 @@ class ContactInformationWidget extends StatelessWidget {
         const SizedBox(height: 16),
 
         // Name
-        InputFieldWithIcon(
-          icon: Icons.person,
+        InputFieldWithSvgIcon(
+          svgIconPath: 'assets/icons/inputs/person.svg',
           hintText: 'Name',
           value: name,
           onChanged: onNameChanged,
@@ -352,8 +353,8 @@ class ContactInformationWidget extends StatelessWidget {
         const SizedBox(height: 12),
 
         // Email
-        InputFieldWithIcon(
-          icon: Icons.email,
+        InputFieldWithSvgIcon(
+          svgIconPath: 'assets/icons/inputs/email.svg',
           hintText: 'Email',
           value: email,
           onChanged: onEmailChanged,
@@ -364,8 +365,8 @@ class ContactInformationWidget extends StatelessWidget {
         const SizedBox(height: 12),
 
         // Phone
-        InputFieldWithIcon(
-          icon: Icons.phone,
+        InputFieldWithSvgIcon(
+          svgIconPath: 'assets/icons/inputs/phone.svg',
           hintText: 'Telefonnummer',
           value: phone,
           onChanged: onPhoneChanged,
@@ -377,7 +378,7 @@ class ContactInformationWidget extends StatelessWidget {
   }
 }
 
-// Reusable components
+// Reusable components - Legacy Material Icon versions (for backward compatibility)
 
 class InputFieldWithIcon extends StatefulWidget {
   final IconData icon;
@@ -437,12 +438,14 @@ class _InputFieldWithIconState extends State<InputFieldWithIcon> {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
-              color:
-                  widget.errorText != null ? AppColors.error : AppColors.border,
+              color: widget.errorText != null
+                  ? AppColors.error
+                  : const Color(0xFFCCCCCC), // #ccc border
               width: 1,
             ),
             borderRadius: BorderRadius.circular(8),
           ),
+          clipBehavior: Clip.antiAlias,
           child: TextFormField(
             controller: _controller,
             onChanged: widget.onChanged,
@@ -453,7 +456,14 @@ class _InputFieldWithIconState extends State<InputFieldWithIcon> {
             decoration: InputDecoration(
               hintText: widget.hintText,
               hintStyle: TextStyle(color: AppColors.textLight),
+              // COMPLETELY REMOVE ALL BORDERS FROM TEXTFORMFIELD
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              filled: false,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               prefixIcon: Icon(
@@ -516,23 +526,266 @@ class DropdownFieldWithIcon extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
-              color: errorText != null ? AppColors.error : AppColors.border,
+              color: errorText != null
+                  ? AppColors.error
+                  : const Color(0xFFCCCCCC), // #ccc border
               width: 1,
             ),
             borderRadius: BorderRadius.circular(8),
           ),
+          clipBehavior: Clip.antiAlias,
           child: DropdownButtonFormField<String>(
             value: value,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyle(color: AppColors.border),
+              hintStyle: TextStyle(color: AppColors.textLight),
+              // COMPLETELY REMOVE ALL BORDERS FROM DROPDOWN
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              filled: false,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
               prefixIcon: Icon(
                 icon,
                 size: 30,
                 color: AppColors.textLight,
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 40,
+                maxWidth: 40,
+                minHeight: 48,
+                maxHeight: 48,
+              ),
+            ),
+            items: items.map((item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item, style: AppTextStyles.bodyMedium),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                onChanged(value);
+              }
+            },
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textPrimary,
+            ),
+            dropdownColor: Colors.white,
+            // Remove default dropdown arrow
+            icon: const SizedBox.shrink(),
+            isExpanded: true,
+          ),
+        ),
+        if (errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              errorText!,
+              style: TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+// Reusable components with SVG support
+
+class InputFieldWithSvgIcon extends StatefulWidget {
+  final String svgIconPath;
+  final String hintText;
+  final String? value;
+  final Function(String)? onChanged;
+  final Function()? onTap;
+  final bool readOnly;
+  final TextInputType keyboardType;
+  final String? errorText;
+
+  const InputFieldWithSvgIcon({
+    Key? key,
+    required this.svgIconPath,
+    required this.hintText,
+    this.value,
+    this.onChanged,
+    this.onTap,
+    this.readOnly = false,
+    this.keyboardType = TextInputType.text,
+    this.errorText,
+  }) : super(key: key);
+
+  @override
+  State<InputFieldWithSvgIcon> createState() => _InputFieldWithSvgIconState();
+}
+
+class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value ?? '');
+  }
+
+  @override
+  void didUpdateWidget(InputFieldWithSvgIcon oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value) {
+      _controller.text = widget.value ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: widget.errorText != null
+                  ? AppColors.error
+                  : const Color(0xFFCCCCCC), // #ccc border
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: TextFormField(
+            controller: _controller,
+            onChanged: widget.onChanged,
+            readOnly: widget.readOnly,
+            keyboardType: widget.keyboardType,
+            onTap: widget.onTap,
+            textDirection: ui.TextDirection.ltr,
+            decoration: InputDecoration(
+              hintText: widget.hintText,
+              hintStyle: TextStyle(color: AppColors.textLight),
+              // COMPLETELY REMOVE ALL BORDERS FROM TEXTFORMFIELD
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              filled: false,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              prefixIcon: Container(
+                width: 40,
+                height: 48,
+                padding: const EdgeInsets.all(
+                    10), // Increased padding for smaller icons
+                child: SvgPicture.asset(
+                  widget.svgIconPath,
+                  width: 18, // Reduced from 20 to 16
+                  height: 18, // Reduced from 20 to 16
+                  // Removed colorFilter to show original SVG colors
+                ),
+              ),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 40,
+                maxWidth: 40,
+                minHeight: 48,
+                maxHeight: 48,
+              ),
+            ),
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textPrimary,
+            ),
+          ),
+        ),
+        if (widget.errorText != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Text(
+              widget.errorText!,
+              style: TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class DropdownFieldWithSvgIcon extends StatelessWidget {
+  final String svgIconPath;
+  final String hintText;
+  final String? value;
+  final List<String> items;
+  final Function(String) onChanged;
+  final String? errorText;
+
+  const DropdownFieldWithSvgIcon({
+    Key? key,
+    required this.svgIconPath,
+    required this.hintText,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    this.errorText,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: errorText != null
+                  ? AppColors.error
+                  : const Color(0xFFCCCCCC), // #ccc border
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: DropdownButtonFormField<String>(
+            value: value,
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(color: AppColors.textLight),
+              // COMPLETELY REMOVE ALL BORDERS FROM DROPDOWN
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              filled: false,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              prefixIcon: Container(
+                width: 40,
+                height: 48,
+                padding: const EdgeInsets.all(
+                    10), // Increased padding for smaller icons
+                child: SvgPicture.asset(
+                  svgIconPath,
+                  width: 18, // Reduced from 24 to 16 for consistency
+                  height: 18, // Reduced from 24 to 16 for consistency
+                  // Removed colorFilter to show original SVG colors
+                ),
               ),
               prefixIconConstraints: const BoxConstraints(
                 minWidth: 40,

@@ -14,7 +14,7 @@ class HeroSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 90, horizontal: 20),
       color: AppColors.background,
       child: Column(
         children: [

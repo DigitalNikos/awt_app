@@ -12,7 +12,8 @@ class AppColors {
 
   // Secondary and accent colors
   static const Color secondary = Color(0xFF76522E); // --secondary: #76522e
-  static const Color accent = Color(0xFF4D1F00); // --accent: #4d1f00
+  // static const Color accent = Color(0xFF4D1F00); // --accent: #4d1f00
+  static const Color accent = Color(0xFFCCCCCC); // --accent: #4d1f00
 
   // Text and background colors
   static const Color textPrimary = Color(0xFF050316); // --text: #050316
@@ -27,9 +28,13 @@ class AppColors {
       Color(0xFFF8F8F8); // --color-background-light: #f8f8f8
 
   // Utility colors
-  static const Color border = Color(0xFFCCCCCC); // --color-border: #ccc
+  static const Color border =
+      Color.fromARGB(255, 53, 203, 23); // --color-border: #ccc
   static const Color success = Color(0xFF4CAF50); // --color-green: #4caf50
   static const Color error = Color(0xFFE53935);
   static const Color warning = Color(0xFFFFAB00);
   static const Color info = Color(0xFF2196F3);
+
+  // Shadow colors
+  static const Color shadow = Color(0x1A000000); // rgba(0, 0, 0, 0.1)
 }
