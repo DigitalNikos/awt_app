@@ -6,6 +6,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/to_airport_screen.dart';
+import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/from_airport_screen.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class HeroSection extends StatelessWidget {
     final t = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 90, horizontal: 20),
-      color: AppColors.background,
+      // color: AppColors.background,
       child: Column(
         children: [
           // Small tagline
@@ -48,6 +49,7 @@ class HeroSection extends StatelessWidget {
           // CTA Buttons with SVG icons
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               _HeroButton(
                 svgAsset: 'assets/images/hero_section/to-airport.svg',
@@ -64,7 +66,11 @@ class HeroSection extends StatelessWidget {
                 svgAsset: 'assets/images/hero_section/from-airport.svg',
                 label: t.translate('from_airport'),
                 onPressed: () {
-                  // TODO: Navigate to FromAirportScreen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const FromAirportScreen()),
+                  );
                 },
               ),
             ],
@@ -115,6 +121,7 @@ class _HeroButton extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // SVG icon
           SvgPicture.asset(
@@ -126,6 +133,7 @@ class _HeroButton extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             label,
+            textAlign: TextAlign.center,
             style: AppTextStyles.buttonText.copyWith(color: Colors.black),
           ),
         ],

@@ -4,7 +4,9 @@ import 'package:vienna_airport_taxi/data/models/booking_form_data.dart';
 
 class BookingApiService {
   // API endpoints - matching your JavaScript configuration
-  static const String _baseUrl = 'https://awt.eu.pythonanywhere.com/';
+  // static const String _baseUrl = 'https://awt.eu.pythonanywhere.com/';
+  static const String _baseUrl = 'http://localhost:5001';
+
   static const String _ordersEndpoint = '$_baseUrl/orders';
   static const String _priceEndpoint = '$_baseUrl/public_calculate_price';
 

@@ -43,8 +43,10 @@ class BookingFormData {
   final bool roundTrip;
   final DateTime? returnDate;
   final String? returnTime;
-  final String? flightFrom;
-  final String? flightNumber;
+  final String?
+      flightFrom; // Used in Step 1 for from_airport, Step 2 for to_airport
+  final String?
+      flightNumber; // Used in Step 1 for from_airport, Step 2 for to_airport
   final String childSeat;
   final bool nameplateService;
   final List<StopoverLocation> stops;

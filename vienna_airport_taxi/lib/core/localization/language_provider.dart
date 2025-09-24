@@ -32,11 +32,15 @@ class LanguageProvider with ChangeNotifier {
   }
 
   String get currentLanguageFlag {
-    return _locale.languageCode == 'de' ? '🇩🇪' : '🇬🇧';
+    return _locale.languageCode == 'de'
+        ? 'assets/images/header/german_flag_icon.svg'
+        : 'assets/images/header/united_kingdom_flag_icon.svg';
   }
 
   String get oppositeLanguageFlag {
-    return _locale.languageCode == 'de' ? '🇬🇧' : '🇩🇪';
+    return _locale.languageCode == 'de'
+        ? 'assets/images/header/united_kingdom_flag_icon.svg'
+        : 'assets/images/header/german_flag_icon.svg';
   }
 
   Locale get oppositeLocale {

@@ -123,6 +123,23 @@ class FormValidationService {
     return ValidationResult(isValid: true);
   }
 
+  // FLIGHT VALIDATION METHODS (for FROM AIRPORT)
+  static ValidationResult validateFlightFrom(String? flightFrom) {
+    if (flightFrom == null || flightFrom.trim().isEmpty) {
+      return ValidationResult(
+          isValid: false, errorMessage: 'Abflugort erforderlich');
+    }
+    return ValidationResult(isValid: true);
+  }
+
+  static ValidationResult validateFlightNumber(String? flightNumber) {
+    if (flightNumber == null || flightNumber.trim().isEmpty) {
+      return ValidationResult(
+          isValid: false, errorMessage: 'Flugnummer erforderlich');
+    }
+    return ValidationResult(isValid: true);
+  }
+
   static ValidationResult validateRequiredField(String? value,
       {required String fieldName}) {
     if (value == null || value.trim().isEmpty) {

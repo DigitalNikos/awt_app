@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         vertical: 48, horizontal: 16),
-                    color: AppColors.backgroundLight,
+                    color: Colors.transparent,
                     child: Column(
                       children: [
                         // Section Header

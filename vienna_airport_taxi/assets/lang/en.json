@@ -55,5 +55,7 @@
     "round_trip_info": "For \"Round Trip\" bookings, our special package prices apply, offering you a discounted rate for the outbound and return journey.",
     "contact_help": "If you have difficulties with the form, you can contact us anytime via email, phone, or WhatsApp. We are happy to help you!",
     "map_title": "Where to find your driver:",
-    "map_caption": "Our driver waits at the information desk in the arrival area"
+    "map_caption": "Our driver waits at the information desk in the arrival area",
+    "phone": "Phone",
+    "whatsapp": "WhatsApp"
   }

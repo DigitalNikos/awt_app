@@ -1,3 +1,5 @@
+// Create a professional wheel time picker that matches your requirements
+
 import 'package:flutter/material.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
@@ -17,33 +19,40 @@ class CustomTimePicker extends StatefulWidget {
 }
 
 class _CustomTimePickerState extends State<CustomTimePicker> {
-  late ScrollController _hoursController;
-  late ScrollController _minutesController;
-  int _selectedHour = 12;
-  int _selectedMinute = 0;
+  late FixedExtentScrollController _hoursController;
+  late FixedExtentScrollController _minutesController;
+  int selectedHour = 8;
+  int selectedMinute = 0;
 
-  final List<int> _hours = List.generate(24, (index) => index);
-  final List<int> _minutes = List.generate(12, (index) => index * 5);
+  static const double itemHeight = 34.0;
+  static const int visibleItems = 5; // Show 5 items at once
 
   @override
   void initState() {
     super.initState();
 
-    // Parse initial time if provided
-    if (widget.initialTime != null) {
+    // Parse initial time if provided, or use current time
+    if (widget.initialTime != null && widget.initialTime!.isNotEmpty) {
       final parts = widget.initialTime!.split(':');
       if (parts.length == 2) {
-        _selectedHour = int.tryParse(parts[0]) ?? 12;
-        _selectedMinute = int.tryParse(parts[1]) ?? 0;
+        selectedHour = int.tryParse(parts[0]) ?? DateTime.now().hour;
+        selectedMinute = int.tryParse(parts[1]) ?? DateTime.now().minute;
       }
+    } else {
+      // Use current time if no initial time provided
+      final now = DateTime.now();
+      selectedHour = now.hour;
+      selectedMinute = now.minute;
     }
 
-    _hoursController = ScrollController(
-      initialScrollOffset: _selectedHour * 40.0,
-    );
-    _minutesController = ScrollController(
-      initialScrollOffset: (_selectedMinute ~/ 5) * 40.0,
-    );
+    // Round minutes to nearest 5
+    selectedMinute = (selectedMinute / 5).round() * 5;
+    if (selectedMinute >= 60) selectedMinute = 55;
+
+    // Use FixedExtentScrollController for wheel behavior
+    _hoursController = FixedExtentScrollController(initialItem: selectedHour);
+    _minutesController =
+        FixedExtentScrollController(initialItem: selectedMinute ~/ 5);
   }
 
   @override
@@ -56,112 +65,76 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
-      height: 350,
+      width: 250,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFCCCCCC)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(0.15),
             blurRadius: 10,
-            spreadRadius: 2,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Header
+          // Header with yellow background (matching date picker)
           Container(
+            width: double.infinity,
             padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
             child: Text(
               'Uhrzeit auswählen',
               style: AppTextStyles.heading3.copyWith(
-                color: AppColors.primary,
+                color: Colors.black,
+                fontSize: 16,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
 
-          // Time selector columns
-          Expanded(
+          // Time picker wheels
+          Container(
+            padding: const EdgeInsets.all(15),
             child: Row(
               children: [
                 // Hours column
                 Expanded(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      // Header
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           'Stunde',
                           style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
                             color: AppColors.textLight,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Stack(
-                              children: [
-                                // Selection indicator
-                                Positioned(
-                                  top: constraints.maxHeight * 0.45,
-                                  left: 0,
-                                  right: 0,
-                                  height: 40,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                                // Hours list
-                                ListView.builder(
-                                  controller: _hoursController,
-                                  itemCount: _hours.length,
-                                  itemExtent: 40,
-                                  itemBuilder: (context, index) {
-                                    final hour = _hours[index];
-                                    final isSelected = hour == _selectedHour;
-
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedHour = hour;
-                                          _hoursController.animateTo(
-                                            hour * 40.0,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        });
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          hour.toString().padLeft(2, '0'),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                            color: isSelected
-                                                ? AppColors.primary
-                                                : AppColors.textPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+                      // Hours wheel
+                      _buildWheelPicker(
+                        controller: _hoursController,
+                        itemCount: 24,
+                        itemBuilder: (index) =>
+                            index.toString().padLeft(2, '0'),
+                        onSelectedItemChanged: (index) {
+                          setState(() {
+                            selectedHour = index;
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -169,88 +142,47 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
 
                 // Separator
                 Container(
-                  width: 1,
-                  color: AppColors.border,
-                  height: 200,
+                  width: 20,
+                  child: Center(
+                    child: Text(
+                      ':',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
                 ),
 
                 // Minutes column
                 Expanded(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                      // Header
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           'Minute',
                           style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textLight,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return Stack(
-                              children: [
-                                // Selection indicator
-                                Positioned(
-                                  top: constraints.maxHeight * 0.45,
-                                  left: 0,
-                                  right: 0,
-                                  height: 40,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                                // Minutes list
-                                ListView.builder(
-                                  controller: _minutesController,
-                                  itemCount: _minutes.length,
-                                  itemExtent: 40,
-                                  itemBuilder: (context, index) {
-                                    final minute = _minutes[index];
-                                    final isSelected =
-                                        minute == _selectedMinute;
-
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedMinute = minute;
-                                          _minutesController.animateTo(
-                                            index * 40.0,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                          );
-                                        });
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          minute.toString().padLeft(2, '0'),
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
-                                            color: isSelected
-                                                ? AppColors.primary
-                                                : AppColors.textPrimary,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+                      // Minutes wheel
+                      _buildWheelPicker(
+                        controller: _minutesController,
+                        itemCount:
+                            12, // 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55
+                        itemBuilder: (index) =>
+                            (index * 5).toString().padLeft(2, '0'),
+                        onSelectedItemChanged: (index) {
+                          setState(() {
+                            selectedMinute = index * 5;
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -259,57 +191,135 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             ),
           ),
 
-          // Buttons
+          // Action buttons (matching date picker style)
           Container(
             padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // Cancel button (red)
                 Expanded(
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    style: TextButton.styleFrom(
-                      backgroundColor: AppColors.backgroundLight,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 48,
+                    margin: const EdgeInsets.only(right: 8),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(156, 162, 159, 159),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 2,
                       ),
-                    ),
-                    child: Text(
-                      'Abbrechen',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16,
+                      child: const Text(
+                        'Abbrechen',
+                        style: TextStyle(
+                          fontSize: 12, // Reduced font size to fit better
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1, // Ensure single line
+                        overflow:
+                            TextOverflow.ellipsis, // Handle overflow gracefully
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+
+                // OK button (green)
                 Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final timeString =
-                          '${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}';
-                      widget.onConfirm(timeString);
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    height: 48,
+                    margin: const EdgeInsets.only(left: 8),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final timeString =
+                            '${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}';
+                        widget.onConfirm(timeString);
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 2,
                       ),
-                    ),
-                    child: const Text(
-                      'Bestätigen',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWheelPicker({
+    required FixedExtentScrollController controller,
+    required int itemCount,
+    required String Function(int) itemBuilder,
+    required Function(int) onSelectedItemChanged,
+  }) {
+    return Container(
+      height: 180,
+      child: Stack(
+        children: [
+          // Selection indicator (middle highlight)
+          Positioned.fill(
+            child: Center(
+              child: Container(
+                height: itemHeight,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppColors.primary.withOpacity(0.5),
+                    width: 1,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Wheel picker
+          ListWheelScrollView.useDelegate(
+            controller: controller,
+            itemExtent: itemHeight,
+            perspective: 0.005,
+            diameterRatio: 1.2,
+            physics: const FixedExtentScrollPhysics(),
+            onSelectedItemChanged: onSelectedItemChanged,
+            childDelegate: ListWheelChildBuilderDelegate(
+              childCount: itemCount,
+              builder: (context, index) {
+                return Container(
+                  height: itemHeight,
+                  alignment: Alignment.center,
+                  child: Text(
+                    itemBuilder(index),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

@@ -31,7 +31,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
-          top: BorderSide(color: Colors.grey.shade300, width: 1),
+          top: BorderSide(
+              color: const Color.fromARGB(218, 224, 224, 224), width: 1),
         ),
         boxShadow: [
           BoxShadow(
@@ -71,31 +72,35 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           ),
           _buildNavItem(
             index: 3,
-            iconWidget: Text(
-              langProvider.oppositeLanguageFlag,
-              style: const TextStyle(fontSize: 24),
+            iconWidget: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: SvgPicture.asset(
+                langProvider.oppositeLanguageFlag,
+                width: 24,
+                height: 24,
+              ),
             ),
             label: langProvider.locale.languageCode == 'de' ? 'EN' : 'DE',
             onTap: () {
               langProvider.changeLanguage(langProvider.oppositeLocale);
             },
           ),
-          _buildNavItem(
-            index: 4,
-            icon: auth.isAuthenticated
-                ? 'assets/images/header/logout_icon.svg'
-                : 'assets/images/header/login_icon.svg',
-            label: auth.isAuthenticated ? 'Logout' : 'Login',
-            onTap: () async {
-              if (auth.isAuthenticated) {
-                await auth.logout();
-              } else {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                );
-              }
-            },
-          ),
+          // _buildNavItem(
+          //   index: 4,
+          //   icon: auth.isAuthenticated
+          //       ? 'assets/images/header/logout_icon.svg'
+          //       : 'assets/images/header/login_icon.svg',
+          //   label: auth.isAuthenticated ? 'Logout' : 'Login',
+          //   onTap: () async {
+          //     if (auth.isAuthenticated) {
+          //       await auth.logout();
+          //     } else {
+          //       Navigator.of(context).push(
+          //         MaterialPageRoute(builder: (_) => const LoginScreen()),
+          //       );
+          //     }
+          //   },
+          // ),
         ],
       ),
     );

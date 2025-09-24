@@ -7,7 +7,7 @@ import 'package:vienna_airport_taxi/presentation/screens/success/success_screen.
 import 'package:vienna_airport_taxi/presentation/screens/error/error_screen.dart';
 import 'package:vienna_airport_taxi/data/services/auth_service.dart';
 
-class ToAirportFormProvider with ChangeNotifier {
+class FromAirportFormProvider with ChangeNotifier {
   // Instance of AuthService
   final AuthService _authService = AuthService();
 
@@ -49,9 +49,9 @@ class ToAirportFormProvider with ChangeNotifier {
   final Map<String, String?> _validationErrors = {};
   Map<String, String?> get validationErrors => Map.from(_validationErrors);
 
-  ToAirportFormProvider() {
-    // Use copyWith to set the tripType
-    _formData = _formData.copyWith(tripType: 'to_airport');
+  FromAirportFormProvider() {
+    // Use copyWith to set the tripType to 'from_airport'
+    _formData = _formData.copyWith(tripType: 'from_airport');
     // Initialize with 0 passengers and luggage (will show placeholders)
     _formData = _formData.copyWith(passengerCount: 0, luggageCount: 0);
   }
@@ -80,20 +80,18 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // Form data manipulation methods - all using copyWith
 
-  // UPDATED: Date and time changes NO LONGER trigger price calculation
+  // Date and time changes NO LONGER trigger price calculation
   void updatePickupDate(DateTime? date) {
     _formData = _formData.copyWith(pickupDate: date);
-    // Removed: _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updatePickupTime(String? time) {
     _formData = _formData.copyWith(pickupTime: time);
-    // Removed: _debouncePriceCalculation();
     notifyListeners();
   }
 
-  // UPDATED: City changes trigger price calculation
+  // City changes trigger price calculation
   void updateCity(String? city) {
     print('updateCity called with: $city');
     print('Previous city was: ${_formData.city}');
@@ -146,7 +144,7 @@ class ToAirportFormProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // UPDATED: Postal code changes trigger price calculation
+  // Postal code changes trigger price calculation
   void updatePostalCode(String? postalCode) {
     print('updatePostalCode called with: $postalCode');
     _formData = _formData.copyWith(postalCode: postalCode);
@@ -154,21 +152,20 @@ class ToAirportFormProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // UPDATED: Address changes NO LONGER trigger price calculation
+  // Address changes NO LONGER trigger price calculation
   void updateAddress(String? address) {
     _formData = _formData.copyWith(address: address);
-    // Removed: _debouncePriceCalculation();
     notifyListeners();
   }
 
-  // UPDATED: Passenger count changes trigger price calculation
+  // Passenger count changes trigger price calculation
   void updatePassengerCount(int count) {
     _formData = _formData.copyWith(passengerCount: count);
     _debouncePriceCalculation(); // Calculate price when passengers change
     notifyListeners();
   }
 
-  // UPDATED: Luggage count changes trigger price calculation
+  // Luggage count changes trigger price calculation
   void updateLuggageCount(int count) {
     _formData = _formData.copyWith(luggageCount: count);
     _hasSelectedLuggage = true; // Mark as explicitly selected
@@ -298,14 +295,14 @@ class ToAirportFormProvider with ChangeNotifier {
     });
   }
 
-  // UPDATED: New price calculation logic - only requires city/postal code
+  // Price calculation logic - only requires city/postal code
   bool _canCalculatePrice() {
     // Debug logging
     print('_canCalculatePrice check:');
     print('  city: ${_formData.city}');
     print('  postalCode: ${_formData.postalCode}');
 
-    // NEW LOGIC: Only require city (+ postal code if Vienna)
+    // Only require city (+ postal code if Vienna)
     final canCalculate = _formData.city != null &&
         _formData.city!.isNotEmpty &&
         (_formData.city != 'Wien' ||
@@ -372,7 +369,7 @@ class ToAirportFormProvider with ChangeNotifier {
     }
   }
 
-  // UPDATED: Step 1 validation - still requires all fields for form submission
+  // Step 1 validation - still requires all fields for form submission
   bool _validateStep1() {
     bool isValid = true;
 
@@ -425,6 +422,24 @@ class ToAirportFormProvider with ChangeNotifier {
     // Luggage validation - REQUIRED (must be explicitly selected)
     if (!_hasSelectedLuggage) {
       _validationErrors['luggage'] = 'Bitte wählen Sie die Anzahl der Koffer';
+      isValid = false;
+    }
+
+    // Flight information validation (FROM AIRPORT SPECIFIC - in Step 1)
+    final flightFromValidation = FormValidationService.validateRequiredField(
+        _formData.flightFrom,
+        fieldName: 'Abflugort');
+    if (!flightFromValidation.isValid) {
+      _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
+      isValid = false;
+    }
+
+    // Flight number validation (FROM AIRPORT SPECIFIC - in Step 1)
+    final flightNumberValidation = FormValidationService.validateRequiredField(
+        _formData.flightNumber,
+        fieldName: 'Flugnummer');
+    if (!flightNumberValidation.isValid) {
+      _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
       isValid = false;
     }
 

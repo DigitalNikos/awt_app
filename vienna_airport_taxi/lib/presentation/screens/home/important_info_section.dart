@@ -15,7 +15,7 @@ class ImportantInfoSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
-      color: AppColors.backgroundLight,
+      color: Colors.transparent, // No background color
       child: Column(
         children: [
           // Section Header
@@ -159,7 +159,7 @@ class _InfoCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 720),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -298,7 +298,7 @@ class _AirportMapCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 720),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -331,9 +331,10 @@ class _AirportMapCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: AppColors.shadow,
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                  spreadRadius: 0,
                 ),
               ],
             ),
@@ -349,7 +350,7 @@ class _AirportMapCard extends StatelessWidget {
                     width: double.infinity,
                     height: 280,
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundLight,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: AppColors.border.withOpacity(0.3),

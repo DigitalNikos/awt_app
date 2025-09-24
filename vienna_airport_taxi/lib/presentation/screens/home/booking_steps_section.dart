@@ -15,7 +15,7 @@ class BookingStepsSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
-      color: AppColors.backgroundLight,
+      // color: AppColors.backgroundLight,
       child: Column(
         children: [
           // Section Header

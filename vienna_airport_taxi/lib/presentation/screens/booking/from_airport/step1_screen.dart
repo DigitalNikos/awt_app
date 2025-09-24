@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
-import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form_provider.dart';
+import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 
@@ -16,7 +16,7 @@ class Step1Screen extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Consumer<ToAirportFormProvider>(
+      child: Consumer<FromAirportFormProvider>(
         builder: (context, provider, child) {
           // Pre-fill contact information if user is authenticated
           if (isAuthenticated && authProvider.currentUser != null) {
@@ -94,6 +94,18 @@ class Step1Screen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+
+              const SizedBox(height: 32),
+
+              // Flight Information (FROM AIRPORT SPECIFIC)
+              FlightInformationWidget(
+                flightFrom: provider.formData.flightFrom,
+                flightNumber: provider.formData.flightNumber,
+                onFlightFromChanged: provider.updateFlightFrom,
+                onFlightNumberChanged: provider.updateFlightNumber,
+                flightFromError: provider.validationErrors['flightFrom'],
+                flightNumberError: provider.validationErrors['flightNumber'],
               ),
 
               const SizedBox(height: 32),

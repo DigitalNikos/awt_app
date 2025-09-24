@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void _handleSplashFlow() async {
     // Wait for SVGator animation to complete (adjust timing as needed)
     await Future.delayed(
-        const Duration(seconds: 3)); // Adjust based on your animation length
+        const Duration(seconds: 4)); // Adjust based on your animation length
 
     if (mounted) {
       _navigateToHome();

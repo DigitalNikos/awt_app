@@ -7,6 +7,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'dart:ui' as ui show TextDirection;
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/custom_dropdown.dart';
 
 class DateTimeSelectionWidget extends StatelessWidget {
   final DateTime? selectedDate;
@@ -74,13 +75,150 @@ class DateTimeSelectionWidget extends StatelessWidget {
     );
   }
 
+  // Replace your _showDatePicker method with this version:
+
   Future<void> _showDatePicker(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    DateTime tempSelectedDate = selectedDate ?? DateTime.now();
+
+    final DateTime? picked = await showDialog<DateTime>(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      locale: const Locale('de'),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.all(0),
+              content: Container(
+                width: 320,
+                height: 420,
+                child: Column(
+                  children: [
+                    // Header
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Datum auswählen',
+                              style: AppTextStyles.heading3.copyWith(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Calendar
+                    Expanded(
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: const ColorScheme.light(
+                            primary: AppColors.primary,
+                            onPrimary: Colors.black,
+                            surface: Colors.white,
+                            onSurface: AppColors.textPrimary,
+                          ),
+                        ),
+                        child: CalendarDatePicker(
+                          initialDate: tempSelectedDate,
+                          firstDate: DateTime.now(),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 365)),
+                          onDateChanged: (DateTime date) {
+                            setState(() {
+                              tempSelectedDate = date;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+
+                    // Custom Buttons
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // Red Cancel Button
+                          Expanded(
+                            child: Container(
+                              height: 48,
+                              margin: const EdgeInsets.only(right: 8),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.error, // Red color
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: const Text(
+                                  'Abbrechen',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Green OK Button
+                          Expanded(
+                            child: Container(
+                              height: 48,
+                              margin: const EdgeInsets.only(left: 8),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(tempSelectedDate);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      AppColors.success, // Green color
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: const Text(
+                                  'OK',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
 
     if (picked != null) {
@@ -146,11 +284,10 @@ class AddressSelectionWidget extends StatelessWidget {
         const SizedBox(height: 16),
 
         // City selector
-        DropdownFieldWithSvgIcon(
+        CustomDropdown(
           svgIconPath: 'assets/icons/inputs/location.svg',
           hintText: 'Ort',
           value: selectedCity,
-          errorText: cityError,
           items: const [
             'Wien',
             'Klagenfurt am Wörthersee',
@@ -160,6 +297,7 @@ class AddressSelectionWidget extends StatelessWidget {
             'Klagenfurt',
           ],
           onChanged: onCitySelected,
+          errorText: cityError,
         ),
 
         const SizedBox(height: 12),
@@ -168,13 +306,12 @@ class AddressSelectionWidget extends StatelessWidget {
         if (selectedCity == 'Wien')
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: DropdownFieldWithSvgIcon(
+            child: CustomDropdown(
               svgIconPath: 'assets/icons/inputs/postal-code.svg',
               hintText: 'PLZ',
               value: selectedPostalCode != null
                   ? '$selectedPostalCode - ${_getDistrictName(selectedPostalCode!)}'
                   : null,
-              errorText: postalCodeError,
               items: const [
                 '1010 - Innere Stadt',
                 '1020 - Leopoldstadt',
@@ -205,6 +342,7 @@ class AddressSelectionWidget extends StatelessWidget {
                 final postalCode = fullValue.split(' - ')[0];
                 onPostalCodeSelected(postalCode);
               },
+              errorText: postalCodeError,
             ),
           ),
 
@@ -252,6 +390,8 @@ class AddressSelectionWidget extends StatelessWidget {
   }
 }
 
+// In your step1_widgets.dart file, update the PassengerAndLuggageWidget:
+
 class PassengerAndLuggageWidget extends StatelessWidget {
   final int passengerCount;
   final int luggageCount;
@@ -276,13 +416,17 @@ class PassengerAndLuggageWidget extends StatelessWidget {
       children: [
         // Passenger count
         Expanded(
-          child: DropdownFieldWithSvgIcon(
+          child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/people.svg',
             hintText: 'Personen',
-            value: passengerCount.toString(),
+            value: passengerCount
+                .toString(), // This ensures the current value is shown
+            items: ['1', '2', '3', '4', '5', '6', '7', '8'], // 1-8 passengers
+            onChanged: (value) {
+              print('DEBUG: Passenger dropdown changed to: $value');
+              onPassengerCountChanged(int.parse(value));
+            },
             errorText: passengerError,
-            items: List.generate(8, (index) => (index + 1).toString()),
-            onChanged: (value) => onPassengerCountChanged(int.parse(value)),
           ),
         ),
 
@@ -290,13 +434,27 @@ class PassengerAndLuggageWidget extends StatelessWidget {
 
         // Luggage count
         Expanded(
-          child: DropdownFieldWithSvgIcon(
+          child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/luggage.svg',
             hintText: 'Koffer',
-            value: luggageCount.toString(),
+            value: luggageCount
+                .toString(), // This ensures the current value is shown
+            items: [
+              '0',
+              '1',
+              '2',
+              '3',
+              '4',
+              '5',
+              '6',
+              '7',
+              '8'
+            ], // 0-8 suitcases
+            onChanged: (value) {
+              print('DEBUG: Luggage dropdown changed to: $value');
+              onLuggageCountChanged(int.parse(value));
+            },
             errorText: luggageError,
-            items: List.generate(9, (index) => index.toString()),
-            onChanged: (value) => onLuggageCountChanged(int.parse(value)),
           ),
         ),
       ],
@@ -825,6 +983,64 @@ class DropdownFieldWithSvgIcon extends StatelessWidget {
               ),
             ),
           ),
+      ],
+    );
+  }
+}
+
+class FlightInformationWidget extends StatelessWidget {
+  final String? flightFrom;
+  final String? flightNumber;
+  final Function(String?) onFlightFromChanged;
+  final Function(String?) onFlightNumberChanged;
+  final String? flightFromError;
+  final String? flightNumberError;
+
+  const FlightInformationWidget({
+    Key? key,
+    required this.flightFrom,
+    required this.flightNumber,
+    required this.onFlightFromChanged,
+    required this.onFlightNumberChanged,
+    this.flightFromError,
+    this.flightNumberError,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Fluginformationen',
+          style: AppTextStyles.heading2,
+        ),
+        const SizedBox(height: 8),
+        const SectionDivider(),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: InputFieldWithIcon(
+                icon: Icons.flight_land,
+                hintText: 'Abflugort',
+                value: flightFrom,
+                onChanged: onFlightFromChanged,
+                errorText: flightFromError,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: InputFieldWithIcon(
+                icon: Icons.flight,
+                hintText: 'Flugnummer',
+                value: flightNumber,
+                onChanged: onFlightNumberChanged,
+                errorText: flightNumberError,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
