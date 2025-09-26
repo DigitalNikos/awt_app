@@ -20,6 +20,7 @@ class _Step1ScreenState extends State<Step1Screen> {
   final GlobalKey _dateTimeKey = GlobalKey();
   final GlobalKey _addressKey = GlobalKey();
   final GlobalKey _passengersKey = GlobalKey();
+  final GlobalKey _flightKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
 
   @override
@@ -40,6 +41,8 @@ class _Step1ScreenState extends State<Step1Screen> {
       'address': _addressKey,
       'passengers': _passengersKey,
       'luggage': _passengersKey,
+      'flightFrom': _flightKey,
+      'flightNumber': _flightKey,
       'name': _contactKey,
       'email': _contactKey,
       'phone': _contactKey,
@@ -160,6 +163,21 @@ class _Step1ScreenState extends State<Step1Screen> {
                       ),
                     ),
                   ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Flight Information
+              Container(
+                key: _flightKey,
+                child: FlightInformationWidget(
+                  flightFrom: provider.formData.flightFrom,
+                  flightNumber: provider.formData.flightNumber,
+                  onFlightFromChanged: provider.updateFlightFrom,
+                  onFlightNumberChanged: provider.updateFlightNumber,
+                  flightFromError: provider.validationErrors['flightFrom'],
+                  flightNumberError: provider.validationErrors['flightNumber'],
                 ),
               ),
 

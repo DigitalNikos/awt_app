@@ -515,6 +515,24 @@ class ToAirportFormProvider with ChangeNotifier {
       isValid = false;
     }
 
+    // Flight information validation (TO AIRPORT SPECIFIC - in Step 1)
+    final flightFromValidation = FormValidationService.validateRequiredField(
+        _formData.flightFrom,
+        fieldName: 'Abflugort');
+    if (!flightFromValidation.isValid) {
+      _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
+      isValid = false;
+    }
+
+    // Flight number validation (TO AIRPORT SPECIFIC - in Step 1)
+    final flightNumberValidation = FormValidationService.validateRequiredField(
+        _formData.flightNumber,
+        fieldName: 'Flugnummer');
+    if (!flightNumberValidation.isValid) {
+      _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
+      isValid = false;
+    }
+
     // Contact information validation (only for non-authenticated users)
     if (_authService.currentUser == null) {
       // Name validation
@@ -563,24 +581,6 @@ class ToAirportFormProvider with ChangeNotifier {
           FormValidationService.validateTime(_formData.returnTime);
       if (!returnTimeValidation.isValid) {
         _validationErrors['returnTime'] = returnTimeValidation.errorMessage;
-        isValid = false;
-      }
-
-      // Flight from validation
-      final flightFromValidation = FormValidationService.validateRequiredField(
-          _formData.flightFrom,
-          fieldName: 'Abflugort');
-      if (!flightFromValidation.isValid) {
-        _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
-        isValid = false;
-      }
-
-      // Flight number validation
-      final flightNumberValidation =
-          FormValidationService.validateRequiredField(_formData.flightNumber,
-              fieldName: 'Flugnummer');
-      if (!flightNumberValidation.isValid) {
-        _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
         isValid = false;
       }
 

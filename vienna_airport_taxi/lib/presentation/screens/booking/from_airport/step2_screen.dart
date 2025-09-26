@@ -35,13 +35,9 @@ class Step2Screen extends StatelessWidget {
                     isReturnTripActive: provider.formData.roundTrip,
                     returnDate: provider.formData.returnDate,
                     returnTime: provider.formData.returnTime,
-                    flightFrom: provider.formData.flightFrom,
-                    flightNumber: provider.formData.flightNumber,
                     onReturnTripChanged: provider.updateRoundTrip,
                     onReturnDateChanged: provider.updateReturnDate,
                     onReturnTimeChanged: provider.updateReturnTime,
-                    onFlightFromChanged: provider.updateFlightFrom,
-                    onFlightNumberChanged: provider.updateFlightNumber,
                   ),
 
                   const SizedBox(height: 2),

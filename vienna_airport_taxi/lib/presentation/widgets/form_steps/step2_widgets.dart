@@ -356,18 +356,12 @@ class ReturnTripWidget extends StatefulWidget {
   final bool isReturnTripActive;
   final DateTime? returnDate;
   final String? returnTime;
-  final String? flightFrom;
-  final String? flightNumber;
   final Function(bool) onReturnTripChanged;
   final Function(DateTime?) onReturnDateChanged;
   final Function(String?) onReturnTimeChanged;
-  final Function(String?) onFlightFromChanged;
-  final Function(String?) onFlightNumberChanged;
   // Error message parameters
   final String? returnDateError;
   final String? returnTimeError;
-  final String? flightFromError;
-  final String? flightNumberError;
   final String? returnDateTimeError;
 
   const ReturnTripWidget({
@@ -375,17 +369,11 @@ class ReturnTripWidget extends StatefulWidget {
     required this.isReturnTripActive,
     required this.returnDate,
     required this.returnTime,
-    required this.flightFrom,
-    required this.flightNumber,
     required this.onReturnTripChanged,
     required this.onReturnDateChanged,
     required this.onReturnTimeChanged,
-    required this.onFlightFromChanged,
-    required this.onFlightNumberChanged,
     this.returnDateError,
     this.returnTimeError,
-    this.flightFromError,
-    this.flightNumberError,
     this.returnDateTimeError,
   }) : super(key: key);
 
@@ -497,42 +485,6 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                           );
                         },
                         readOnly: true,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Flight information section
-                Text(
-                  'Fluginformationen',
-                  style: AppTextStyles.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: InputFieldWithIcon(
-                        icon: Icons.flight_land,
-                        hintText: 'Abflugort',
-                        value: widget.flightFrom,
-                        onChanged: widget.onFlightFromChanged,
-                        errorText: widget.flightFromError,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: InputFieldWithIcon(
-                        icon: Icons.flight,
-                        hintText: 'Flugnummer',
-                        value: widget.flightNumber,
-                        onChanged: widget.onFlightNumberChanged,
-                        errorText: widget.flightNumberError,
                       ),
                     ),
                   ],

@@ -81,18 +81,29 @@ class FromAirportFormProvider with ChangeNotifier {
   // Form data manipulation methods - all using copyWith
 
   // Date and time changes NO LONGER trigger price calculation
+  void _clearFieldError(String fieldKey) {
+    if (_validationErrors.containsKey(fieldKey)) {
+      _validationErrors.remove(fieldKey);
+    }
+  }
+
   void updatePickupDate(DateTime? date) {
+    _clearFieldError('date');
+    _clearFieldError('reservationTime'); // Also clear reservation time error
     _formData = _formData.copyWith(pickupDate: date);
     notifyListeners();
   }
 
   void updatePickupTime(String? time) {
+    _clearFieldError('time');
+    _clearFieldError('reservationTime'); // Also clear reservation time error
     _formData = _formData.copyWith(pickupTime: time);
     notifyListeners();
   }
 
   // City changes trigger price calculation
   void updateCity(String? city) {
+    _clearFieldError('city');
     print('updateCity called with: $city');
     print('Previous city was: ${_formData.city}');
     print('Previous price was: ${_formData.price}');
@@ -146,6 +157,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Postal code changes trigger price calculation
   void updatePostalCode(String? postalCode) {
+    _clearFieldError('postalCode');
     print('updatePostalCode called with: $postalCode');
     _formData = _formData.copyWith(postalCode: postalCode);
     _debouncePriceCalculation(); // Calculate price when postal code changes
@@ -154,6 +166,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Address changes NO LONGER trigger price calculation
   void updateAddress(String? address) {
+    _clearFieldError('address');
     _formData = _formData.copyWith(address: address);
     notifyListeners();
   }
@@ -386,6 +399,16 @@ class FromAirportFormProvider with ChangeNotifier {
         FormValidationService.validateTime(_formData.pickupTime);
     if (!timeValidation.isValid) {
       _validationErrors['time'] = timeValidation.errorMessage;
+      isValid = false;
+    }
+
+    // Reservation time validation (3h/8h advance booking)
+    final reservationTimeValidation =
+        FormValidationService.validateReservationTime(
+            _formData.pickupDate, _formData.pickupTime);
+    if (!reservationTimeValidation.isValid) {
+      _validationErrors['reservationTime'] =
+          reservationTimeValidation.errorMessage;
       isValid = false;
     }
 

@@ -36,8 +36,6 @@ class _Step2ScreenState extends State<Step2Screen> {
     final Map<String, GlobalKey> fieldKeys = {
       'returnDate': _returnTripKey,
       'returnTime': _returnTripKey,
-      'flightFrom': _returnTripKey,
-      'flightNumber': _returnTripKey,
       'returnDateTime': _returnTripKey,
       'returnReservationTime': _returnTripKey,
       'stopover': _stopoverKey,
@@ -96,19 +94,12 @@ class _Step2ScreenState extends State<Step2Screen> {
                       isReturnTripActive: provider.formData.roundTrip,
                       returnDate: provider.formData.returnDate,
                       returnTime: provider.formData.returnTime,
-                      flightFrom: provider.formData.flightFrom,
-                      flightNumber: provider.formData.flightNumber,
                       onReturnTripChanged: provider.updateRoundTrip,
                       onReturnDateChanged: provider.updateReturnDate,
                       onReturnTimeChanged: provider.updateReturnTime,
-                      onFlightFromChanged: provider.updateFlightFrom,
-                      onFlightNumberChanged: provider.updateFlightNumber,
                       // Pass validation errors
                       returnDateError: provider.validationErrors['returnDate'],
                       returnTimeError: provider.validationErrors['returnTime'],
-                      flightFromError: provider.validationErrors['flightFrom'],
-                      flightNumberError:
-                          provider.validationErrors['flightNumber'],
                       returnDateTimeError:
                           provider.validationErrors['returnDateTime'],
                     ),
