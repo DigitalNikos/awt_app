@@ -12,6 +12,12 @@ class StopoverWidget extends StatefulWidget {
   final List<StopoverLocation> currentStopovers;
   final Function(String postalCode, String address) onAddStopover;
   final Function(int index) onRemoveStopover;
+  final String? stopoverError;
+  final Function(bool isOpen)? onPanelStateChanged;
+  final Function(bool hasUnaddedData)? onValidatePanelData;
+  final Function(String? postalCode, String address)? onValidateFields;
+  final String? addressError;
+  final String? postalCodeError;
 
   const StopoverWidget({
     Key? key,
@@ -19,6 +25,12 @@ class StopoverWidget extends StatefulWidget {
     required this.currentStopovers,
     required this.onAddStopover,
     required this.onRemoveStopover,
+    this.stopoverError,
+    this.onPanelStateChanged,
+    this.onValidatePanelData,
+    this.onValidateFields,
+    this.addressError,
+    this.postalCodeError,
   }) : super(key: key);
 
   @override
@@ -30,6 +42,12 @@ class _StopoverWidgetState extends State<StopoverWidget> {
   String? _selectedPostalCode;
   String _address = '';
   final TextEditingController _addressController = TextEditingController();
+
+  // Method to check if panel is open with data but not added
+  bool get hasUnaddedStopoverData =>
+      _isInputPanelVisible &&
+      ((_selectedPostalCode != null && _selectedPostalCode!.isNotEmpty) ||
+          _address.isNotEmpty);
 
   @override
   void dispose() {
@@ -46,6 +64,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
         _addressController.clear();
         _isInputPanelVisible = false; // Hide input panel after adding
       });
+      widget.onPanelStateChanged?.call(false);
     }
   }
 
@@ -66,7 +85,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
           // Show initial card only when no stopovers exist and input panel is not visible
           if (hasInitialCard && !_isInputPanelVisible)
             OptionCard(
-              icon: Icons.add_location,
+              svgIcon: 'assets/icons/panels/add_location.svg',
               title: 'Zwischenstopp',
               description: 'Fügen Sie einen Zwischenstopp zu Ihrer Fahrt hinzu',
               isExpanded: false,
@@ -74,6 +93,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                 setState(() {
                   _isInputPanelVisible = true;
                 });
+                widget.onPanelStateChanged?.call(true);
               },
             ),
 
@@ -82,8 +102,10 @@ class _StopoverWidgetState extends State<StopoverWidget> {
             OptionPanel(
               title: 'Zwischenstopp',
               isVisible: true,
-              helperText:
-                  'Sie können noch ${maxStopovers - currentCount} ${currentCount == maxStopovers - 1 ? 'Zwischenstopp' : 'Zwischenstopps'} hinzufügen.',
+              isError: widget.stopoverError != null,
+              helperText: widget.stopoverError != null
+                  ? widget.stopoverError!
+                  : 'Sie können noch ${maxStopovers - currentCount} ${currentCount == maxStopovers - 1 ? 'Zwischenstopp' : 'Zwischenstopps'} hinzufügen.',
               onClose: () {
                 setState(() {
                   _isInputPanelVisible = false;
@@ -91,6 +113,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                   _address = '';
                   _addressController.clear();
                 });
+                widget.onPanelStateChanged?.call(false);
               },
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -202,10 +225,16 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                             icon: Icons.location_on,
                             hintText: 'Stopover Adresse',
                             value: _address,
+                            errorText: widget.addressError,
                             onChanged: (value) {
                               setState(() {
                                 _address = value;
                               });
+                              // Validate individual fields and panel data
+                              widget.onValidateFields
+                                  ?.call(_selectedPostalCode, value);
+                              widget.onValidatePanelData
+                                  ?.call(hasUnaddedStopoverData);
                             },
                           ),
 
@@ -215,6 +244,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                             icon: Icons.markunread_mailbox,
                             hintText: 'PLZ',
                             value: _selectedPostalCode,
+                            errorText: widget.postalCodeError,
                             items: const [
                               '1010',
                               '1020',
@@ -244,6 +274,10 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                               setState(() {
                                 _selectedPostalCode = value;
                               });
+                              // Validate individual fields and panel data
+                              widget.onValidateFields?.call(value, _address);
+                              widget.onValidatePanelData
+                                  ?.call(hasUnaddedStopoverData);
                             },
                           ),
 
@@ -329,6 +363,12 @@ class ReturnTripWidget extends StatefulWidget {
   final Function(String?) onReturnTimeChanged;
   final Function(String?) onFlightFromChanged;
   final Function(String?) onFlightNumberChanged;
+  // Error message parameters
+  final String? returnDateError;
+  final String? returnTimeError;
+  final String? flightFromError;
+  final String? flightNumberError;
+  final String? returnDateTimeError;
 
   const ReturnTripWidget({
     Key? key,
@@ -342,6 +382,11 @@ class ReturnTripWidget extends StatefulWidget {
     required this.onReturnTimeChanged,
     required this.onFlightFromChanged,
     required this.onFlightNumberChanged,
+    this.returnDateError,
+    this.returnTimeError,
+    this.flightFromError,
+    this.flightNumberError,
+    this.returnDateTimeError,
   }) : super(key: key);
 
   @override
@@ -358,7 +403,7 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
           // Only show the option card when return trip is NOT active
           if (!widget.isReturnTripActive)
             OptionCard(
-              icon: Icons.compare_arrows,
+              svgIcon: 'assets/icons/panels/compare_arrows.svg',
               title: 'Rückfahrt',
               description: 'Planen Sie Ihre Rückfahrt vom Flughafen',
               isExpanded: widget.isReturnTripActive,
@@ -397,6 +442,7 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                         value: widget.returnDate != null
                             ? '${widget.returnDate!.day.toString().padLeft(2, '0')}.${widget.returnDate!.month.toString().padLeft(2, '0')}.${widget.returnDate!.year}'
                             : null,
+                        errorText: widget.returnDateError,
                         onTap: () async {
                           final DateTime? picked = await showDatePicker(
                             context: context,
@@ -405,6 +451,20 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                             lastDate:
                                 DateTime.now().add(const Duration(days: 365)),
                             locale: const Locale('de'),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: AppColors.primary,
+                                    onPrimary: Colors.black,
+                                    surface: Colors.white,
+                                    onSurface: Colors
+                                        .grey, // Grey border for current date
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
                           );
                           if (picked != null) {
                             widget.onReturnDateChanged(picked);
@@ -419,6 +479,7 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                         icon: Icons.access_time,
                         hintText: 'Uhrzeit',
                         value: widget.returnTime,
+                        errorText: widget.returnTimeError,
                         onTap: () async {
                           await showDialog(
                             context: context,
@@ -461,6 +522,7 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                         hintText: 'Abflugort',
                         value: widget.flightFrom,
                         onChanged: widget.onFlightFromChanged,
+                        errorText: widget.flightFromError,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -470,10 +532,24 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                         hintText: 'Flugnummer',
                         value: widget.flightNumber,
                         onChanged: widget.onFlightNumberChanged,
+                        errorText: widget.flightNumberError,
                       ),
                     ),
                   ],
                 ),
+
+                // Display combined date/time validation error
+                if (widget.returnDateTimeError != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      widget.returnDateTimeError!,
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -510,14 +586,10 @@ class ChildSeatWidget extends StatelessWidget {
           children: [
             // OptionCard that displays the current selection
             OptionCard(
-              icon: Icons.child_care,
+              svgIcon: 'assets/icons/panels/child_care.svg',
               title: 'Kindersitz',
               description: 'Wählen Sie die passende Option für Ihr Kind',
-              indicator: const Icon(
-                Icons.arrow_drop_down,
-                color: AppColors.textSecondary,
-                size: 24,
-              ),
+              // Removed custom indicator - will use default + icon like other panels
               selectedValue: selectedChildSeat != 'None'
                   ? childSeatOptions[selectedChildSeat]
                   : null,
@@ -639,7 +711,7 @@ class NameSignWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8), // Fixed margin
       child: OptionCard(
-        icon: Icons.badge,
+        svgIcon: 'assets/icons/panels/badge.svg',
         title: 'Namenschild',
         description: 'Wir begrüßen Sie in der Ankunftshalle mit Namensschild',
         indicator: Container(
@@ -678,7 +750,9 @@ class PaymentMethodWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: OptionCard(
-        icon: paymentMethod == 'cash' ? Icons.attach_money : Icons.credit_card,
+        svgIcon: paymentMethod == 'cash'
+            ? 'assets/icons/panels/attach_money.svg'
+            : 'assets/icons/panels/credit_card.svg',
         title: 'Zahlungsart',
         description: 'Zahlungsart auswählen',
         indicator: Container(
@@ -778,7 +852,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   Widget _buildCollapsedState() {
     return OptionCard(
-      icon: Icons.note_add,
+      svgIcon: 'assets/icons/panels/note_add.svg',
       title: 'Anmerkungen',
       description: 'Fügen Sie hier zusätzliche Informationen hinzu',
     );
@@ -872,6 +946,25 @@ class _CommentWidgetState extends State<CommentWidget> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SectionDivider extends StatelessWidget {
+  const SectionDivider({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 192,
+      height: 3,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          stops: const [0.0, 1.0],
+          colors: [AppColors.primary, const Color.fromARGB(0, 255, 255, 255)],
+        ),
+        borderRadius: BorderRadius.circular(16),
       ),
     );
   }

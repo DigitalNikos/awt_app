@@ -60,6 +60,7 @@ flutter:
     - assets/images/splash/
     - assets/images/booking_section/
     - assets/icons/inputs/
+    - assets/icons/panels/
     - assets/lang/
 
 flutter_icons:

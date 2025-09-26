@@ -6,8 +6,65 @@ import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 
-class Step1Screen extends StatelessWidget {
+class Step1Screen extends StatefulWidget {
   const Step1Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Step1Screen> createState() => _Step1ScreenState();
+}
+
+class _Step1ScreenState extends State<Step1Screen> {
+  final ScrollController _scrollController = ScrollController();
+
+  // GlobalKeys for each section to enable scrolling
+  final GlobalKey _dateTimeKey = GlobalKey();
+  final GlobalKey _addressKey = GlobalKey();
+  final GlobalKey _passengersKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Method to scroll to the first error field
+  void _scrollToFirstError(Map<String, String?> errors) {
+    // Define the order of fields and their corresponding keys
+    final Map<String, GlobalKey> fieldKeys = {
+      'date': _dateTimeKey,
+      'time': _dateTimeKey,
+      'reservationTime': _dateTimeKey,
+      'city': _addressKey,
+      'postalCode': _addressKey,
+      'address': _addressKey,
+      'passengers': _passengersKey,
+      'luggage': _passengersKey,
+      'name': _contactKey,
+      'email': _contactKey,
+      'phone': _contactKey,
+    };
+
+    // Find the first error in the defined order
+    for (String fieldName in fieldKeys.keys) {
+      if (errors.containsKey(fieldName) && errors[fieldName] != null) {
+        final targetKey = fieldKeys[fieldName]!;
+
+        // Scroll to the section containing the error
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (targetKey.currentContext != null) {
+            Scrollable.ensureVisible(
+              targetKey.currentContext!,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              alignment: 0.1, // Show the field near the top of the screen
+            );
+          }
+        });
+        break; // Only scroll to the first error
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +72,7 @@ class Step1Screen extends StatelessWidget {
     final isAuthenticated = authProvider.isAuthenticated;
 
     return SingleChildScrollView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(16),
       child: Consumer<ToAirportFormProvider>(
         builder: (context, provider, child) {
@@ -31,85 +89,97 @@ class Step1Screen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Date and Time Selection
-              DateTimeSelectionWidget(
-                selectedDate: provider.formData.pickupDate,
-                selectedTime: provider.formData.pickupTime,
-                onDateSelected: provider.updatePickupDate,
-                onTimeSelected: provider.updatePickupTime,
-                dateError: provider.validationErrors['date'],
-                timeError: provider.validationErrors['time'],
+              Container(
+                key: _dateTimeKey,
+                child: DateTimeSelectionWidget(
+                  selectedDate: provider.formData.pickupDate,
+                  selectedTime: provider.formData.pickupTime,
+                  onDateSelected: provider.updatePickupDate,
+                  onTimeSelected: provider.updatePickupTime,
+                  dateError: provider.validationErrors['date'],
+                  timeError: provider.validationErrors['time'],
+                ),
               ),
 
               const SizedBox(height: 32),
 
               // Address Selection
-              AddressSelectionWidget(
-                selectedCity: provider.formData.city,
-                selectedPostalCode: provider.formData.postalCode,
-                address: provider.formData.address,
-                onCitySelected: provider.updateCity,
-                onPostalCodeSelected: provider.updatePostalCode,
-                onAddressChanged: provider.updateAddress,
-                cityError: provider.validationErrors['city'],
-                postalCodeError: provider.validationErrors['postalCode'],
-                addressError: provider.validationErrors['address'],
+              Container(
+                key: _addressKey,
+                child: AddressSelectionWidget(
+                  selectedCity: provider.formData.city,
+                  selectedPostalCode: provider.formData.postalCode,
+                  address: provider.formData.address,
+                  onCitySelected: provider.updateCity,
+                  onPostalCodeSelected: provider.updatePostalCode,
+                  onAddressChanged: provider.updateAddress,
+                  cityError: provider.validationErrors['city'],
+                  postalCodeError: provider.validationErrors['postalCode'],
+                  addressError: provider.validationErrors['address'],
+                ),
               ),
 
               const SizedBox(height: 12), // REDUCED from 32px to 12px
 
               // MOVED UP: Passenger and Luggage Selection (now after Address)
-              Row(
-                children: [
-                  // Passenger count
-                  Expanded(
-                    child: DropdownFieldWithSvgIcon(
-                      svgIconPath: 'assets/icons/inputs/people.svg',
-                      hintText: 'Personen',
-                      value: provider.formData.passengerCount > 0
-                          ? provider.formData.passengerCount.toString()
-                          : null, // Show placeholder when 0
-                      errorText: provider.validationErrors['passengers'],
-                      items:
-                          List.generate(8, (index) => (index + 1).toString()),
-                      onChanged: (value) =>
-                          provider.updatePassengerCount(int.parse(value)),
+              Container(
+                key: _passengersKey,
+                child: Row(
+                  children: [
+                    // Passenger count
+                    Expanded(
+                      child: DropdownFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/people.svg',
+                        hintText: 'Personen',
+                        value: provider.formData.passengerCount > 0
+                            ? provider.formData.passengerCount.toString()
+                            : null, // Show placeholder when 0
+                        errorText: provider.validationErrors['passengers'],
+                        items:
+                            List.generate(8, (index) => (index + 1).toString()),
+                        onChanged: (value) =>
+                            provider.updatePassengerCount(int.parse(value)),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-                  // Luggage count
-                  Expanded(
-                    child: DropdownFieldWithSvgIcon(
-                      svgIconPath: 'assets/icons/inputs/luggage.svg',
-                      hintText: 'Koffer',
-                      value: provider.formData.luggageCount >= 0 &&
-                              provider.hasSelectedLuggage
-                          ? provider.formData.luggageCount.toString()
-                          : null, // Show placeholder when not selected
-                      errorText: provider.validationErrors['luggage'],
-                      items: List.generate(9, (index) => index.toString()),
-                      onChanged: (value) =>
-                          provider.updateLuggageCount(int.parse(value)),
+                    // Luggage count
+                    Expanded(
+                      child: DropdownFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/luggage.svg',
+                        hintText: 'Koffer',
+                        value: provider.formData.luggageCount >= 0 &&
+                                provider.hasSelectedLuggage
+                            ? provider.formData.luggageCount.toString()
+                            : null, // Show placeholder when not selected
+                        errorText: provider.validationErrors['luggage'],
+                        items: List.generate(9, (index) => index.toString()),
+                        onChanged: (value) =>
+                            provider.updateLuggageCount(int.parse(value)),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               const SizedBox(height: 32),
 
               // Contact Information (moved down)
               if (!isAuthenticated)
-                ContactInformationWidget(
-                  name: provider.formData.customerName,
-                  email: provider.formData.customerEmail,
-                  phone: provider.formData.customerPhone,
-                  onNameChanged: provider.updateCustomerName,
-                  onEmailChanged: provider.updateCustomerEmail,
-                  onPhoneChanged: provider.updateCustomerPhone,
-                  nameError: provider.validationErrors['name'],
-                  emailError: provider.validationErrors['email'],
-                  phoneError: provider.validationErrors['phone'],
+                Container(
+                  key: _contactKey,
+                  child: ContactInformationWidget(
+                    name: provider.formData.customerName,
+                    email: provider.formData.customerEmail,
+                    phone: provider.formData.customerPhone,
+                    onNameChanged: provider.updateCustomerName,
+                    onEmailChanged: provider.updateCustomerEmail,
+                    onPhoneChanged: provider.updateCustomerPhone,
+                    nameError: provider.validationErrors['name'],
+                    emailError: provider.validationErrors['email'],
+                    phoneError: provider.validationErrors['phone'],
+                  ),
                 ),
 
               if (!isAuthenticated) const SizedBox(height: 32),
@@ -119,22 +189,25 @@ class Step1Screen extends StatelessWidget {
                 children: [
                   // Price Display Container
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: AppColors.backgroundLight,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border(
+                        left: BorderSide(
+                          color: AppColors.primary,
+                          width: 4,
+                        ),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 5,
                           spreadRadius: 1,
                         ),
                       ],
-                      border: Border.all(
-                        color: AppColors.primary,
-                        width: 4,
-                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -142,8 +215,8 @@ class Step1Screen extends StatelessWidget {
                         Text(
                           'Preis:',
                           style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.textLight,
+                            fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
                         ),
@@ -200,6 +273,9 @@ class Step1Screen extends StatelessWidget {
                       onPressed: () {
                         if (provider.validateStep(0)) {
                           provider.nextStep();
+                        } else {
+                          // Scroll to first error when validation fails
+                          _scrollToFirstError(provider.validationErrors);
                         }
                       },
                       style: ElevatedButton.styleFrom(

@@ -6,18 +6,75 @@ import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart';
+// import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
 
-class Step2Screen extends StatelessWidget {
+class Step2Screen extends StatefulWidget {
   const Step2Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Step2Screen> createState() => _Step2ScreenState();
+}
+
+class _Step2ScreenState extends State<Step2Screen> {
+  final ScrollController _scrollController = ScrollController();
+
+  // GlobalKeys for each section to enable scrolling
+  final GlobalKey _returnTripKey = GlobalKey();
+  final GlobalKey _stopoverKey = GlobalKey();
+  final GlobalKey _childSeatKey = GlobalKey();
+  final GlobalKey _paymentKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Method to scroll to the first error field
+  void _scrollToFirstError(Map<String, String?> errors) {
+    // Define the order of fields and their corresponding keys
+    final Map<String, GlobalKey> fieldKeys = {
+      'returnDate': _returnTripKey,
+      'returnTime': _returnTripKey,
+      'flightFrom': _returnTripKey,
+      'flightNumber': _returnTripKey,
+      'returnDateTime': _returnTripKey,
+      'returnReservationTime': _returnTripKey,
+      'stopover': _stopoverKey,
+      'stopoverAddress': _stopoverKey,
+      'stopoverPostalCode': _stopoverKey,
+    };
+
+    // Find the first error in the defined order
+    for (String fieldName in fieldKeys.keys) {
+      if (errors.containsKey(fieldName) && errors[fieldName] != null) {
+        final targetKey = fieldKeys[fieldName]!;
+
+        // Scroll to the section containing the error
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (targetKey.currentContext != null) {
+            Scrollable.ensureVisible(
+              targetKey.currentContext!,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              alignment: 0.1, // Show the field near the top of the screen
+            );
+          }
+        });
+        break; // Only scroll to the first error
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ToAirportFormProvider>(
       builder: (context, provider, child) {
         return CustomScrollView(
+          controller: _scrollController,
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 20),
@@ -28,20 +85,33 @@ class Step2Screen extends StatelessWidget {
                     style: AppTextStyles.heading2,
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
+                  const SectionDivider(),
+                  const SizedBox(height: 16),
 
                   // Return trip widget
-                  ReturnTripWidget(
-                    isReturnTripActive: provider.formData.roundTrip,
-                    returnDate: provider.formData.returnDate,
-                    returnTime: provider.formData.returnTime,
-                    flightFrom: provider.formData.flightFrom,
-                    flightNumber: provider.formData.flightNumber,
-                    onReturnTripChanged: provider.updateRoundTrip,
-                    onReturnDateChanged: provider.updateReturnDate,
-                    onReturnTimeChanged: provider.updateReturnTime,
-                    onFlightFromChanged: provider.updateFlightFrom,
-                    onFlightNumberChanged: provider.updateFlightNumber,
+                  Container(
+                    key: _returnTripKey,
+                    child: ReturnTripWidget(
+                      isReturnTripActive: provider.formData.roundTrip,
+                      returnDate: provider.formData.returnDate,
+                      returnTime: provider.formData.returnTime,
+                      flightFrom: provider.formData.flightFrom,
+                      flightNumber: provider.formData.flightNumber,
+                      onReturnTripChanged: provider.updateRoundTrip,
+                      onReturnDateChanged: provider.updateReturnDate,
+                      onReturnTimeChanged: provider.updateReturnTime,
+                      onFlightFromChanged: provider.updateFlightFrom,
+                      onFlightNumberChanged: provider.updateFlightNumber,
+                      // Pass validation errors
+                      returnDateError: provider.validationErrors['returnDate'],
+                      returnTimeError: provider.validationErrors['returnTime'],
+                      flightFromError: provider.validationErrors['flightFrom'],
+                      flightNumberError:
+                          provider.validationErrors['flightNumber'],
+                      returnDateTimeError:
+                          provider.validationErrors['returnDateTime'],
+                    ),
                   ),
 
                   const SizedBox(height: 2),
@@ -64,11 +134,22 @@ class Step2Screen extends StatelessWidget {
                   const SizedBox(height: 2),
 
                   // Stopover widget (only visible for Vienna)
-                  StopoverWidget(
-                    isViennaSelected: provider.formData.city == 'Wien',
-                    currentStopovers: provider.formData.stops,
-                    onAddStopover: provider.addStopover,
-                    onRemoveStopover: provider.removeStopover,
+                  Container(
+                    key: _stopoverKey,
+                    child: StopoverWidget(
+                      isViennaSelected: provider.formData.city == 'Wien',
+                      currentStopovers: provider.formData.stops,
+                      onAddStopover: provider.addStopover,
+                      onRemoveStopover: provider.removeStopover,
+                      stopoverError: provider.validationErrors['stopover'],
+                      onPanelStateChanged: provider.setStopoverPanelOpen,
+                      onValidatePanelData: provider.validateStopoverPanel,
+                      onValidateFields: provider.validateStopoverFields,
+                      addressError:
+                          provider.validationErrors['stopoverAddress'],
+                      postalCodeError:
+                          provider.validationErrors['stopoverPostalCode'],
+                    ),
                   ),
 
                   const SizedBox(height: 2),
@@ -117,8 +198,8 @@ class Step2Screen extends StatelessWidget {
                         Text(
                           'Preis:',
                           style: TextStyle(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.textLight,
+                            fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
                         ),
@@ -190,14 +271,8 @@ class Step2Screen extends StatelessWidget {
                             if (provider.validateStep(1)) {
                               provider.nextStep();
                             } else {
-                              // Show validation error if needed
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Bitte füllen Sie alle erforderlichen Felder aus.'),
-                                  backgroundColor: AppColors.error,
-                                ),
-                              );
+                              // Scroll to first error when validation fails
+                              _scrollToFirstError(provider.validationErrors);
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -219,7 +294,11 @@ class Step2Screen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward, size: 20),
+                              const Icon(
+                                Icons.arrow_forward,
+                                size: 20,
+                                color: Colors.black,
+                              ),
                             ],
                           ),
                         ),

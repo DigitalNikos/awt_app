@@ -52,7 +52,10 @@ class Step3Screen extends StatelessWidget {
                             height: 3,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [AppColors.accent, Colors.transparent],
+                                colors: [
+                                  AppColors.primary,
+                                  const Color.fromARGB(0, 255, 255, 255)
+                                ],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),

@@ -19,6 +19,10 @@ class ToAirportFormProvider with ChangeNotifier {
   bool _hasSelectedLuggage = false;
   bool get hasSelectedLuggage => _hasSelectedLuggage;
 
+  // Zwischenstopp panel state tracking
+  bool _hasOpenStopoverPanel = false;
+  bool get hasOpenStopoverPanel => _hasOpenStopoverPanel;
+
   // Current step (0-indexed)
   int _currentStep = 0;
   int get currentStep => _currentStep;
@@ -48,6 +52,13 @@ class ToAirportFormProvider with ChangeNotifier {
   // Validation errors
   final Map<String, String?> _validationErrors = {};
   Map<String, String?> get validationErrors => Map.from(_validationErrors);
+
+  // Helper method to clear specific field errors when user starts typing
+  void _clearFieldError(String fieldKey) {
+    if (_validationErrors.containsKey(fieldKey)) {
+      _validationErrors.remove(fieldKey);
+    }
+  }
 
   ToAirportFormProvider() {
     // Use copyWith to set the tripType
@@ -82,12 +93,16 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: Date and time changes NO LONGER trigger price calculation
   void updatePickupDate(DateTime? date) {
+    _clearFieldError('date');
+    _clearFieldError('reservationTime'); // Also clear reservation time error
     _formData = _formData.copyWith(pickupDate: date);
     // Removed: _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updatePickupTime(String? time) {
+    _clearFieldError('time');
+    _clearFieldError('reservationTime'); // Also clear reservation time error
     _formData = _formData.copyWith(pickupTime: time);
     // Removed: _debouncePriceCalculation();
     notifyListeners();
@@ -95,6 +110,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: City changes trigger price calculation
   void updateCity(String? city) {
+    _clearFieldError('city');
     print('updateCity called with: $city');
     print('Previous city was: ${_formData.city}');
     print('Previous price was: ${_formData.price}');
@@ -148,6 +164,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: Postal code changes trigger price calculation
   void updatePostalCode(String? postalCode) {
+    _clearFieldError('postalCode');
     print('updatePostalCode called with: $postalCode');
     _formData = _formData.copyWith(postalCode: postalCode);
     _debouncePriceCalculation(); // Calculate price when postal code changes
@@ -156,6 +173,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: Address changes NO LONGER trigger price calculation
   void updateAddress(String? address) {
+    _clearFieldError('address');
     _formData = _formData.copyWith(address: address);
     // Removed: _debouncePriceCalculation();
     notifyListeners();
@@ -163,6 +181,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: Passenger count changes trigger price calculation
   void updatePassengerCount(int count) {
+    _clearFieldError('passengers');
     _formData = _formData.copyWith(passengerCount: count);
     _debouncePriceCalculation(); // Calculate price when passengers change
     notifyListeners();
@@ -170,6 +189,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // UPDATED: Luggage count changes trigger price calculation
   void updateLuggageCount(int count) {
+    _clearFieldError('luggage');
     _formData = _formData.copyWith(luggageCount: count);
     _hasSelectedLuggage = true; // Mark as explicitly selected
     _debouncePriceCalculation(); // Calculate price when luggage changes
@@ -177,16 +197,19 @@ class ToAirportFormProvider with ChangeNotifier {
   }
 
   void updateCustomerName(String? name) {
+    _clearFieldError('name');
     _formData = _formData.copyWith(customerName: name);
     notifyListeners();
   }
 
   void updateCustomerEmail(String? email) {
+    _clearFieldError('email');
     _formData = _formData.copyWith(customerEmail: email);
     notifyListeners();
   }
 
   void updateCustomerPhone(String? phone) {
+    _clearFieldError('phone');
     _formData = _formData.copyWith(customerPhone: phone);
     notifyListeners();
   }
@@ -231,24 +254,32 @@ class ToAirportFormProvider with ChangeNotifier {
   }
 
   void updateReturnDate(DateTime? date) {
+    _clearFieldError('returnDate');
+    _clearFieldError('returnDateTime'); // Clear combined validation error
+    _clearFieldError('returnReservationTime'); // Clear return reservation error
     _formData = _formData.copyWith(returnDate: date);
     _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updateReturnTime(String? time) {
+    _clearFieldError('returnTime');
+    _clearFieldError('returnDateTime'); // Clear combined validation error
+    _clearFieldError('returnReservationTime'); // Clear return reservation error
     _formData = _formData.copyWith(returnTime: time);
     _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updateFlightFrom(String? flightFrom) {
+    _clearFieldError('flightFrom');
     _formData = _formData.copyWith(flightFrom: flightFrom);
     _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updateFlightNumber(String? flightNumber) {
+    _clearFieldError('flightNumber');
     _formData = _formData.copyWith(flightNumber: flightNumber);
     _debouncePriceCalculation();
     notifyListeners();
@@ -256,6 +287,7 @@ class ToAirportFormProvider with ChangeNotifier {
 
   // Stopover management
   void addStopover(String postalCode, String address) {
+    _clearFieldError('stopover'); // Clear stopover error when adding
     final newStopover = StopoverLocation(
       postalCode: postalCode,
       address: address,
@@ -267,6 +299,7 @@ class ToAirportFormProvider with ChangeNotifier {
   }
 
   void removeStopover(int index) {
+    _clearFieldError('stopover'); // Clear stopover error when removing
     if (index >= 0 && index < _formData.stops.length) {
       final updatedStops = [..._formData.stops];
       updatedStops.removeAt(index);
@@ -279,6 +312,49 @@ class ToAirportFormProvider with ChangeNotifier {
   void clearStopovers() {
     _formData = _formData.copyWith(stops: []);
     _debouncePriceCalculation();
+    notifyListeners();
+  }
+
+  // Methods to track Zwischenstopp panel state
+  void setStopoverPanelOpen(bool isOpen) {
+    _hasOpenStopoverPanel = isOpen;
+    if (!isOpen) {
+      _clearFieldError('stopover'); // Clear error when panel is closed
+    }
+    notifyListeners();
+  }
+
+  void validateStopoverPanel(bool hasUnaddedData) {
+    if (hasUnaddedData) {
+      _validationErrors['stopover'] =
+          'Bitte fügen Sie den Zwischenstopp zur Liste hinzu oder schließen Sie das Panel.';
+    } else {
+      _clearFieldError('stopover');
+      _clearFieldError('stopoverAddress');
+      _clearFieldError('stopoverPostalCode');
+    }
+    notifyListeners();
+  }
+
+  // Method to validate individual stopover fields
+  void validateStopoverFields(String? postalCode, String address) {
+    // Clear previous individual field errors
+    _clearFieldError('stopoverAddress');
+    _clearFieldError('stopoverPostalCode');
+
+    bool hasData =
+        (postalCode != null && postalCode.isNotEmpty) || address.isNotEmpty;
+
+    if (hasData) {
+      // If user has started filling, validate individual fields
+      if (postalCode == null || postalCode.isEmpty) {
+        _validationErrors['stopoverPostalCode'] = 'PLZ ist erforderlich';
+      }
+      if (address.isEmpty) {
+        _validationErrors['stopoverAddress'] = 'Adresse ist erforderlich';
+      }
+    }
+
     notifyListeners();
   }
 
@@ -306,6 +382,7 @@ class ToAirportFormProvider with ChangeNotifier {
     print('  postalCode: ${_formData.postalCode}');
 
     // NEW LOGIC: Only require city (+ postal code if Vienna)
+    // Note: passenger_count can be 0 in UI (API service will send minimum 1)
     final canCalculate = _formData.city != null &&
         _formData.city!.isNotEmpty &&
         (_formData.city != 'Wien' ||
@@ -428,6 +505,16 @@ class ToAirportFormProvider with ChangeNotifier {
       isValid = false;
     }
 
+    // RESERVATION TIME VALIDATION (Reservierungsfristen)
+    final reservationTimeValidation =
+        FormValidationService.validateReservationTime(
+            _formData.pickupDate, _formData.pickupTime);
+    if (!reservationTimeValidation.isValid) {
+      _validationErrors['reservationTime'] =
+          reservationTimeValidation.errorMessage;
+      isValid = false;
+    }
+
     // Contact information validation (only for non-authenticated users)
     if (_authService.currentUser == null) {
       // Name validation
@@ -496,6 +583,33 @@ class ToAirportFormProvider with ChangeNotifier {
         _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
         isValid = false;
       }
+
+      // RETURN TRIP DATETIME VALIDATION (Return must be after pickup)
+      final returnDateTimeValidation =
+          FormValidationService.validateReturnDateTime(_formData.pickupDate,
+              _formData.pickupTime, _formData.returnDate, _formData.returnTime);
+      if (!returnDateTimeValidation.isValid) {
+        _validationErrors['returnDateTime'] =
+            returnDateTimeValidation.errorMessage;
+        isValid = false;
+      }
+
+      // RETURN TRIP RESERVATION TIME VALIDATION
+      final returnReservationTimeValidation =
+          FormValidationService.validateReservationTime(
+              _formData.returnDate, _formData.returnTime);
+      if (!returnReservationTimeValidation.isValid) {
+        _validationErrors['returnReservationTime'] =
+            returnReservationTimeValidation.errorMessage;
+        isValid = false;
+      }
+    }
+
+    // ZWISCHENSTOPP PANEL VALIDATION (Check for open panel with unfilled data)
+    if (_hasOpenStopoverPanel && _formData.city == 'Wien') {
+      _validationErrors['stopover'] =
+          'Bitte fügen Sie den Zwischenstopp zur Liste hinzu oder schließen Sie das Panel.';
+      isValid = false;
     }
 
     notifyListeners();

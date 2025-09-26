@@ -10,6 +10,7 @@ class OptionPanel extends StatelessWidget {
   final Function() onClose;
   final String? helperText;
   final bool isVisible;
+  final bool isError;
 
   const OptionPanel({
     Key? key,
@@ -18,6 +19,7 @@ class OptionPanel extends StatelessWidget {
     required this.onClose,
     this.helperText,
     required this.isVisible,
+    this.isError = false,
   }) : super(key: key);
 
   @override
@@ -70,7 +72,7 @@ class OptionPanel extends StatelessWidget {
                           child: Text(
                             title,
                             style: AppTextStyles.heading3.copyWith(
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                         ),
@@ -81,11 +83,11 @@ class OptionPanel extends StatelessWidget {
                   // Close button
                   Positioned(
                     right: 8,
-                    top: 8,
+                    top: 4,
                     child: IconButton(
                       icon: Icon(
                         Icons.close,
-                        color: Colors.white,
+                        color: Colors.black,
                         size: 20,
                       ),
                       onPressed: onClose,
@@ -135,7 +137,8 @@ class OptionPanel extends StatelessWidget {
                     helperText!,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
+                      color:
+                          isError ? AppColors.error : AppColors.textSecondary,
                     ),
                   ),
                 ),

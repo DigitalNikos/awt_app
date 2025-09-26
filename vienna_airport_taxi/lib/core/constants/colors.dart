@@ -19,7 +19,8 @@ class AppColors {
   static const Color textPrimary = Color(0xFF050316); // --text: #050316
   static const Color textSecondary = Color(0xFF666666); // --color-text: #666666
   static const Color textLight =
-      Color(0xFF76522E); // --color-text-light: #76522e
+      Color(0xFF666666); // --color-text-light: #76522e
+  static const Color cancelButtonBackground = Color(0xFFD1D5DB); //
 
   // Background colors
   static const Color background =
@@ -28,8 +29,7 @@ class AppColors {
       Color(0xFFF8F8F8); // --color-background-light: #f8f8f8
 
   // Utility colors
-  static const Color border =
-      Color.fromARGB(255, 53, 203, 23); // --color-border: #ccc
+  static const Color border = Color(0xFFCCCCCC); // --color-border: #ccc
   static const Color success = Color(0xFF4CAF50); // --color-green: #4caf50
   static const Color error = Color(0xFFE53935);
   static const Color warning = Color(0xFFFFAB00);

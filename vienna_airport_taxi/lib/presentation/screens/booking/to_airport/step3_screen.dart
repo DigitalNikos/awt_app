@@ -7,6 +7,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/data/models/booking_form_data.dart'; // Add this import
+import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart'; // For SectionDivider
 
 class Step3Screen extends StatelessWidget {
   const Step3Screen({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class Step3Screen extends StatelessWidget {
         return CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 20),
@@ -31,34 +32,31 @@ class Step3Screen extends StatelessWidget {
                     style: AppTextStyles.heading2,
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
+                  const SectionDivider(),
+                  const SizedBox(height: 16),
 
-                  // Overview container
+                  // Overview container (border removed)
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.border, width: 1),
-                    ),
                     padding: const EdgeInsets.all(16),
                     child: Stack(
                       children: [
                         // Yellow top border (30% width)
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.25,
-                            height: 3,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [AppColors.accent, Colors.transparent],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Positioned(
+                        //   top: 0,
+                        //   left: 0,
+                        //   child: Container(
+                        //     width: MediaQuery.of(context).size.width * 0.25,
+                        //     height: 3,
+                        //     decoration: BoxDecoration(
+                        //       gradient: LinearGradient(
+                        //         colors: [AppColors.accent, Colors.transparent],
+                        //         begin: Alignment.centerLeft,
+                        //         end: Alignment.centerRight,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
 
                         // Content
                         Padding(
@@ -259,7 +257,7 @@ class Step3Screen extends StatelessWidget {
                         Text(
                           'Preis:',
                           style: TextStyle(
-                            color: AppColors.accent,
+                            color: AppColors.textLight,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -365,6 +363,7 @@ class Step3Screen extends StatelessWidget {
                                   'Jetzt buchen',
                                   style: AppTextStyles.buttonText.copyWith(
                                     fontSize: 16,
+                                    color: Colors.white,
                                   ),
                                 ),
                         ),

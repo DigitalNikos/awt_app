@@ -28,7 +28,9 @@ class BookingApiService {
         'postal_code': formData.postalCode ?? '',
         'street_and_number': formData.address ?? '',
       },
-      'passenger_count': formData.passengerCount,
+      'passenger_count': formData.passengerCount > 0
+          ? formData.passengerCount
+          : 1, // Minimum 1 for API
       'luggage_count': formData.luggageCount,
       'trip_type': formData.tripType,
       'round_trip': formData.roundTrip,
@@ -123,6 +125,11 @@ class BookingApiService {
   Future<BookingResponse> submitBooking(BookingFormData formData) async {
     int retries = 0;
 
+    // Ensure minimum passenger count for final submission
+    final finalFormData = formData.passengerCount > 0
+        ? formData
+        : formData.copyWith(passengerCount: 1);
+
     while (retries < _maxRetries) {
       try {
         final response = await http
@@ -132,7 +139,7 @@ class BookingApiService {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
               },
-              body: jsonEncode(formData.toJson()),
+              body: jsonEncode(finalFormData.toJson()),
             )
             .timeout(_timeout);
 

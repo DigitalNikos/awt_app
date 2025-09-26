@@ -1,11 +1,13 @@
 // lib/presentation/widgets/form_steps/option_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 
 class OptionCard extends StatefulWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? svgIcon;
   final String title;
   final String description;
   final Widget? indicator;
@@ -15,14 +17,17 @@ class OptionCard extends StatefulWidget {
 
   const OptionCard({
     Key? key,
-    required this.icon,
+    this.icon,
+    this.svgIcon,
     required this.title,
     required this.description,
     this.indicator,
     this.onTap,
     this.isExpanded = false,
     this.selectedValue,
-  }) : super(key: key);
+  })  : assert(icon != null || svgIcon != null,
+            'Either icon or svgIcon must be provided'),
+        super(key: key);
 
   @override
   State<OptionCard> createState() => _OptionCardState();
@@ -93,12 +98,19 @@ class _OptionCardState extends State<OptionCard>
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Main icon
-                    Icon(
-                      widget.icon,
-                      color: Colors.white,
-                      size: 24,
-                    ),
+                    // Main icon (SVG or Material Icon)
+                    widget.svgIcon != null
+                        ? SvgPicture.asset(
+                            widget.svgIcon!,
+                            width: 24,
+                            height: 24,
+                            // No colorFilter - show original SVG colors
+                          )
+                        : Icon(
+                            widget.icon!,
+                            color: Colors.white,
+                            size: 24,
+                          ),
                     // Decorative circles
                     Positioned(
                       bottom: 5,

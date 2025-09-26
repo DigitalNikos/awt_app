@@ -7,7 +7,9 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'dart:ui' as ui show TextDirection;
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/custom_date_picker.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_dropdown.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/phone_input_field.dart';
 
 class DateTimeSelectionWidget extends StatelessWidget {
   final DateTime? selectedDate;
@@ -78,166 +80,37 @@ class DateTimeSelectionWidget extends StatelessWidget {
   // Replace your _showDatePicker method with this version:
 
   Future<void> _showDatePicker(BuildContext context) async {
-    DateTime tempSelectedDate = selectedDate ?? DateTime.now();
-
-    final DateTime? picked = await showDialog<DateTime>(
+    await showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              contentPadding: const EdgeInsets.all(0),
-              content: Container(
-                width: 320,
-                height: 420,
-                child: Column(
-                  children: [
-                    // Header
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Datum auswählen',
-                              style: AppTextStyles.heading3.copyWith(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Calendar
-                    Expanded(
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                          colorScheme: const ColorScheme.light(
-                            primary: AppColors.primary,
-                            onPrimary: Colors.black,
-                            surface: Colors.white,
-                            onSurface: AppColors.textPrimary,
-                          ),
-                        ),
-                        child: CalendarDatePicker(
-                          initialDate: tempSelectedDate,
-                          firstDate: DateTime.now(),
-                          lastDate:
-                              DateTime.now().add(const Duration(days: 365)),
-                          onDateChanged: (DateTime date) {
-                            setState(() {
-                              tempSelectedDate = date;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-
-                    // Custom Buttons
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          // Red Cancel Button
-                          Expanded(
-                            child: Container(
-                              height: 48,
-                              margin: const EdgeInsets.only(right: 8),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.error, // Red color
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  elevation: 2,
-                                ),
-                                child: const Text(
-                                  'Abbrechen',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // Green OK Button
-                          Expanded(
-                            child: Container(
-                              height: 48,
-                              margin: const EdgeInsets.only(left: 8),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(tempSelectedDate);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      AppColors.success, // Green color
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  elevation: 2,
-                                ),
-                                child: const Text(
-                                  'OK',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
+        return CustomDatePicker(
+          initialDate: selectedDate,
+          onConfirm: (date) {
+            onDateSelected(date);
           },
+          firstDate: DateTime.now(),
+          lastDate: DateTime.now().add(const Duration(days: 365)),
+          title: 'Datum auswählen',
         );
       },
     );
-
-    if (picked != null) {
-      onDateSelected(picked);
-    }
   }
 
   Future<void> _showTimePicker(BuildContext context) async {
-    await showDialog(
+    await showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
       builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: CustomTimePicker(
-            initialTime: selectedTime,
-            onConfirm: (timeString) {
-              onTimeSelected(timeString);
-            },
-          ),
+        return CustomTimePicker(
+          initialTime: selectedTime,
+          onConfirm: (timeString) {
+            onTimeSelected(timeString);
+          },
         );
       },
     );
@@ -419,11 +292,9 @@ class PassengerAndLuggageWidget extends StatelessWidget {
           child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/people.svg',
             hintText: 'Personen',
-            value: passengerCount
-                .toString(), // This ensures the current value is shown
-            items: ['1', '2', '3', '4', '5', '6', '7', '8'], // 1-8 passengers
+            value: passengerCount > 0 ? passengerCount.toString() : '1',
+            items: ['1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
-              print('DEBUG: Passenger dropdown changed to: $value');
               onPassengerCountChanged(int.parse(value));
             },
             errorText: passengerError,
@@ -437,21 +308,9 @@ class PassengerAndLuggageWidget extends StatelessWidget {
           child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/luggage.svg',
             hintText: 'Koffer',
-            value: luggageCount
-                .toString(), // This ensures the current value is shown
-            items: [
-              '0',
-              '1',
-              '2',
-              '3',
-              '4',
-              '5',
-              '6',
-              '7',
-              '8'
-            ], // 0-8 suitcases
+            value: luggageCount.toString(),
+            items: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
-              print('DEBUG: Luggage dropdown changed to: $value');
               onLuggageCountChanged(int.parse(value));
             },
             errorText: luggageError,
@@ -522,14 +381,12 @@ class ContactInformationWidget extends StatelessWidget {
 
         const SizedBox(height: 12),
 
-        // Phone
-        InputFieldWithSvgIcon(
-          svgIconPath: 'assets/icons/inputs/phone.svg',
-          hintText: 'Telefonnummer',
+        // Phone with +43 prefix
+        PhoneInputField(
           value: phone,
           onChanged: onPhoneChanged,
-          keyboardType: TextInputType.phone,
           errorText: phoneError,
+          hintText: 'Telefonnummer',
         ),
       ],
     );
@@ -883,7 +740,7 @@ class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
   }
 }
 
-class DropdownFieldWithSvgIcon extends StatelessWidget {
+class DropdownFieldWithSvgIcon extends StatefulWidget {
   final String svgIconPath;
   final String hintText;
   final String? value;
@@ -902,81 +759,275 @@ class DropdownFieldWithSvgIcon extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DropdownFieldWithSvgIcon> createState() =>
+      _DropdownFieldWithSvgIconState();
+}
+
+class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
+  void _showModalBottomSheet() {
+    print('DEBUG: Showing modal for ${widget.hintText}');
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Modern minimal header
+              Container(
+                padding: const EdgeInsets.fromLTRB(24, 16, 16, 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // SVG icon in black
+                        SvgPicture.asset(
+                          widget.svgIconPath,
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${widget.hintText} auswählen',
+                          style: AppTextStyles.heading3.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Modern close button
+                    Material(
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(20),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Modern options grid
+              Flexible(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: widget.hintText == 'Personen' ||
+                          widget.hintText == 'Koffer'
+                      ? _buildModernNumberGrid()
+                      : _buildModernList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModernNumberGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        childAspectRatio: 1.2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: widget.items.length,
+      itemBuilder: (context, index) {
+        final item = widget.items[index];
+        final isSelected = item == widget.value;
+        return Material(
+          color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(16),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              widget.onChanged(item);
+              Navigator.of(context).pop();
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color:
+                      isSelected ? AppColors.textPrimary : Colors.grey.shade300,
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  item,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected
+                        ? AppColors.textPrimary
+                        : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildModernList() {
+    return SingleChildScrollView(
+      child: Column(
+        children: widget.items.map((item) {
+          final isSelected = item == widget.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Material(
+              color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  widget.onChanged(item);
+                  Navigator.of(context).pop();
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.textPrimary
+                          : Colors.grey.shade300,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                            color: isSelected
+                                ? AppColors.textPrimary
+                                : Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: AppColors.textPrimary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: errorText != null
-                  ? AppColors.error
-                  : const Color(0xFFCCCCCC), // #ccc border
-              width: 1,
+        // Main dropdown container (same styling as inputs)
+        GestureDetector(
+          onTap: () {
+            print('DEBUG: Tapping ${widget.hintText} dropdown');
+            _showModalBottomSheet();
+          },
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: widget.errorText != null
+                    ? AppColors.error
+                    : const Color(0xFFCCCCCC),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(8),
             ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: DropdownButtonFormField<String>(
-            value: value,
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
-              // COMPLETELY REMOVE ALL BORDERS FROM DROPDOWN
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-              disabledBorder: InputBorder.none,
-              filled: false,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-              prefixIcon: Container(
-                width: 40,
-                height: 48,
-                padding: const EdgeInsets.all(
-                    10), // Increased padding for smaller icons
-                child: SvgPicture.asset(
-                  svgIconPath,
-                  width: 18, // Reduced from 24 to 16 for consistency
-                  height: 18, // Reduced from 24 to 16 for consistency
-                  // Removed colorFilter to show original SVG colors
+            child: Stack(
+              children: [
+                Container(
+                  height: 48,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.value ?? widget.hintText,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: widget.value != null
+                          ? AppColors.textPrimary
+                          : AppColors.textLight,
+                    ),
+                  ),
                 ),
-              ),
-              prefixIconConstraints: const BoxConstraints(
-                minWidth: 40,
-                maxWidth: 40,
-                minHeight: 48,
-                maxHeight: 48,
-              ),
+
+                // Icon positioned exactly like other input fields
+                Positioned(
+                  left: 12,
+                  top: 14,
+                  child: SvgPicture.asset(
+                    widget.svgIconPath,
+                    width: 18,
+                    height: 18,
+                  ),
+                ),
+              ],
             ),
-            items: items.map((item) {
-              return DropdownMenuItem<String>(
-                value: item,
-                child: Text(item, style: AppTextStyles.bodyMedium),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                onChanged(value);
-              }
-            },
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
-            ),
-            dropdownColor: Colors.white,
-            // Remove default dropdown arrow
-            icon: const SizedBox.shrink(),
-            isExpanded: true,
           ),
         ),
-        if (errorText != null)
+
+        // Error message
+        if (widget.errorText != null)
           Padding(
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
-              errorText!,
+              widget.errorText!,
               style: TextStyle(
                 color: AppColors.error,
                 fontSize: 12,

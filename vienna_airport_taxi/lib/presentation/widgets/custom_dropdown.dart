@@ -30,42 +30,8 @@ class CustomDropdown extends StatefulWidget {
   State<CustomDropdown> createState() => _CustomDropdownState();
 }
 
-class _CustomDropdownState extends State<CustomDropdown>
-    with SingleTickerProviderStateMixin {
+class _CustomDropdownState extends State<CustomDropdown> {
   bool _isOpen = false;
-  late AnimationController _animationController;
-  late Animation<double> _expandAnimation;
-  late Animation<double> _iconRotation;
-  OverlayEntry? _overlayEntry;
-  final LayerLink _layerLink = LayerLink();
-  final GlobalKey _dropdownKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _expandAnimation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    );
-    _iconRotation = Tween<double>(
-      begin: 0.0,
-      end: 0.5,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-  }
-
-  @override
-  void dispose() {
-    _closeDropdown();
-    _animationController.dispose();
-    super.dispose();
-  }
 
   void _toggleDropdown() {
     if (!widget.enabled) return;
@@ -79,138 +45,265 @@ class _CustomDropdownState extends State<CustomDropdown>
 
   void _openDropdown() {
     _isOpen = true;
-    _animationController.forward();
-    _overlayEntry = _createOverlayEntry();
-    Overlay.of(context).insert(_overlayEntry!);
+    _showModalBottomSheet();
   }
 
   void _closeDropdown() {
-    if (_overlayEntry != null) {
-      _animationController.reverse().then((_) {
-        _overlayEntry?.remove();
-        _overlayEntry = null;
-      });
-    }
     _isOpen = false;
   }
 
-  OverlayEntry _createOverlayEntry() {
-    RenderBox renderBox =
-        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
-    Size size = renderBox.size;
-    Offset offset = renderBox.localToGlobal(Offset.zero);
-
-    return OverlayEntry(
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy + size.height + 4,
-        width: size.width,
-        child: CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset: Offset(0.0, size.height + 4),
-          child: Material(
-            elevation: 8,
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.transparent,
-            child: AnimatedBuilder(
-              animation: _expandAnimation,
-              builder: (context, child) {
-                return Transform.scale(
-                  scaleY: _expandAnimation.value,
-                  alignment: Alignment.topCenter,
-                  child: Opacity(
-                    opacity: _expandAnimation.value,
-                    child: Container(
-                      constraints: BoxConstraints(
-                        maxHeight: 200,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: AppColors.primary,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 10,
-                            spreadRadius: 0,
-                            offset: const Offset(0, 4),
+  void _showModalBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.6,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Modern minimal header
+              Container(
+                padding: const EdgeInsets.fromLTRB(24, 16, 16, 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        // SVG icon in black
+                        SvgPicture.asset(
+                          widget.svgIconPath,
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemCount: widget.items.length,
-                          itemBuilder: (context, index) {
-                            final item = widget.items[index];
-                            final isSelected = item == widget.value;
-
-                            return InkWell(
-                              onTap: () {
-                                widget.onChanged(item);
-                                _closeDropdown();
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary.withOpacity(0.1)
-                                      : Colors.transparent,
-                                  border: index < widget.items.length - 1
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            color: AppColors.primary
-                                                .withOpacity(0.2),
-                                            width: 1,
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        item,
-                                        style:
-                                            AppTextStyles.bodyMedium.copyWith(
-                                          color: isSelected
-                                              ? AppColors.primary
-                                              : AppColors.textPrimary,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                    if (isSelected)
-                                      Icon(
-                                        Icons.check,
-                                        color: AppColors.primary,
-                                        size: 18,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${widget.hintText} auswählen',
+                          style: AppTextStyles.heading3.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Modern close button
+                    Material(
+                      color: AppColors.primaryLight,
+                      borderRadius: BorderRadius.circular(20),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _closeDropdown();
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+
+              // Modern options with special PLZ layout
+              Flexible(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: widget.hintText == 'PLZ'
+                      ? _buildPLZGrid()
+                      : _buildRegularList(),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((_) {
+      // Called when modal is dismissed
+      _closeDropdown();
+    });
+  }
+
+  Widget _buildPLZGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const BouncingScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3.5,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 8,
+      ),
+      itemCount: widget.items.length,
+      itemBuilder: (context, index) {
+        final item = widget.items[index];
+        final isSelected = item == widget.value;
+
+        // Split PLZ and district name for better layout
+        final parts = item.split(' - ');
+        final plz = parts[0];
+        final district = parts.length > 1 ? parts[1] : '';
+
+        return Material(
+          color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              widget.onChanged(item);
+              Navigator.of(context).pop();
+              _closeDropdown();
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color:
+                      isSelected ? AppColors.textPrimary : Colors.grey.shade300,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          plz,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: isSelected
+                                ? AppColors.textPrimary
+                                : Colors.grey.shade800,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: AppColors.textPrimary,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 8,
+                          ),
+                        ),
+                    ],
                   ),
-                );
-              },
+                  if (district.isNotEmpty)
+                    Flexible(
+                      child: Text(
+                        district,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? AppColors.textPrimary.withOpacity(0.8)
+                              : Colors.grey.shade600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRegularList() {
+    return SingleChildScrollView(
+      child: Column(
+        children: widget.items.map((item) {
+          final isSelected = item == widget.value;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            child: Material(
+              color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  widget.onChanged(item);
+                  Navigator.of(context).pop();
+                  _closeDropdown();
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.textPrimary
+                          : Colors.grey.shade300,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                            color: isSelected
+                                ? AppColors.textPrimary
+                                : Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                      if (isSelected)
+                        Container(
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: AppColors.textPrimary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -220,59 +313,51 @@ class _CustomDropdownState extends State<CustomDropdown>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CompositedTransformTarget(
-          link: _layerLink,
-          child: Stack(
-            children: [
-              // Main dropdown container (identical to your input fields)
-              GestureDetector(
-                key: _dropdownKey,
-                onTap: _toggleDropdown,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: widget.errorText != null
-                          ? AppColors.error
-                          : _isOpen
-                              ? AppColors.primary
-                              : const Color(0xFFCCCCCC),
-                      width: _isOpen ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Container(
-                    height: 48,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 16),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      widget.value ?? widget.hintText,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: widget.value != null
-                            ? AppColors.textPrimary
-                            : AppColors.textLight,
-                      ),
+        // Main dropdown container (identical to your input fields)
+        GestureDetector(
+          onTap: _toggleDropdown,
+          behavior: HitTestBehavior
+              .opaque, // Ensure tap detection works in Expanded widgets
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: widget.errorText != null
+                    ? AppColors.error
+                    : const Color(0xFFCCCCCC),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Stack(
+              children: [
+                Container(
+                  height: 48,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.value ?? widget.hintText,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: widget.value != null
+                          ? AppColors.textPrimary
+                          : AppColors.textLight,
                     ),
                   ),
                 ),
-              ),
 
-              // Icon positioned exactly like your input fields
-              Positioned(
-                left: 12,
-                top: 14,
-                child: Container(
-                  width: 20,
-                  height: 20,
+                // Icon positioned exactly like your input fields
+                Positioned(
+                  left: 12,
+                  top: 14,
                   child: SvgPicture.asset(
                     widget.svgIconPath,
                     width: 18,
                     height: 18,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 

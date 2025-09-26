@@ -149,6 +149,127 @@ class FormValidationService {
     return ValidationResult(isValid: true);
   }
 
+  // RESERVATION TIME VALIDATION (Reservierungsfristen)
+  static ValidationResult validateReservationTime(
+      DateTime? pickupDate, String? pickupTime) {
+    if (pickupDate == null || pickupTime == null || pickupTime.trim().isEmpty) {
+      return ValidationResult(isValid: true); // Skip if date/time not set
+    }
+
+    try {
+      // Parse pickup time
+      final timeParts = pickupTime.split(':');
+      final hours = int.parse(timeParts[0]);
+      final minutes = int.parse(timeParts[1]);
+
+      // Create full pickup datetime
+      final pickupDateTime = DateTime(
+        pickupDate.year,
+        pickupDate.month,
+        pickupDate.day,
+        hours,
+        minutes,
+      );
+
+      final now = DateTime.now();
+      final timeDifference = pickupDateTime.difference(now);
+
+      // Check if pickup is in the past
+      if (timeDifference.isNegative) {
+        return ValidationResult(
+            isValid: false,
+            errorMessage:
+                'Abfahrtszeit darf nicht in der Vergangenheit liegen');
+      }
+
+      // Check reservation time requirements
+      if (hours >= 22 || hours < 6) {
+        // Night time (22:00 - 06:00): minimum 8 hours advance
+        if (timeDifference.inHours < 8) {
+          return ValidationResult(
+              isValid: false,
+              errorMessage:
+                  'Fahrten zwischen 22:00 und 06:00 Uhr müssen mindestens 8 Stunden vorher reserviert werden');
+        }
+      } else {
+        // Day time (06:00 - 22:00): minimum 3 hours advance
+        if (timeDifference.inHours < 3) {
+          return ValidationResult(
+              isValid: false,
+              errorMessage:
+                  'Fahrten bis 22:00 Uhr müssen mindestens 3 Stunden vorher reserviert werden');
+        }
+      }
+
+      return ValidationResult(isValid: true);
+    } catch (e) {
+      return ValidationResult(
+          isValid: false, errorMessage: 'Ungültiges Datum oder Zeitformat');
+    }
+  }
+
+  // RETURN TRIP VALIDATION (Return must be after pickup)
+  static ValidationResult validateReturnDateTime(DateTime? pickupDate,
+      String? pickupTime, DateTime? returnDate, String? returnTime) {
+    if (returnDate == null || returnTime == null || returnTime.trim().isEmpty) {
+      return ValidationResult(isValid: true); // Skip if return not set
+    }
+
+    if (pickupDate == null || pickupTime == null || pickupTime.trim().isEmpty) {
+      return ValidationResult(isValid: true); // Skip if pickup not set
+    }
+
+    try {
+      // Parse pickup datetime
+      final pickupTimeParts = pickupTime.split(':');
+      final pickupHours = int.parse(pickupTimeParts[0]);
+      final pickupMinutes = int.parse(pickupTimeParts[1]);
+
+      final pickupDateTime = DateTime(
+        pickupDate.year,
+        pickupDate.month,
+        pickupDate.day,
+        pickupHours,
+        pickupMinutes,
+      );
+
+      // Parse return datetime
+      final returnTimeParts = returnTime.split(':');
+      final returnHours = int.parse(returnTimeParts[0]);
+      final returnMinutes = int.parse(returnTimeParts[1]);
+
+      final returnDateTime = DateTime(
+        returnDate.year,
+        returnDate.month,
+        returnDate.day,
+        returnHours,
+        returnMinutes,
+      );
+
+      // Return must be after pickup
+      if (returnDateTime.isBefore(pickupDateTime) ||
+          returnDateTime.isAtSameMomentAs(pickupDateTime)) {
+        return ValidationResult(
+            isValid: false,
+            errorMessage: 'Rückfahrt muss nach der Hinfahrt stattfinden');
+      }
+
+      // Minimum 1 hour between pickup and return
+      final timeDifference = returnDateTime.difference(pickupDateTime);
+      if (timeDifference.inMinutes < 60) {
+        return ValidationResult(
+            isValid: false,
+            errorMessage:
+                'Mindestens 1 Stunde zwischen Hin- und Rückfahrt erforderlich');
+      }
+
+      return ValidationResult(isValid: true);
+    } catch (e) {
+      return ValidationResult(
+          isValid: false, errorMessage: 'Ungültiges Datum oder Zeitformat');
+    }
+  }
+
   static ValidationResult validateTermsAccepted(bool? accepted) {
     if (!isChecked(accepted)) {
       return ValidationResult(
