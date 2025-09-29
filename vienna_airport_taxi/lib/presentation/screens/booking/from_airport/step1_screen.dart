@@ -4,17 +4,79 @@ import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
-class Step1Screen extends StatelessWidget {
+class Step1Screen extends StatefulWidget {
   const Step1Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Step1Screen> createState() => _Step1ScreenState();
+}
+
+class _Step1ScreenState extends State<Step1Screen> {
+  final ScrollController _scrollController = ScrollController();
+
+  // GlobalKeys for each section to enable scrolling
+  final GlobalKey _dateTimeKey = GlobalKey();
+  final GlobalKey _addressKey = GlobalKey();
+  final GlobalKey _passengersKey = GlobalKey();
+  final GlobalKey _flightKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Method to scroll to the first error field
+  void _scrollToFirstError(Map<String, String?> errors) {
+    // Define the order of fields and their corresponding keys
+    final Map<String, GlobalKey> fieldKeys = {
+      'date': _dateTimeKey,
+      'time': _dateTimeKey,
+      'reservationTime': _dateTimeKey,
+      'city': _addressKey,
+      'postalCode': _addressKey,
+      'address': _addressKey,
+      'passengers': _passengersKey,
+      'luggage': _passengersKey,
+      'flightFrom': _flightKey,
+      'flightNumber': _flightKey,
+      'name': _contactKey,
+      'email': _contactKey,
+      'phone': _contactKey,
+    };
+
+    // Find the first error in the defined order
+    for (String fieldName in fieldKeys.keys) {
+      if (errors.containsKey(fieldName) && errors[fieldName] != null) {
+        final targetKey = fieldKeys[fieldName]!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (targetKey.currentContext != null) {
+            Scrollable.ensureVisible(
+              targetKey.currentContext!,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+              alignment: 0.1,
+            );
+          }
+        });
+        break; // Stop after finding the first error
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final isAuthenticated = authProvider.isAuthenticated;
+    final localizations = AppLocalizations.of(context);
 
     return SingleChildScrollView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(16),
       child: Consumer<FromAirportFormProvider>(
         builder: (context, provider, child) {
@@ -31,97 +93,113 @@ class Step1Screen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Date and Time Selection
-              DateTimeSelectionWidget(
-                selectedDate: provider.formData.pickupDate,
-                selectedTime: provider.formData.pickupTime,
-                onDateSelected: provider.updatePickupDate,
-                onTimeSelected: provider.updatePickupTime,
-                dateError: provider.validationErrors['date'],
-                timeError: provider.validationErrors['time'],
+              Container(
+                key: _dateTimeKey,
+                child: DateTimeSelectionWidget(
+                  selectedDate: provider.formData.pickupDate,
+                  selectedTime: provider.formData.pickupTime,
+                  onDateSelected: provider.updatePickupDate,
+                  onTimeSelected: provider.updatePickupTime,
+                  dateError: provider.validationErrors['date'],
+                  timeError: provider.validationErrors['time'],
+                ),
               ),
 
               const SizedBox(height: 32),
 
               // Address Selection
-              AddressSelectionWidget(
-                selectedCity: provider.formData.city,
-                selectedPostalCode: provider.formData.postalCode,
-                address: provider.formData.address,
-                onCitySelected: provider.updateCity,
-                onPostalCodeSelected: provider.updatePostalCode,
-                onAddressChanged: provider.updateAddress,
-                cityError: provider.validationErrors['city'],
-                postalCodeError: provider.validationErrors['postalCode'],
-                addressError: provider.validationErrors['address'],
+              Container(
+                key: _addressKey,
+                child: AddressSelectionWidget(
+                  selectedCity: provider.formData.city,
+                  selectedPostalCode: provider.formData.postalCode,
+                  address: provider.formData.address,
+                  onCitySelected: provider.updateCity,
+                  onPostalCodeSelected: provider.updatePostalCode,
+                  onAddressChanged: provider.updateAddress,
+                  cityError: provider.validationErrors['city'],
+                  postalCodeError: provider.validationErrors['postalCode'],
+                  addressError: provider.validationErrors['address'],
+                ),
               ),
 
               const SizedBox(height: 12), // REDUCED from 32px to 12px
 
               // MOVED UP: Passenger and Luggage Selection (now after Address)
-              Row(
-                children: [
-                  // Passenger count
-                  Expanded(
-                    child: DropdownFieldWithSvgIcon(
-                      svgIconPath: 'assets/icons/inputs/people.svg',
-                      hintText: 'Personen',
-                      value: provider.formData.passengerCount > 0
-                          ? provider.formData.passengerCount.toString()
-                          : null, // Show placeholder when 0
-                      errorText: provider.validationErrors['passengers'],
-                      items:
-                          List.generate(8, (index) => (index + 1).toString()),
-                      onChanged: (value) =>
-                          provider.updatePassengerCount(int.parse(value)),
+              Container(
+                key: _passengersKey,
+                child: Row(
+                  children: [
+                    // Passenger count
+                    Expanded(
+                      child: DropdownFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/people.svg',
+                        hintText: localizations
+                            .translate('form.step1.address_section.person'),
+                        value: provider.formData.passengerCount > 0
+                            ? provider.formData.passengerCount.toString()
+                            : null, // Show placeholder when 0
+                        errorText: provider.validationErrors['passengers'],
+                        items:
+                            List.generate(8, (index) => (index + 1).toString()),
+                        onChanged: (value) =>
+                            provider.updatePassengerCount(int.parse(value)),
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(width: 12),
+                    const SizedBox(width: 12),
 
-                  // Luggage count
-                  Expanded(
-                    child: DropdownFieldWithSvgIcon(
-                      svgIconPath: 'assets/icons/inputs/luggage.svg',
-                      hintText: 'Koffer',
-                      value: provider.formData.luggageCount >= 0 &&
-                              provider.hasSelectedLuggage
-                          ? provider.formData.luggageCount.toString()
-                          : null, // Show placeholder when not selected
-                      errorText: provider.validationErrors['luggage'],
-                      items: List.generate(9, (index) => index.toString()),
-                      onChanged: (value) =>
-                          provider.updateLuggageCount(int.parse(value)),
+                    // Luggage count
+                    Expanded(
+                      child: DropdownFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/luggage.svg',
+                        hintText: 'Koffer',
+                        value: provider.formData.luggageCount >= 0 &&
+                                provider.hasSelectedLuggage
+                            ? provider.formData.luggageCount.toString()
+                            : null, // Show placeholder when not selected
+                        errorText: provider.validationErrors['luggage'],
+                        items: List.generate(9, (index) => index.toString()),
+                        onChanged: (value) =>
+                            provider.updateLuggageCount(int.parse(value)),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               const SizedBox(height: 32),
 
               // Flight Information (FROM AIRPORT SPECIFIC)
-              FlightInformationWidget(
-                flightFrom: provider.formData.flightFrom,
-                flightNumber: provider.formData.flightNumber,
-                onFlightFromChanged: provider.updateFlightFrom,
-                onFlightNumberChanged: provider.updateFlightNumber,
-                flightFromError: provider.validationErrors['flightFrom'],
-                flightNumberError: provider.validationErrors['flightNumber'],
+              Container(
+                key: _flightKey,
+                child: FlightInformationWidget(
+                  flightFrom: provider.formData.flightFrom,
+                  flightNumber: provider.formData.flightNumber,
+                  onFlightFromChanged: provider.updateFlightFrom,
+                  onFlightNumberChanged: provider.updateFlightNumber,
+                  flightFromError: provider.validationErrors['flightFrom'],
+                  flightNumberError: provider.validationErrors['flightNumber'],
+                ),
               ),
 
               const SizedBox(height: 32),
 
               // Contact Information (moved down)
               if (!isAuthenticated)
-                ContactInformationWidget(
-                  name: provider.formData.customerName,
-                  email: provider.formData.customerEmail,
-                  phone: provider.formData.customerPhone,
-                  onNameChanged: provider.updateCustomerName,
-                  onEmailChanged: provider.updateCustomerEmail,
-                  onPhoneChanged: provider.updateCustomerPhone,
-                  nameError: provider.validationErrors['name'],
-                  emailError: provider.validationErrors['email'],
-                  phoneError: provider.validationErrors['phone'],
+                Container(
+                  key: _contactKey,
+                  child: ContactInformationWidget(
+                    name: provider.formData.customerName,
+                    email: provider.formData.customerEmail,
+                    phone: provider.formData.customerPhone,
+                    onNameChanged: provider.updateCustomerName,
+                    onEmailChanged: provider.updateCustomerEmail,
+                    onPhoneChanged: provider.updateCustomerPhone,
+                    nameError: provider.validationErrors['name'],
+                    emailError: provider.validationErrors['email'],
+                    phoneError: provider.validationErrors['phone'],
+                  ),
                 ),
 
               if (!isAuthenticated) const SizedBox(height: 32),
@@ -212,6 +290,8 @@ class Step1Screen extends StatelessWidget {
                       onPressed: () {
                         if (provider.validateStep(0)) {
                           provider.nextStep();
+                        } else {
+                          _scrollToFirstError(provider.validationErrors);
                         }
                       },
                       style: ElevatedButton.styleFrom(

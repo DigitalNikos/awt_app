@@ -173,6 +173,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Passenger count changes trigger price calculation
   void updatePassengerCount(int count) {
+    _clearFieldError('passengers'); // Clear error immediately
     _formData = _formData.copyWith(passengerCount: count);
     _debouncePriceCalculation(); // Calculate price when passengers change
     notifyListeners();
@@ -180,6 +181,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Luggage count changes trigger price calculation
   void updateLuggageCount(int count) {
+    _clearFieldError('luggage'); // Clear error immediately
     _formData = _formData.copyWith(luggageCount: count);
     _hasSelectedLuggage = true; // Mark as explicitly selected
     _debouncePriceCalculation(); // Calculate price when luggage changes
@@ -187,21 +189,25 @@ class FromAirportFormProvider with ChangeNotifier {
   }
 
   void updateCustomerName(String? name) {
+    _clearFieldError('name'); // Clear error immediately
     _formData = _formData.copyWith(customerName: name);
     notifyListeners();
   }
 
   void updateCustomerEmail(String? email) {
+    _clearFieldError('email'); // Clear error immediately
     _formData = _formData.copyWith(customerEmail: email);
     notifyListeners();
   }
 
   void updateCustomerPhone(String? phone) {
+    _clearFieldError('phone'); // Clear error immediately
     _formData = _formData.copyWith(customerPhone: phone);
     notifyListeners();
   }
 
   void updateChildSeat(String childSeat) {
+    _clearFieldError('childSeat'); // Clear error immediately
     _formData = _formData.copyWith(childSeat: childSeat);
     _debouncePriceCalculation();
     notifyListeners();
@@ -253,12 +259,14 @@ class FromAirportFormProvider with ChangeNotifier {
   }
 
   void updateFlightFrom(String? flightFrom) {
+    _clearFieldError('flightFrom'); // Clear error immediately
     _formData = _formData.copyWith(flightFrom: flightFrom);
     _debouncePriceCalculation();
     notifyListeners();
   }
 
   void updateFlightNumber(String? flightNumber) {
+    _clearFieldError('flightNumber'); // Clear error immediately
     _formData = _formData.copyWith(flightNumber: flightNumber);
     _debouncePriceCalculation();
     notifyListeners();

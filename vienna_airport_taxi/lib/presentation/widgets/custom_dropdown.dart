@@ -174,11 +174,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color:
-                      isSelected ? AppColors.textPrimary : Colors.grey.shade300,
-                  width: isSelected ? 1.5 : 1,
-                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -199,20 +194,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           ),
                         ),
                       ),
-                      if (isSelected)
-                        Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: AppColors.textPrimary,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 8,
-                          ),
-                        ),
                     ],
                   ),
                   if (district.isNotEmpty)
@@ -261,12 +242,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppColors.textPrimary
-                          : Colors.grey.shade300,
-                      width: isSelected ? 1.5 : 1,
-                    ),
+                    // border: Border.all(
+                    //   color: isSelected
+                    //       ? AppColors.textPrimary
+                    //       : Colors.grey.shade300,
+                    //   width: isSelected ? 1.5 : 1,
+                    // ),
                   ),
                   child: Row(
                     children: [
@@ -283,20 +264,20 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           ),
                         ),
                       ),
-                      if (isSelected)
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: AppColors.textPrimary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
+                      // if (isSelected)
+                      //   Container(
+                      //     width: 20,
+                      //     height: 20,
+                      //     decoration: BoxDecoration(
+                      //       color: AppColors.textPrimary,
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     child: const Icon(
+                      //       Icons.check,
+                      //       color: Colors.white,
+                      //       size: 14,
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),

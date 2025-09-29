@@ -4,6 +4,7 @@ import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 
 class Step1Screen extends StatefulWidget {
@@ -20,7 +21,6 @@ class _Step1ScreenState extends State<Step1Screen> {
   final GlobalKey _dateTimeKey = GlobalKey();
   final GlobalKey _addressKey = GlobalKey();
   final GlobalKey _passengersKey = GlobalKey();
-  final GlobalKey _flightKey = GlobalKey();
   final GlobalKey _contactKey = GlobalKey();
 
   @override
@@ -41,8 +41,6 @@ class _Step1ScreenState extends State<Step1Screen> {
       'address': _addressKey,
       'passengers': _passengersKey,
       'luggage': _passengersKey,
-      'flightFrom': _flightKey,
-      'flightNumber': _flightKey,
       'name': _contactKey,
       'email': _contactKey,
       'phone': _contactKey,
@@ -163,21 +161,6 @@ class _Step1ScreenState extends State<Step1Screen> {
                       ),
                     ),
                   ],
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Flight Information
-              Container(
-                key: _flightKey,
-                child: FlightInformationWidget(
-                  flightFrom: provider.formData.flightFrom,
-                  flightNumber: provider.formData.flightNumber,
-                  onFlightFromChanged: provider.updateFlightFrom,
-                  onFlightNumberChanged: provider.updateFlightNumber,
-                  flightFromError: provider.validationErrors['flightFrom'],
-                  flightNumberError: provider.validationErrors['flightNumber'],
                 ),
               ),
 

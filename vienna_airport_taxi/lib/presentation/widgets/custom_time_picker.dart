@@ -1,6 +1,7 @@
 // Create a professional wheel time picker that matches your requirements
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 
@@ -78,19 +79,38 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Uhrzeit auswählen',
-                      style: AppTextStyles.heading3.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        // Clock SVG icon (black, same as other modals)
+                        SvgPicture.asset(
+                          'assets/icons/inputs/clock.svg',
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Uhrzeit auswählen',
+                          style: AppTextStyles.heading3.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      '${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textLight,
-                        fontSize: 14,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 32), // Align with title text
+                      child: Text(
+                        '${selectedHour.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textLight,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -117,83 +137,110 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             ),
           ),
 
-          // Modern time picker wheels
+          // Modern time picker wheels with unified selection bar
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-              child: Row(
+              child: Column(
                 children: [
-                  // Hours column
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
+                  // Headers
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           'Stunden',
+                          textAlign: TextAlign.center,
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
                             fontSize: 12,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Expanded(
-                          child: _buildModernWheelPicker(
-                            controller: _hoursController,
-                            itemCount: 24,
-                            itemBuilder: (index) =>
-                                index.toString().padLeft(2, '0'),
-                            onSelectedItemChanged: (index) {
-                              setState(() {
-                                selectedHour = index;
-                              });
-                            },
-                            selectedValue: selectedHour,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Modern separator
-                  Container(
-                    width: 40,
-                    alignment: Alignment.center,
-                    child: Text(
-                      ':',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textSecondary,
                       ),
-                    ),
-                  ),
-
-                  // Minutes column
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
+                      Container(width: 40), // Space for separator
+                      Expanded(
+                        child: Text(
                           'Minuten',
+                          textAlign: TextAlign.center,
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
                             fontSize: 12,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        Expanded(
-                          child: _buildModernWheelPicker(
-                            controller: _minutesController,
-                            itemCount: 12,
-                            itemBuilder: (index) =>
-                                (index * 5).toString().padLeft(2, '0'),
-                            onSelectedItemChanged: (index) {
-                              setState(() {
-                                selectedMinute = index * 5;
-                              });
-                            },
-                            selectedValue: selectedMinute ~/ 5,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Combined wheel picker with unified selection bar
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        // Unified selection indicator spanning both wheels (no border)
+                        Positioned.fill(
+                          child: Center(
+                            child: Container(
+                              height: 50,
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(12),
+                                // Removed border completely
+                              ),
+                            ),
                           ),
+                        ),
+
+                        // Wheels row
+                        Row(
+                          children: [
+                            // Hours wheel (white background, no border)
+                            Expanded(
+                              child: _buildCleanWheelPicker(
+                                controller: _hoursController,
+                                itemCount: 24,
+                                itemBuilder: (index) =>
+                                    index.toString().padLeft(2, '0'),
+                                onSelectedItemChanged: (index) {
+                                  setState(() {
+                                    selectedHour = index;
+                                  });
+                                },
+                                selectedValue: selectedHour,
+                              ),
+                            ),
+
+                            // Modern separator
+                            Container(
+                              width: 40,
+                              alignment: Alignment.center,
+                              child: Text(
+                                ':',
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+
+                            // Minutes wheel (white background, no border)
+                            Expanded(
+                              child: _buildCleanWheelPicker(
+                                controller: _minutesController,
+                                itemCount: 12,
+                                itemBuilder: (index) =>
+                                    (index * 5).toString().padLeft(2, '0'),
+                                onSelectedItemChanged: (index) {
+                                  setState(() {
+                                    selectedMinute = index * 5;
+                                  });
+                                },
+                                selectedValue: selectedMinute ~/ 5,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -241,78 +288,43 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     );
   }
 
-  Widget _buildModernWheelPicker({
+  Widget _buildCleanWheelPicker({
     required FixedExtentScrollController controller,
     required int itemCount,
     required String Function(int) itemBuilder,
     required Function(int) onSelectedItemChanged,
     required int selectedValue,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.grey.shade50,
-        border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1,
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Modern selection indicator
-          Positioned.fill(
-            child: Center(
-              child: Container(
-                height: 50,
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.primary.withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                ),
+    // Clean wheel picker - no container decoration, white background, no borders
+    return ListWheelScrollView.useDelegate(
+      controller: controller,
+      itemExtent: 50,
+      perspective: 0.01,
+      diameterRatio: 1.8,
+      squeeze: 1.1,
+      physics: const FixedExtentScrollPhysics(),
+      onSelectedItemChanged: onSelectedItemChanged,
+      childDelegate: ListWheelChildBuilderDelegate(
+        childCount: itemCount,
+        builder: (context, index) {
+          final isSelected = (itemCount == 24 && index == selectedValue) ||
+              (itemCount == 12 && index == selectedValue);
+
+          return Container(
+            height: 50,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              itemBuilder(index),
+              style: TextStyle(
+                fontSize: isSelected ? 24 : 18,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color:
+                    isSelected ? AppColors.textPrimary : Colors.grey.shade600,
               ),
             ),
-          ),
-
-          // Modern wheel picker
-          ListWheelScrollView.useDelegate(
-            controller: controller,
-            itemExtent: 50,
-            perspective: 0.01,
-            diameterRatio: 1.8,
-            squeeze: 1.1,
-            physics: const FixedExtentScrollPhysics(),
-            onSelectedItemChanged: onSelectedItemChanged,
-            childDelegate: ListWheelChildBuilderDelegate(
-              childCount: itemCount,
-              builder: (context, index) {
-                final isSelected =
-                    (itemCount == 24 && index == selectedValue) ||
-                        (itemCount == 12 && index == selectedValue);
-
-                return Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.symmetric(vertical: 2),
-                  child: Text(
-                    itemBuilder(index),
-                    style: TextStyle(
-                      fontSize: isSelected ? 24 : 18,
-                      fontWeight:
-                          isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected
-                          ? AppColors.textPrimary
-                          : Colors.grey.shade600,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

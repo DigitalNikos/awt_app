@@ -57,5 +57,43 @@
     "map_title": "Wo Sie Ihren Fahrer finden:",
     "map_caption": "Unser Fahrer wartet am Informationsschalter im Ankunftsbereich",
     "phone": "Telefon",
-    "whatsapp": "WhatsApp"
-  }
+    "whatsapp": "WhatsApp",
+    "form":{
+      "progress_bar": {
+        "step1": "Fahrtdetails",
+        "step2": "Optionen", 
+        "step3": "Überblick"
+      },
+      "step1":{
+        "date_time_section": {
+          "date_and_time": "Datum und Uhrzeit",
+          "date": "Datum",
+          "time": "Uhrzeit",
+          "select_date": "Datum auswählen",
+          "select_time": "Uhrzeit auswählen"
+        },
+        "address_section": {
+          "address_title": "Zieladresse",
+          "city": "Ort",
+          "address": "Adresse",
+          "postal_code": "PLZ",
+          "person": "Personen",
+          "luggage": "Koffer"
+        },
+        "contact_section": {
+          "contact_title": "Kontakt",
+          "name": "Name",
+          "email": "Email",
+          "phone": "Telefon"
+        },
+        "price_section": {
+          "price": "Preis"
+        },
+        "button":{
+          "next": "Weiter",
+          "previous": "Zurück",
+          "book": "Buchen"
+        }
+      }
+    }
+}

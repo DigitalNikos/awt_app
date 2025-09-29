@@ -18,7 +18,7 @@ class AppLocalizations {
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _AppLocalizationsDelegate();
 
-  late Map<String, String> _localizedStrings;
+  late Map<String, dynamic> _localizedStrings;
 
   Future<bool> load() async {
     // Load the language JSON file from the "assets/lang" folder
@@ -26,16 +26,42 @@ class AppLocalizations {
         await rootBundle.loadString('assets/lang/${locale.languageCode}.json');
     Map<String, dynamic> jsonMap = json.decode(jsonString);
 
-    _localizedStrings = jsonMap.map((key, value) {
-      return MapEntry(key, value.toString());
-    });
+    // Keep the nested structure instead of flattening to strings
+    _localizedStrings = jsonMap;
 
     return true;
   }
 
   // This method will be called from every widget which needs a localized text
   String translate(String key) {
-    return _localizedStrings[key] ?? key;
+    try {
+      // Handle nested keys with dot notation (e.g., "form.step1.date_time_section.Date_and_Time")
+      List<String> keys = key.split('.');
+      dynamic value = _localizedStrings;
+
+      print('🔍 DEBUG: Looking for key: $key');
+      print('🔍 DEBUG: Available top-level keys: ${_localizedStrings.keys}');
+
+      for (String k in keys) {
+        print('🔍 DEBUG: Checking key part: $k');
+        if (value is Map && value.containsKey(k)) {
+          value = value[k];
+          print('🔍 DEBUG: Found $k, value type: ${value.runtimeType}');
+        } else {
+          print('❌ DEBUG: Key part "$k" not found in ${value.runtimeType}');
+          print(
+              '❌ DEBUG: Available keys at this level: ${value is Map ? value.keys : 'not a map'}');
+          return key; // Return the key if path not found
+        }
+      }
+
+      final result = value?.toString() ?? key;
+      print('✅ DEBUG: Final result: $result');
+      return result;
+    } catch (e) {
+      print('❌ DEBUG: Error in translate: $e');
+      return key;
+    }
   }
 }
 

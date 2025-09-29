@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/option_card.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/option_panel.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/data/models/booking_form_data.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/custom_date_picker.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class StopoverWidget extends StatefulWidget {
   final bool isViennaSelected;
@@ -76,7 +81,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
     final currentCount = widget.currentStopovers.length;
     final canAddMore = currentCount < maxStopovers;
     final hasInitialCard = currentCount == 0;
-
+    final localizations = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -86,7 +91,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
           if (hasInitialCard && !_isInputPanelVisible)
             OptionCard(
               svgIcon: 'assets/icons/panels/add_location.svg',
-              title: 'Zwischenstopp',
+              title: localizations
+                  .translate('form.step2.stopover_section.stopover_title'),
               description: 'Fügen Sie einen Zwischenstopp zu Ihrer Fahrt hinzu',
               isExpanded: false,
               onTap: () {
@@ -100,7 +106,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
           // Stopover list container
           if (currentCount > 0 || _isInputPanelVisible)
             OptionPanel(
-              title: 'Zwischenstopp',
+              title: localizations
+                  .translate('form.step2.stopover_section.stopover_title'),
               isVisible: true,
               isError: widget.stopoverError != null,
               helperText: widget.stopoverError != null
@@ -173,147 +180,145 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                       ),
                     ),
 
-                  // Input section (visible when needed)
+                  // Input section (visible when needed) - No border, more spacing
                   if (_isInputPanelVisible && canAddMore) ...[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColors.border),
+                    // Header with more spacing
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Neuer Zwischenstopp',
+                          style: AppTextStyles.bodyLarge.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close, size: 24),
+                          onPressed: () {
+                            setState(() {
+                              _isInputPanelVisible = false;
+                              _selectedPostalCode = null;
+                              _address = '';
+                              _addressController.clear();
+                            });
+                            widget.onPanelStateChanged?.call(false);
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Input fields with SVG icons (like Step 1)
+                    InputFieldWithSvgIcon(
+                      svgIconPath: 'assets/icons/inputs/address.svg',
+                      hintText: 'Stopover Adresse',
+                      value: _address,
+                      errorText: widget.addressError,
+                      onChanged: (value) {
+                        setState(() {
+                          _address = value;
+                        });
+                        // Validate individual fields and panel data
+                        widget.onValidateFields
+                            ?.call(_selectedPostalCode, value);
+                        widget.onValidatePanelData
+                            ?.call(hasUnaddedStopoverData);
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    DropdownFieldWithSvgIcon(
+                      svgIconPath: 'assets/icons/inputs/postal-code.svg',
+                      hintText: 'PLZ',
+                      value: _selectedPostalCode,
+                      errorText: widget.postalCodeError,
+                      items: const [
+                        '1010 - Innere Stadt',
+                        '1020 - Leopoldstadt',
+                        '1030 - Landstraße',
+                        '1040 - Wieden',
+                        '1050 - Margareten',
+                        '1060 - Mariahilf',
+                        '1070 - Neubau',
+                        '1080 - Josefstadt',
+                        '1090 - Alsergrund',
+                        '1100 - Favoriten',
+                        '1110 - Simmering',
+                        '1120 - Meidling',
+                        '1130 - Hietzing',
+                        '1140 - Penzing',
+                        '1150 - Rudolfsheim-Fünfhaus',
+                        '1160 - Ottakring',
+                        '1170 - Hernals',
+                        '1180 - Währing',
+                        '1190 - Döbling',
+                        '1200 - Brigittenau',
+                        '1210 - Floridsdorf',
+                        '1220 - Donaustadt',
+                        '1230 - Liesing',
+                      ],
+                      onChanged: (value) {
+                        // Extract just the postal code (first 4 digits)
+                        final postalCode =
+                            value != null ? value.split(' - ')[0] : null;
+                        setState(() {
+                          _selectedPostalCode = postalCode;
+                        });
+                        // Validate individual fields and panel data
+                        widget.onValidateFields?.call(postalCode, _address);
+                        widget.onValidatePanelData
+                            ?.call(hasUnaddedStopoverData);
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Add button with more spacing
+                    ElevatedButton(
+                      onPressed: _addStopover,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          // Header
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Neuer Zwischenstopp',
-                                style: AppTextStyles.bodyLarge.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.close, size: 20),
-                                onPressed: () {
-                                  setState(() {
-                                    _isInputPanelVisible = false;
-                                    _selectedPostalCode = null;
-                                    _address = '';
-                                    _addressController.clear();
-                                  });
-                                },
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Divider
-                          Container(
-                            height: 1,
-                            color: AppColors.border,
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                          ),
-
-                          // Input fields
-                          InputFieldWithIcon(
-                            icon: Icons.location_on,
-                            hintText: 'Stopover Adresse',
-                            value: _address,
-                            errorText: widget.addressError,
-                            onChanged: (value) {
-                              setState(() {
-                                _address = value;
-                              });
-                              // Validate individual fields and panel data
-                              widget.onValidateFields
-                                  ?.call(_selectedPostalCode, value);
-                              widget.onValidatePanelData
-                                  ?.call(hasUnaddedStopoverData);
-                            },
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          DropdownFieldWithIcon(
-                            icon: Icons.markunread_mailbox,
-                            hintText: 'PLZ',
-                            value: _selectedPostalCode,
-                            errorText: widget.postalCodeError,
-                            items: const [
-                              '1010',
-                              '1020',
-                              '1030',
-                              '1040',
-                              '1050',
-                              '1060',
-                              '1070',
-                              '1080',
-                              '1090',
-                              '1100',
-                              '1110',
-                              '1120',
-                              '1130',
-                              '1140',
-                              '1150',
-                              '1160',
-                              '1170',
-                              '1180',
-                              '1190',
-                              '1200',
-                              '1210',
-                              '1220',
-                              '1230',
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedPostalCode = value;
-                              });
-                              // Validate individual fields and panel data
-                              widget.onValidateFields?.call(value, _address);
-                              widget.onValidatePanelData
-                                  ?.call(hasUnaddedStopoverData);
-                            },
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Add button
-                          ElevatedButton(
-                            onPressed: _addStopover,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.add_location, size: 16),
-                                const SizedBox(width: 8),
-                                const Text('Zwischenstopp hinzufügen'),
-                              ],
+                          Icon(Icons.add_location,
+                              size: 18, color: Colors.white),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Zwischenstopp hinzufügen',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
                     ),
+
+                    const SizedBox(height: 16),
                   ] else if (!_isInputPanelVisible &&
                       currentCount > 0 &&
                       canAddMore) ...[
-                    // "Add another stopover" button
+                    // "Add another stopover" button with better spacing
+                    const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
                           _isInputPanelVisible = true;
                         });
+                        widget.onPanelStateChanged?.call(true);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -321,23 +326,27 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                         side: BorderSide(
                           color: AppColors.primary,
                           style: BorderStyle.solid,
-                          width: 1,
+                          width: 1.5,
                         ),
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.add_location,
-                              size: 16, color: AppColors.primary),
-                          const SizedBox(width: 8),
+                              size: 18, color: AppColors.primary),
+                          const SizedBox(width: 12),
                           Text(
                             'Weiteren Zwischenstopp hinzufügen',
-                            style: TextStyle(color: AppColors.textPrimary),
+                            style: TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -356,12 +365,18 @@ class ReturnTripWidget extends StatefulWidget {
   final bool isReturnTripActive;
   final DateTime? returnDate;
   final String? returnTime;
+  final String? flightFrom;
+  final String? flightNumber;
   final Function(bool) onReturnTripChanged;
   final Function(DateTime?) onReturnDateChanged;
   final Function(String?) onReturnTimeChanged;
+  final Function(String?)? onFlightFromChanged;
+  final Function(String?)? onFlightNumberChanged;
   // Error message parameters
   final String? returnDateError;
   final String? returnTimeError;
+  final String? flightFromError;
+  final String? flightNumberError;
   final String? returnDateTimeError;
 
   const ReturnTripWidget({
@@ -369,11 +384,17 @@ class ReturnTripWidget extends StatefulWidget {
     required this.isReturnTripActive,
     required this.returnDate,
     required this.returnTime,
+    this.flightFrom,
+    this.flightNumber,
     required this.onReturnTripChanged,
     required this.onReturnDateChanged,
     required this.onReturnTimeChanged,
+    this.onFlightFromChanged,
+    this.onFlightNumberChanged,
     this.returnDateError,
     this.returnTimeError,
+    this.flightFromError,
+    this.flightNumberError,
     this.returnDateTimeError,
   }) : super(key: key);
 
@@ -424,62 +445,56 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                 Row(
                   children: [
                     Expanded(
-                      child: InputFieldWithIcon(
-                        icon: Icons.calendar_month,
+                      child: InputFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/calendar.svg',
                         hintText: 'Datum',
                         value: widget.returnDate != null
-                            ? '${widget.returnDate!.day.toString().padLeft(2, '0')}.${widget.returnDate!.month.toString().padLeft(2, '0')}.${widget.returnDate!.year}'
+                            ? DateFormat('dd.MM.yyyy')
+                                .format(widget.returnDate!)
                             : null,
                         errorText: widget.returnDateError,
                         onTap: () async {
-                          final DateTime? picked = await showDatePicker(
+                          await showModalBottomSheet(
                             context: context,
-                            initialDate: widget.returnDate ?? DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate:
-                                DateTime.now().add(const Duration(days: 365)),
-                            locale: const Locale('de'),
-                            builder: (context, child) {
-                              return Theme(
-                                data: Theme.of(context).copyWith(
-                                  colorScheme: const ColorScheme.light(
-                                    primary: AppColors.primary,
-                                    onPrimary: Colors.black,
-                                    surface: Colors.white,
-                                    onSurface: Colors
-                                        .grey, // Grey border for current date
-                                  ),
-                                ),
-                                child: child!,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16)),
+                            ),
+                            builder: (BuildContext context) {
+                              return CustomDatePicker(
+                                initialDate:
+                                    widget.returnDate ?? DateTime.now(),
+                                onConfirm: (selectedDate) {
+                                  widget.onReturnDateChanged(selectedDate);
+                                },
+                                title: 'Datum auswählen',
                               );
                             },
                           );
-                          if (picked != null) {
-                            widget.onReturnDateChanged(picked);
-                          }
                         },
                         readOnly: true,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: InputFieldWithIcon(
-                        icon: Icons.access_time,
+                      child: InputFieldWithSvgIcon(
+                        svgIconPath: 'assets/icons/inputs/clock.svg',
                         hintText: 'Uhrzeit',
                         value: widget.returnTime,
                         errorText: widget.returnTimeError,
                         onTap: () async {
-                          await showDialog(
+                          await showModalBottomSheet(
                             context: context,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(16)),
+                            ),
                             builder: (BuildContext context) {
-                              return Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: CustomTimePicker(
-                                  initialTime: widget.returnTime,
-                                  onConfirm: (timeString) {
-                                    widget.onReturnTimeChanged(timeString);
-                                  },
-                                ),
+                              return CustomTimePicker(
+                                initialTime: widget.returnTime,
+                                onConfirm: (timeString) {
+                                  widget.onReturnTimeChanged(timeString);
+                                },
                               );
                             },
                           );
@@ -489,6 +504,42 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                     ),
                   ],
                 ),
+
+                // Flight information section (only show if flight callbacks are provided)
+                if (widget.onFlightFromChanged != null &&
+                    widget.onFlightNumberChanged != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Fluginformationen',
+                    style: AppTextStyles.bodyLarge.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InputFieldWithIcon(
+                          icon: Icons.flight_land,
+                          hintText: 'Abflugort',
+                          value: widget.flightFrom,
+                          onChanged: widget.onFlightFromChanged,
+                          errorText: widget.flightFromError,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: InputFieldWithIcon(
+                          icon: Icons.flight,
+                          hintText: 'Flugnummer',
+                          value: widget.flightNumber,
+                          onChanged: widget.onFlightNumberChanged,
+                          errorText: widget.flightNumberError,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
 
                 // Display combined date/time validation error
                 if (widget.returnDateTimeError != null)
@@ -834,10 +885,13 @@ class _CommentWidgetState extends State<CommentWidget> {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.note_add,
-                    color: Colors.white,
-                    size: 24,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SvgPicture.asset(
+                      'assets/icons/panels/note_add.svg',
+                      width: 24,
+                      height: 24,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -879,6 +933,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                 textAlignVertical: TextAlignVertical.top,
                 decoration: InputDecoration(
                   hintText: 'Fügen Sie hier zusätzliche Informationen hinzu...',
+                  hintStyle: TextStyle(
+                    color: AppColors.textLight,
+                    fontSize: 14,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(color: AppColors.border),

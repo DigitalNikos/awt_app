@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-import 'package:vienna_airport_taxi/core/constants/app_constants.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'dart:ui' as ui show TextDirection;
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_date_picker.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_dropdown.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/phone_input_field.dart';
 
@@ -37,7 +37,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Datum und Uhrzeit',
+          localizations.translate('form.step1.date_time_section.date_and_time'),
           style: AppTextStyles.heading2,
         ),
         const SizedBox(height: 8),
@@ -49,7 +49,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
             Expanded(
               child: InputFieldWithSvgIcon(
                 svgIconPath: 'assets/icons/inputs/calendar.svg',
-                hintText: 'Datum',
+                hintText: localizations
+                    .translate('form.step1.date_time_section.date'),
                 value: selectedDate != null
                     ? DateFormat('dd.MM.yyyy').format(selectedDate!)
                     : null,
@@ -64,7 +65,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
             Expanded(
               child: InputFieldWithSvgIcon(
                 svgIconPath: 'assets/icons/inputs/clock.svg',
-                hintText: 'Uhrzeit',
+                hintText: localizations
+                    .translate('form.step1.date_time_section.time'),
                 value: selectedTime,
                 onTap: () => _showTimePicker(context),
                 readOnly: true,
@@ -80,6 +82,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
   // Replace your _showDatePicker method with this version:
 
   Future<void> _showDatePicker(BuildContext context) async {
+    final localizations = AppLocalizations.of(context);
     await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -93,7 +96,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
           },
           firstDate: DateTime.now(),
           lastDate: DateTime.now().add(const Duration(days: 365)),
-          title: 'Datum auswählen',
+          title: localizations
+              .translate('form.step1.date_time_section.select_date'),
         );
       },
     );
@@ -149,7 +153,7 @@ class AddressSelectionWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Zieladresse',
+          localizations.translate('form.step1.address_section.address_title'),
           style: AppTextStyles.heading2,
         ),
         const SizedBox(height: 8),
@@ -159,7 +163,7 @@ class AddressSelectionWidget extends StatelessWidget {
         // City selector
         CustomDropdown(
           svgIconPath: 'assets/icons/inputs/location.svg',
-          hintText: 'Ort',
+          hintText: localizations.translate('form.step1.address_section.city'),
           value: selectedCity,
           items: const [
             'Wien',
@@ -181,7 +185,8 @@ class AddressSelectionWidget extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12),
             child: CustomDropdown(
               svgIconPath: 'assets/icons/inputs/postal-code.svg',
-              hintText: 'PLZ',
+              hintText: localizations
+                  .translate('form.step1.address_section.postal_code'),
               value: selectedPostalCode != null
                   ? '$selectedPostalCode - ${_getDistrictName(selectedPostalCode!)}'
                   : null,
@@ -222,7 +227,8 @@ class AddressSelectionWidget extends StatelessWidget {
         // Address input
         InputFieldWithSvgIcon(
           svgIconPath: 'assets/icons/inputs/address.svg',
-          hintText: 'Adresse',
+          hintText:
+              localizations.translate('form.step1.address_section.address'),
           value: address,
           onChanged: onAddressChanged,
           errorText: addressError,
@@ -285,13 +291,15 @@ class PassengerAndLuggageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Row(
       children: [
         // Passenger count
         Expanded(
           child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/people.svg',
-            hintText: 'Personen',
+            hintText:
+                localizations.translate('form.step1.address_section.person'),
             value: passengerCount > 0 ? passengerCount.toString() : '1',
             items: ['1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
@@ -307,7 +315,8 @@ class PassengerAndLuggageWidget extends StatelessWidget {
         Expanded(
           child: CustomDropdown(
             svgIconPath: 'assets/icons/inputs/luggage.svg',
-            hintText: 'Koffer',
+            hintText:
+                localizations.translate('form.step1.address_section.luggage'),
             value: luggageCount.toString(),
             items: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
@@ -347,11 +356,12 @@ class ContactInformationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Kontakt',
+          localizations.translate('form.step1.contact_section.contact_title'),
           style: AppTextStyles.heading2,
         ),
         const SizedBox(height: 8),
@@ -361,7 +371,7 @@ class ContactInformationWidget extends StatelessWidget {
         // Name
         InputFieldWithSvgIcon(
           svgIconPath: 'assets/icons/inputs/person.svg',
-          hintText: 'Name',
+          hintText: localizations.translate('form.step1.contact_section.name'),
           value: name,
           onChanged: onNameChanged,
           errorText: nameError,
@@ -372,7 +382,7 @@ class ContactInformationWidget extends StatelessWidget {
         // Email
         InputFieldWithSvgIcon(
           svgIconPath: 'assets/icons/inputs/email.svg',
-          hintText: 'Email',
+          hintText: localizations.translate('form.step1.contact_section.email'),
           value: email,
           onChanged: onEmailChanged,
           keyboardType: TextInputType.emailAddress,
@@ -386,7 +396,7 @@ class ContactInformationWidget extends StatelessWidget {
           value: phone,
           onChanged: onPhoneChanged,
           errorText: phoneError,
-          hintText: 'Telefonnummer',
+          hintText: localizations.translate('form.step1.contact_section.phone'),
         ),
       ],
     );
@@ -740,305 +750,6 @@ class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
   }
 }
 
-class DropdownFieldWithSvgIcon extends StatefulWidget {
-  final String svgIconPath;
-  final String hintText;
-  final String? value;
-  final List<String> items;
-  final Function(String) onChanged;
-  final String? errorText;
-
-  const DropdownFieldWithSvgIcon({
-    Key? key,
-    required this.svgIconPath,
-    required this.hintText,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-    this.errorText,
-  }) : super(key: key);
-
-  @override
-  State<DropdownFieldWithSvgIcon> createState() =>
-      _DropdownFieldWithSvgIconState();
-}
-
-class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
-  void _showModalBottomSheet() {
-    print('DEBUG: Showing modal for ${widget.hintText}');
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.6,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Modern minimal header
-              Container(
-                padding: const EdgeInsets.fromLTRB(24, 16, 16, 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // SVG icon in black
-                        SvgPicture.asset(
-                          widget.svgIconPath,
-                          width: 20,
-                          height: 20,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '${widget.hintText} auswählen',
-                          style: AppTextStyles.heading3.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    // Modern close button
-                    Material(
-                      color: AppColors.primaryLight,
-                      borderRadius: BorderRadius.circular(20),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          child: Icon(
-                            Icons.close,
-                            size: 20,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Modern options grid
-              Flexible(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: widget.hintText == 'Personen' ||
-                          widget.hintText == 'Koffer'
-                      ? _buildModernNumberGrid()
-                      : _buildModernList(),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildModernNumberGrid() {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        childAspectRatio: 1.2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: widget.items.length,
-      itemBuilder: (context, index) {
-        final item = widget.items[index];
-        final isSelected = item == widget.value;
-        return Material(
-          color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(16),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              widget.onChanged(item);
-              Navigator.of(context).pop();
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color:
-                      isSelected ? AppColors.textPrimary : Colors.grey.shade300,
-                  width: isSelected ? 2 : 1,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected
-                        ? AppColors.textPrimary
-                        : Colors.grey.shade600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildModernList() {
-    return SingleChildScrollView(
-      child: Column(
-        children: widget.items.map((item) {
-          final isSelected = item == widget.value;
-          return Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            child: Material(
-              color: isSelected ? AppColors.primaryLight : Colors.grey.shade50,
-              borderRadius: BorderRadius.circular(12),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: () {
-                  widget.onChanged(item);
-                  Navigator.of(context).pop();
-                },
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isSelected
-                          ? AppColors.textPrimary
-                          : Colors.grey.shade300,
-                      width: isSelected ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w500,
-                            color: isSelected
-                                ? AppColors.textPrimary
-                                : Colors.grey.shade700,
-                          ),
-                        ),
-                      ),
-                      if (isSelected)
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: AppColors.textPrimary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Main dropdown container (same styling as inputs)
-        GestureDetector(
-          onTap: () {
-            print('DEBUG: Tapping ${widget.hintText} dropdown');
-            _showModalBottomSheet();
-          },
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(
-                color: widget.errorText != null
-                    ? AppColors.error
-                    : const Color(0xFFCCCCCC),
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  height: 48,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    widget.value ?? widget.hintText,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: widget.value != null
-                          ? AppColors.textPrimary
-                          : AppColors.textLight,
-                    ),
-                  ),
-                ),
-
-                // Icon positioned exactly like other input fields
-                Positioned(
-                  left: 12,
-                  top: 14,
-                  child: SvgPicture.asset(
-                    widget.svgIconPath,
-                    width: 18,
-                    height: 18,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Error message
-        if (widget.errorText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 4, left: 4),
-            child: Text(
-              widget.errorText!,
-              style: TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
 class FlightInformationWidget extends StatelessWidget {
   final String? flightFrom;
   final String? flightNumber;
@@ -1059,11 +770,13 @@ class FlightInformationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Fluginformationen',
+          localizations.translate(
+              'form.step1.flight_information_section.flight_information_title'),
           style: AppTextStyles.heading2,
         ),
         const SizedBox(height: 8),
@@ -1074,7 +787,8 @@ class FlightInformationWidget extends StatelessWidget {
             Expanded(
               child: InputFieldWithIcon(
                 icon: Icons.flight_land,
-                hintText: 'Abflugort',
+                hintText: localizations.translate(
+                    'form.step1.flight_information_section.flight_from'),
                 value: flightFrom,
                 onChanged: onFlightFromChanged,
                 errorText: flightFromError,
@@ -1084,7 +798,8 @@ class FlightInformationWidget extends StatelessWidget {
             Expanded(
               child: InputFieldWithIcon(
                 icon: Icons.flight,
-                hintText: 'Flugnummer',
+                hintText: localizations.translate(
+                    'form.step1.flight_information_section.flight_number'),
                 value: flightNumber,
                 onChanged: onFlightNumberChanged,
                 errorText: flightNumberError,

@@ -57,5 +57,43 @@
     "map_title": "Where to find your driver:",
     "map_caption": "Our driver waits at the information desk in the arrival area",
     "phone": "Phone",
-    "whatsapp": "WhatsApp"
-  }
+    "whatsapp": "WhatsApp",
+    "form":{
+        "progress_bar": {
+        "step1": "Trip Details",
+        "step2": "Options", 
+        "step3": "Overview"
+      },
+      "step1":{
+        "date_time_section": {
+          "date_and_time": "Date and Time",
+          "date": "Date",
+          "time": "Time",
+          "select_date": "Select Date",
+          "select_time": "Select Time"
+        },
+        "address_section": {
+          "address_title": "Destination Address",
+          "city": "City",
+          "address": "Address",
+          "postal_code": "Postal Code",
+          "person": "Person",
+          "luggage": "Luggage"
+        },
+        "contact_section": {
+          "contact_title": "Contact",
+          "name": "Name",
+          "email": "Email",
+          "phone": "Phone"
+        },
+        "price_section": {
+          "price": "Price"
+        },
+        "button":{
+          "next": "Next",
+          "previous": "Previous",
+          "book": "Book"
+        }
+      }
+    }
+}

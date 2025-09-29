@@ -28,11 +28,14 @@ class FromAirportScreen extends StatelessWidget {
 class _FromAirportScreenContent extends StatelessWidget {
   const _FromAirportScreenContent({Key? key}) : super(key: key);
 
-  static const List<String> _steps = [
-    'Fahrtdetails',
-    'Optionen',
-    'Überblick',
-  ];
+  List<String> _getLocalizedSteps(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    return [
+      localizations.translate('form.progress_bar.step1'),
+      localizations.translate('form.progress_bar.step2'),
+      localizations.translate('form.progress_bar.step3'),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +139,7 @@ class _FromAirportScreenContent extends StatelessWidget {
               // Progress Bar
               ProgressBar(
                 currentStep: provider.currentStep + 1,
-                steps: _steps,
+                steps: _getLocalizedSteps(context),
               ),
 
               // Form Content

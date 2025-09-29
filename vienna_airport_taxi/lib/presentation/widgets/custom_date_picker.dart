@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 
@@ -51,27 +52,46 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.title,
-                      style: AppTextStyles.heading3.copyWith(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        // Calendar SVG icon (black, same as other modals)
+                        SvgPicture.asset(
+                          'assets/icons/inputs/calendar.svg',
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          widget.title,
+                          style: AppTextStyles.heading3.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      DateFormat('EEEE, d. MMMM yyyy', 'de')
-                          .format(tempSelectedDate),
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textLight,
-                        fontSize: 14,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 32), // Align with title text
+                      child: Text(
+                        DateFormat('EEEE, d. MMMM yyyy', 'de')
+                            .format(tempSelectedDate),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textLight,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 // Modern close button
                 Material(
-                  color: Colors.grey.shade100,
+                  color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(20),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
@@ -82,7 +102,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                       child: Icon(
                         Icons.close,
                         size: 20,
-                        color: Colors.grey.shade600,
+                        color: Colors.black,
                       ),
                     ),
                   ),

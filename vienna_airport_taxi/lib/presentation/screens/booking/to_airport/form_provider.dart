@@ -215,6 +215,7 @@ class ToAirportFormProvider with ChangeNotifier {
   }
 
   void updateChildSeat(String childSeat) {
+    _clearFieldError('childSeat'); // Clear error immediately
     _formData = _formData.copyWith(childSeat: childSeat);
     _debouncePriceCalculation();
     notifyListeners();
@@ -512,24 +513,6 @@ class ToAirportFormProvider with ChangeNotifier {
     if (!reservationTimeValidation.isValid) {
       _validationErrors['reservationTime'] =
           reservationTimeValidation.errorMessage;
-      isValid = false;
-    }
-
-    // Flight information validation (TO AIRPORT SPECIFIC - in Step 1)
-    final flightFromValidation = FormValidationService.validateRequiredField(
-        _formData.flightFrom,
-        fieldName: 'Abflugort');
-    if (!flightFromValidation.isValid) {
-      _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
-      isValid = false;
-    }
-
-    // Flight number validation (TO AIRPORT SPECIFIC - in Step 1)
-    final flightNumberValidation = FormValidationService.validateRequiredField(
-        _formData.flightNumber,
-        fieldName: 'Flugnummer');
-    if (!flightNumberValidation.isValid) {
-      _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
       isValid = false;
     }
 
