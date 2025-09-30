@@ -7,6 +7,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart';
 // import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class Step2Screen extends StatefulWidget {
   const Step2Screen({Key? key}) : super(key: key);
@@ -68,6 +69,7 @@ class _Step2ScreenState extends State<Step2Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Consumer<ToAirportFormProvider>(
       builder: (context, provider, child) {
         return CustomScrollView(
@@ -81,7 +83,7 @@ class _Step2ScreenState extends State<Step2Screen> {
 
                   // Section title
                   Text(
-                    'Optionen',
+                    localizations.translate('form.step2.step2_title'),
                     style: AppTextStyles.heading2,
                   ),
 
@@ -196,7 +198,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Preis:',
+                          localizations.translate('form.price_section.price'),
                           style: TextStyle(
                             color: AppColors.textLight,
                             fontWeight: FontWeight.w700,
@@ -252,7 +254,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text(
-                            'Zurück',
+                            localizations.translate('form.button.previous'),
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -288,7 +290,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Weiter',
+                                localizations.translate('form.button.next'),
                                 style: AppTextStyles.buttonText.copyWith(
                                   fontSize: 16,
                                 ),

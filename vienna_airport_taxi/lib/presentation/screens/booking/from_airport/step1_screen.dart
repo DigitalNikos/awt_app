@@ -234,8 +234,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          localizations
-                              .translate('form.step1.price_section.price'),
+                          localizations.translate('form.price_section.price'),
                           style: TextStyle(
                             color: AppColors.textLight,
                             fontWeight: FontWeight.w700,
@@ -311,7 +310,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            localizations.translate('form.step1.button.next'),
+                            localizations.translate('form.button.next'),
                             style:
                                 AppTextStyles.buttonText.copyWith(fontSize: 18),
                           ),

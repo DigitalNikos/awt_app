@@ -94,17 +94,10 @@
           "name": "Name",
           "email": "Email",
           "phone": "Telefon"
-        },
-        "price_section": {
-          "price": "Preis"
-        },
-        "button":{
-          "next": "Weiter",
-          "previous": "Zurück",
-          "book": "Buchen"
         }
       },
       "step2":{
+        "step2_title": "Optionen",
         "return_trip_section": {
           "return_trip": "Rückfahrt",
           "return_trip_description": "Planen Sie Ihre Rückfahrt",
@@ -116,7 +109,55 @@
           "return_trip_flight_from": "Abflugort",
           "return_trip_flight_number": "Flug-Nr.",
           "return_trip_info_message": "Wir holen Sie pünktlich zu Ihrem Flug ab."
+        },
+        "stopover_section": {
+          "stopover_title": "Zwischenstopps",
+          "stopover_description": "Zwischenstopp hinzufügen",
+          "stopover_panel_title": "Neuer Zwischenstopp",
+          "stopover_input_placeholder": "Stopover Adresse",
+          "stopover_plz": "PLZ",
+          "stopover_new_butrton": "Zwischenstopp hinzufügen",
+          "stopover_add_another_button": "Weiteren Zwischenstopp hinzufügen",
+          "stopover_info_message": {
+            "start": "Sie können noch",
+            "single": "Zwischenstopp",
+            "multiple": "Zwischenstopps",
+            "end": "hinzufügen."
+          }
+        },
+        "payment_section": {
+          "payment_title": "Zahlungsart",
+          "payment_description": "Zahlungsart auswählen",
+          "payment_method_cash": "Bar",
+          "payment_method_card": "Karte"
+        },
+        "child_seat_section": {
+          "child_seat_title": "Kindersitz",
+          "child_seat_description": "Option für Ihr Kind wählen",
+          "child_seat_select_option": "Kindersitz auswählen",
+          "child_seat_option_none": "Ohne",
+          "child_seat_option_booster_seat": "Kindersitzerhöhung",
+          "child_seat_option_child_seat": "Kindersitz",
+          "child_seat_option_baby_carrier": "Babyschale"
+        },
+        "notes_section": {
+          "notes_title": "Anmerkungen",
+          "notes_description": "Zusätzliche Infos hier einfügen",
+          "notes_input_placeholder": "Zusätzliche Infos hier einfügen"
+        },
+        "nameplate_section": {
+          "nameplate_title": "Namenschild",
+          "nameplate_description": "Abholung mit Namensschild"
         }
+      },
+     
+      "price_section": {
+        "price": "Preis"
+      },
+      "button":{
+        "next": "Weiter",
+        "previous": "Zurück",
+        "book": "Buchen"
       }
     }
 }

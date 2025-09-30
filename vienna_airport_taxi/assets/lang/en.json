@@ -94,17 +94,10 @@
           "name": "Name",
           "email": "Email",
           "phone": "Phone"
-        },
-        "price_section": {
-          "price": "Price"
-        },
-        "button":{
-          "next": "Next",
-          "previous": "Previous",
-          "book": "Book"
         }
       },
       "step2":{
+        "step2_title": "Options",
         "return_trip_section": {
           "return_trip": "Return Trip",
           "return_trip_description": "Plan your return trip",
@@ -116,7 +109,54 @@
           "return_trip_flight_from": "Flight From",
           "return_trip_flight_number": "Flight Nr.",
           "return_trip_info_message": "We will pick you up punctually for your flight."
+        },
+        "stopover_section": {
+          "stopover_title": "Stopovers",
+          "stopover_description": "Add a stopover",
+          "stopover_panel_title": "New Stopover",
+          "stopover_input_placeholder": "Stopover Address",
+          "stopover_plz": "Postal Code",
+          "stopover_new_butrton": "Add Stopover",
+          "stopover_add_another_button": "Add Another Stopover",
+          "stopover_info_message": {
+            "start": "You can add",
+            "single": " more stopover",
+            "multiple": "more stopovers",
+            "end": "."
+          }
+        },
+        "payment_section": {
+          "payment_title": "Payment Method",
+          "payment_description": "Select Payment Method",
+          "payment_method_cash": "Cash",
+          "payment_method_card": "Card"
+        },
+        "child_seat_section": {
+          "child_seat_title": "Child Seat",
+          "child_seat_description": "Select Option for Your Child",
+          "child_seat_select_option": "Select Child Seat",
+          "child_seat_option_none": "None",
+          "child_seat_option_booster_seat": "Booster Seat",
+          "child_seat_option_child_seat": "Child Seat",
+          "child_seat_option_baby_carrier": "Baby Carrier"
+        },
+        "notes_section": {
+          "notes_title": "Notes",
+          "notes_description": "Add additional info here",
+          "notes_input_placeholder": "Add additional info here"
+        },
+        "nameplate_section": {
+          "nameplate_title": "Nameplate",
+          "nameplate_description": "Pickup with Nameplate"
         }
+      },
+      "price_section": {
+        "price": "Price"
+      },
+      "button":{
+        "next": "Next",
+        "previous": "Previous",
+        "book": "Book"
       }
     }
 }

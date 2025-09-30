@@ -93,7 +93,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
               svgIcon: 'assets/icons/panels/add_location.svg',
               title: localizations
                   .translate('form.step2.stopover_section.stopover_title'),
-              description: 'Fügen Sie einen Zwischenstopp zu Ihrer Fahrt hinzu',
+              description: localizations.translate(
+                  'form.step2.stopover_section.stopover_description'),
               isExpanded: false,
               onTap: () {
                 setState(() {
@@ -112,7 +113,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
               isError: widget.stopoverError != null,
               helperText: widget.stopoverError != null
                   ? widget.stopoverError!
-                  : 'Sie können noch ${maxStopovers - currentCount} ${currentCount == maxStopovers - 1 ? 'Zwischenstopp' : 'Zwischenstopps'} hinzufügen.',
+                  : '${localizations.translate('form.step2.stopover_section.stopover_info_message.start')} ${maxStopovers - currentCount} ${currentCount == maxStopovers - 1 ? localizations.translate('form.step2.stopover_section.stopover_info_message.single') : localizations.translate('form.step2.stopover_section.stopover_info_message.multiple')} ${localizations.translate('form.step2.stopover_section.stopover_info_message.end')}',
               onClose: () {
                 setState(() {
                   _isInputPanelVisible = false;
@@ -187,7 +188,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Neuer Zwischenstopp',
+                          localizations.translate(
+                              'form.step2.stopover_section.stopover_panel_title'),
                           style: AppTextStyles.bodyLarge.copyWith(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -215,7 +217,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                     // Input fields with SVG icons (like Step 1)
                     InputFieldWithSvgIcon(
                       svgIconPath: 'assets/icons/inputs/address.svg',
-                      hintText: 'Stopover Adresse',
+                      hintText: localizations.translate(
+                          'form.step2.stopover_section.stopover_input_placeholder'),
                       value: _address,
                       errorText: widget.addressError,
                       onChanged: (value) {
@@ -234,7 +237,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
 
                     DropdownFieldWithSvgIcon(
                       svgIconPath: 'assets/icons/inputs/postal-code.svg',
-                      hintText: 'PLZ',
+                      hintText: localizations.translate(
+                          'form.step2.stopover_section.stopover_plz'),
                       value: _selectedPostalCode,
                       errorText: widget.postalCodeError,
                       items: const [
@@ -296,7 +300,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                               size: 18, color: Colors.white),
                           const SizedBox(width: 12),
                           Text(
-                            'Zwischenstopp hinzufügen',
+                            localizations.translate(
+                                'form.step2.stopover_section.stopover_new_butrton'),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -341,7 +346,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                               size: 18, color: AppColors.primary),
                           const SizedBox(width: 12),
                           Text(
-                            'Weiteren Zwischenstopp hinzufügen',
+                            localizations.translate(
+                                'form.step2.stopover_section.stopover_add_another_button'),
                             style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 16,
@@ -584,11 +590,17 @@ class ChildSeatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     final childSeatOptions = {
-      'None': 'Ohne',
-      'booster_seat': 'Kindersitzerhöhung',
-      'child_seat': 'Kindersitz',
-      'baby_carrier': 'Babyschale',
+      'None': localizations
+          .translate('form.step2.child_seat_section.child_seat_option_none'),
+      'booster_seat': localizations.translate(
+          'form.step2.child_seat_section.child_seat_option_booster_seat'),
+      'child_seat': localizations.translate(
+          'form.step2.child_seat_section.child_seat_option_child_seat'),
+      'baby_carrier': localizations.translate(
+          'form.step2.child_seat_section.child_seat_option_baby_carrier'),
     };
 
     return Container(
@@ -600,8 +612,10 @@ class ChildSeatWidget extends StatelessWidget {
             // OptionCard that displays the current selection
             OptionCard(
               svgIcon: 'assets/icons/panels/child_care.svg',
-              title: 'Kindersitz',
-              description: 'Wählen Sie die passende Option für Ihr Kind',
+              title: localizations
+                  .translate('form.step2.child_seat_section.child_seat_title'),
+              description: localizations.translate(
+                  'form.step2.child_seat_section.child_seat_description'),
               // Removed custom indicator - will use default + icon like other panels
               selectedValue: selectedChildSeat != 'None'
                   ? childSeatOptions[selectedChildSeat]
@@ -616,7 +630,7 @@ class ChildSeatWidget extends StatelessWidget {
                   onTap: () {
                     // Show custom dropdown
                     _showChildSeatOptions(context, selectedChildSeat,
-                        childSeatOptions, onChildSeatChanged);
+                        childSeatOptions, onChildSeatChanged, localizations);
                   },
                 ),
               ),
@@ -632,6 +646,7 @@ class ChildSeatWidget extends StatelessWidget {
     String currentSelection,
     Map<String, String> options,
     Function(String) onChanged,
+    AppLocalizations localizations,
   ) {
     showModalBottomSheet(
       context: context,
@@ -650,7 +665,8 @@ class ChildSeatWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Kindersitz auswählen',
+                    localizations.translate(
+                        'form.step2.child_seat_section.child_seat_select_option'),
                     style: AppTextStyles.heading3,
                   ),
                   IconButton(
@@ -720,13 +736,16 @@ class NameSignWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!isReturnTripActive) return const SizedBox.shrink();
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8), // Fixed margin
       child: OptionCard(
         svgIcon: 'assets/icons/panels/badge.svg',
-        title: 'Namenschild',
-        description: 'Wir begrüßen Sie in der Ankunftshalle mit Namensschild',
+        title: localizations
+            .translate('form.step2.nameplate_section.nameplate_title'),
+        description: localizations
+            .translate('form.step2.nameplate_section.nameplate_description'),
         indicator: Container(
           width: 24,
           height: 24,
@@ -760,21 +779,28 @@ class PaymentMethodWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: OptionCard(
         svgIcon: paymentMethod == 'cash'
             ? 'assets/icons/panels/attach_money.svg'
             : 'assets/icons/panels/credit_card.svg',
-        title: 'Zahlungsart',
-        description: 'Zahlungsart auswählen',
+        title:
+            localizations.translate('form.step2.payment_section.payment_title'),
+        description: localizations
+            .translate('form.step2.payment_section.payment_description'),
         indicator: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            paymentMethod == 'cash' ? 'Bar' : 'Karte',
+            paymentMethod == 'cash'
+                ? localizations
+                    .translate('form.step2.payment_section.payment_method_cash')
+                : localizations.translate(
+                    'form.step2.payment_section.payment_method_card'),
             style: TextStyle(
               color: AppColors.success,
               fontWeight: FontWeight.w600,
@@ -864,14 +890,17 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Widget _buildCollapsedState() {
+    final localizations = AppLocalizations.of(context);
     return OptionCard(
       svgIcon: 'assets/icons/panels/note_add.svg',
-      title: 'Anmerkungen',
-      description: 'Fügen Sie hier zusätzliche Informationen hinzu',
+      title: localizations.translate('form.step2.notes_section.notes_title'),
+      description:
+          localizations.translate('form.step2.notes_section.notes_description'),
     );
   }
 
   Widget _buildExpandedState() {
+    final localizations = AppLocalizations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -907,7 +936,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
-                    'Anmerkungen',
+                    localizations
+                        .translate('form.step2.notes_section.notes_title'),
                     style: AppTextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -942,7 +972,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                 expands: true,
                 textAlignVertical: TextAlignVertical.top,
                 decoration: InputDecoration(
-                  hintText: 'Fügen Sie hier zusätzliche Informationen hinzu...',
+                  hintText: localizations.translate(
+                      'form.step2.notes_section.notes_input_placeholder'),
                   hintStyle: TextStyle(
                     color: AppColors.textLight,
                     fontSize: 14,

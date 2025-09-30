@@ -6,12 +6,14 @@ import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/form_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class Step2Screen extends StatelessWidget {
   const Step2Screen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Consumer<FromAirportFormProvider>(
       builder: (context, provider, child) {
         return CustomScrollView(
@@ -24,7 +26,7 @@ class Step2Screen extends StatelessWidget {
 
                   // Section title
                   Text(
-                    'Optionen',
+                    localizations.translate('form.step2.step2_title'),
                     style: AppTextStyles.heading2,
                   ),
 
@@ -111,7 +113,7 @@ class Step2Screen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Preis:',
+                          localizations.translate('form.price_section.price'),
                           style: TextStyle(
                             color: AppColors.accent,
                             fontWeight: FontWeight.w600,
@@ -167,7 +169,7 @@ class Step2Screen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text(
-                            'Zurück',
+                            localizations.translate('form.button.previous'),
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -209,7 +211,7 @@ class Step2Screen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Weiter',
+                                localizations.translate('form.button.next'),
                                 style: AppTextStyles.buttonText.copyWith(
                                   fontSize: 16,
                                 ),
