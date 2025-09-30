@@ -405,6 +405,7 @@ class ReturnTripWidget extends StatefulWidget {
 class _ReturnTripWidgetState extends State<ReturnTripWidget> {
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -413,8 +414,10 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
           if (!widget.isReturnTripActive)
             OptionCard(
               svgIcon: 'assets/icons/panels/compare_arrows.svg',
-              title: 'Rückfahrt',
-              description: 'Planen Sie Ihre Rückfahrt vom Flughafen',
+              title: localizations
+                  .translate('form.step2.return_trip_section.return_trip'),
+              description: localizations.translate(
+                  'form.step2.return_trip_section.return_trip_description'),
               isExpanded: widget.isReturnTripActive,
               onTap: () {
                 widget.onReturnTripChanged(!widget.isReturnTripActive);
@@ -423,9 +426,11 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
 
           // Option panel
           OptionPanel(
-            title: 'Rückfahrt',
+            title: localizations
+                .translate('form.step2.return_trip_section.return_trip'),
             isVisible: widget.isReturnTripActive,
-            helperText: 'Wir holen Sie pünktlich zu Ihrem Flug ab.',
+            helperText: localizations.translate(
+                'form.step2.return_trip_section.return_trip_info_message'),
             onClose: () {
               widget.onReturnTripChanged(false);
             },
@@ -434,7 +439,8 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
               children: [
                 // Date and time section
                 Text(
-                  'Wann möchten Sie zurückfahren?',
+                  localizations.translate(
+                      'form.step2.return_trip_section.return_trip_question'),
                   style: AppTextStyles.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -447,7 +453,8 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                     Expanded(
                       child: InputFieldWithSvgIcon(
                         svgIconPath: 'assets/icons/inputs/calendar.svg',
-                        hintText: 'Datum',
+                        hintText: localizations.translate(
+                            'form.step2.return_trip_section.return_trip_date'),
                         value: widget.returnDate != null
                             ? DateFormat('dd.MM.yyyy')
                                 .format(widget.returnDate!)
@@ -467,7 +474,8 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                                 onConfirm: (selectedDate) {
                                   widget.onReturnDateChanged(selectedDate);
                                 },
-                                title: 'Datum auswählen',
+                                title: localizations.translate(
+                                    'form.step2.return_trip_section.return_trip_date_select'),
                               );
                             },
                           );
@@ -479,7 +487,8 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                     Expanded(
                       child: InputFieldWithSvgIcon(
                         svgIconPath: 'assets/icons/inputs/clock.svg',
-                        hintText: 'Uhrzeit',
+                        hintText: localizations.translate(
+                            'form.step2.return_trip_section.return_trip_time'),
                         value: widget.returnTime,
                         errorText: widget.returnTimeError,
                         onTap: () async {
@@ -510,7 +519,8 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                     widget.onFlightNumberChanged != null) ...[
                   const SizedBox(height: 16),
                   Text(
-                    'Fluginformationen',
+                    localizations.translate(
+                        'form.step2.return_trip_section.flight_information_title'),
                     style: AppTextStyles.bodyLarge.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

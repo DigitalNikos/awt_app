@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class CustomListPicker extends StatelessWidget {
   final String title;
@@ -21,6 +22,8 @@ class CustomListPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -49,7 +52,7 @@ class CustomListPicker extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      '$title auswählen',
+                      '$title ${localizations.translate('select')}',
                       style: AppTextStyles.heading3.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,

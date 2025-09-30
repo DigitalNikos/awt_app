@@ -24,6 +24,7 @@
     "booking_failed": "Booking Failed",
     "ok": "OK",
     "cancel": "Cancel",
+    "select": "select",
     "profile": "Profile",
     "logout": "Logout",
     "settings": "Settings",
@@ -70,7 +71,10 @@
           "date": "Date",
           "time": "Time",
           "select_date": "Select Date",
-          "select_time": "Select Time"
+          "select_time": "Select Time",
+          "hours": "Hours",
+          "minutes": "Minutes",
+          "confirm_time": "Confirm Time"
         },
         "address_section": {
           "address_title": "Destination Address",
@@ -83,7 +87,7 @@
         "flight_information_section": {
           "flight_information_title": "Flight Information",
           "flight_from": "Flight From",
-          "flight_number": "Flight Number"
+          "flight_number": "Flight Nr."
         },
         "contact_section": {
           "contact_title": "Contact",
@@ -98,6 +102,20 @@
           "next": "Next",
           "previous": "Previous",
           "book": "Book"
+        }
+      },
+      "step2":{
+        "return_trip_section": {
+          "return_trip": "Return Trip",
+          "return_trip_description": "Plan your return trip",
+          "return_trip_question": "When do you want to return?",
+          "return_trip_date": "Date",
+          "return_trip_date_select": "Select Date",
+          "return_trip_time": "Time",
+          "flight_information_title": "Flight Information",
+          "return_trip_flight_from": "Flight From",
+          "return_trip_flight_number": "Flight Nr.",
+          "return_trip_info_message": "We will pick you up punctually for your flight."
         }
       }
     }

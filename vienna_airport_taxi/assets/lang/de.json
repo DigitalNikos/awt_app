@@ -18,12 +18,13 @@
     "luggage": "Anzahl der Gepäckstücke",
     "address": "Adresse",
     "save_address": "Diese Adresse speichern",
-    "flight_number": "Flugnummer",
+    "flight_number": "Flug-Nr.",
     "book_now": "Jetzt buchen",
     "booking_success": "Buchung erfolgreich",
     "booking_failed": "Buchung fehlgeschlagen",
     "ok": "OK",
     "cancel": "Abbrechen",
+    "select": "auswählen",
     "profile": "Profil",
     "logout": "Abmelden",
     "settings": "Einstellungen",
@@ -70,7 +71,10 @@
           "date": "Datum",
           "time": "Uhrzeit",
           "select_date": "Datum auswählen",
-          "select_time": "Uhrzeit auswählen"
+          "select_time": "Uhrzeit auswählen",
+          "hours": "Stunden",
+          "minutes": "Minuten",
+          "confirm_time": "Uhrzeit bestätigen"
         },
         "address_section": {
           "address_title": "Zieladresse",
@@ -83,7 +87,7 @@
         "flight_information_section": {
           "flight_information_title": "Fluginformationen",
           "flight_from": "Abflugort",
-          "flight_number": "Flugnummer"
+          "flight_number": "Flug-Nr."
         },
         "contact_section": {
           "contact_title": "Kontakt",
@@ -98,6 +102,20 @@
           "next": "Weiter",
           "previous": "Zurück",
           "book": "Buchen"
+        }
+      },
+      "step2":{
+        "return_trip_section": {
+          "return_trip": "Rückfahrt",
+          "return_trip_description": "Planen Sie Ihre Rückfahrt",
+          "return_trip_question": "Wann möchten Sie zurückfahren?",
+          "return_trip_date": "Datum",
+          "return_trip_date_select": "Datum auswählen",
+          "return_trip_time": "Uhrzeit",
+          "flight_information_title": "Fluginformationen",
+          "return_trip_flight_from": "Abflugort",
+          "return_trip_flight_number": "Flug-Nr.",
+          "return_trip_info_message": "Wir holen Sie pünktlich zu Ihrem Flug ab."
         }
       }
     }

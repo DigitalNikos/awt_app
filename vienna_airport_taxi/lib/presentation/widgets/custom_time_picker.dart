@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final String? initialTime;
@@ -62,6 +63,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.65,
@@ -93,7 +96,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Uhrzeit auswählen',
+                          localizations.translate(
+                              'form.step1.date_time_section.select_time'),
                           style: AppTextStyles.heading3.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -148,7 +152,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Stunden',
+                          localizations
+                              .translate('form.step1.date_time_section.hours'),
                           textAlign: TextAlign.center,
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
@@ -160,7 +165,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                       Container(width: 40), // Space for separator
                       Expanded(
                         child: Text(
-                          'Minuten',
+                          localizations.translate(
+                              'form.step1.date_time_section.minutes'),
                           textAlign: TextAlign.center,
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
@@ -273,7 +279,8 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   shadowColor: Colors.transparent,
                 ),
                 child: Text(
-                  'Uhrzeit bestätigen',
+                  localizations
+                      .translate('form.step1.date_time_section.confirm_time'),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

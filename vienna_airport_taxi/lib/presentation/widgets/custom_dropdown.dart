@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class CustomDropdown extends StatefulWidget {
   final String svgIconPath;
@@ -53,6 +54,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
   }
 
   void _showModalBottomSheet() {
+    final localizations = AppLocalizations.of(context);
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -87,7 +90,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          '${widget.hintText} auswählen',
+                          '${widget.hintText} ${localizations.translate('select')}',
                           style: AppTextStyles.heading3.copyWith(
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
