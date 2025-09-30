@@ -125,7 +125,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: widget.hintText == 'PLZ'
+                  child: widget.svgIconPath ==
+                          'assets/icons/inputs/postal-code.svg'
                       ? _buildPLZGrid()
                       : _buildRegularList(),
                 ),

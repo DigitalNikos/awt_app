@@ -33,8 +33,10 @@ class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
     print('DEBUG: Showing modal for ${widget.hintText}');
 
     // Determine if this is a number picker (Personen, Koffer) or list picker
+    // Use SVG icon path instead of text to support multiple languages
     final isNumberPicker =
-        widget.hintText == 'Personen' || widget.hintText == 'Koffer';
+        widget.svgIconPath == 'assets/icons/inputs/people.svg' ||
+            widget.svgIconPath == 'assets/icons/inputs/luggage.svg';
 
     showModalBottomSheet(
       context: context,

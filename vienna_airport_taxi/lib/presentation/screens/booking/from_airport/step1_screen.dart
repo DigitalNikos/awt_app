@@ -153,7 +153,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                     Expanded(
                       child: DropdownFieldWithSvgIcon(
                         svgIconPath: 'assets/icons/inputs/luggage.svg',
-                        hintText: 'Koffer',
+                        hintText: localizations
+                            .translate('form.step1.address_section.luggage'),
                         value: provider.formData.luggageCount >= 0 &&
                                 provider.hasSelectedLuggage
                             ? provider.formData.luggageCount.toString()
@@ -209,31 +210,35 @@ class _Step1ScreenState extends State<Step1Screen> {
                 children: [
                   // Price Display Container
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
                       color: AppColors.backgroundLight,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border(
+                        left: BorderSide(
+                          color: AppColors.primary,
+                          width: 4,
+                        ),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black,
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 5,
                           spreadRadius: 1,
                         ),
                       ],
-                      border: Border.all(
-                        color: AppColors.primary,
-                        width: 4,
-                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Preis:',
+                          localizations
+                              .translate('form.step1.price_section.price'),
                           style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.textLight,
+                            fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
                         ),
@@ -306,7 +311,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Weiter',
+                            localizations.translate('form.step1.button.next'),
                             style:
                                 AppTextStyles.buttonText.copyWith(fontSize: 18),
                           ),

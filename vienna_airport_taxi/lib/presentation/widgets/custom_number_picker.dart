@@ -117,11 +117,7 @@ class CustomNumberPicker extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color:
-                      isSelected ? AppColors.textPrimary : Colors.grey.shade300,
-                  width: isSelected ? 2 : 1,
-                ),
+                // Removed border - no borders on grid boxes
               ),
               child: Center(
                 child: Text(

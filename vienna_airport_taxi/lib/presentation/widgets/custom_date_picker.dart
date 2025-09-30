@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class CustomDatePicker extends StatefulWidget {
   final DateTime? initialDate;
@@ -33,8 +34,24 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     tempSelectedDate = widget.initialDate ?? DateTime.now();
   }
 
+  // Helper method to get localized weekday names
+  List<String> _getLocalizedWeekdays(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    final locale = localizations.locale;
+
+    // Create a date that starts on Monday (to get correct order)
+    final monday = DateTime(2024, 1, 1); // January 1, 2024 was a Monday
+
+    return List.generate(7, (index) {
+      final day = monday.add(Duration(days: index));
+      return DateFormat('E', locale.languageCode).format(day).substring(0, 2);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.75,
@@ -79,7 +96,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                       padding: const EdgeInsets.only(
                           left: 32), // Align with title text
                       child: Text(
-                        DateFormat('EEEE, d. MMMM yyyy', 'de')
+                        DateFormat('EEEE, d. MMMM yyyy',
+                                localizations.locale.languageCode)
                             .format(tempSelectedDate),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.textLight,
@@ -115,7 +133,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           Flexible(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _buildModernCalendar(),
+              child: _buildModernCalendar(localizations),
             ),
           ),
 
@@ -126,12 +144,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
-  Widget _buildModernCalendar() {
+  Widget _buildModernCalendar(AppLocalizations localizations) {
     final now = DateTime.now();
     final firstDayOfMonth =
         DateTime(tempSelectedDate.year, tempSelectedDate.month, 1);
-    final lastDayOfMonth =
-        DateTime(tempSelectedDate.year, tempSelectedDate.month + 1, 0);
     final startDate =
         firstDayOfMonth.subtract(Duration(days: firstDayOfMonth.weekday - 1));
 
@@ -168,7 +184,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
               // Month/Year display
               Text(
-                DateFormat('MMMM yyyy', 'de').format(tempSelectedDate),
+                DateFormat('MMMM yyyy', localizations.locale.languageCode)
+                    .format(tempSelectedDate),
                 style: AppTextStyles.bodyLarge.copyWith(
                   fontWeight: FontWeight.w600,
                   fontSize: 16,
@@ -203,7 +220,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
         // Weekday headers
         Row(
-          children: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((day) {
+          children: _getLocalizedWeekdays(context).map((day) {
             return Expanded(
               child: Container(
                 height: 32,

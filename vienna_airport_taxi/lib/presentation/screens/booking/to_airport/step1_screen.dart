@@ -6,6 +6,7 @@ import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/form
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class Step1Screen extends StatefulWidget {
   const Step1Screen({Key? key}) : super(key: key);
@@ -71,6 +72,7 @@ class _Step1ScreenState extends State<Step1Screen> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final isAuthenticated = authProvider.isAuthenticated;
+    final localizations = AppLocalizations.of(context);
 
     return SingleChildScrollView(
       controller: _scrollController,
@@ -131,7 +133,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                     Expanded(
                       child: DropdownFieldWithSvgIcon(
                         svgIconPath: 'assets/icons/inputs/people.svg',
-                        hintText: 'Personen',
+                        hintText: localizations
+                            .translate('form.step1.address_section.person'),
                         value: provider.formData.passengerCount > 0
                             ? provider.formData.passengerCount.toString()
                             : null, // Show placeholder when 0
@@ -149,7 +152,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                     Expanded(
                       child: DropdownFieldWithSvgIcon(
                         svgIconPath: 'assets/icons/inputs/luggage.svg',
-                        hintText: 'Koffer',
+                        hintText: localizations
+                            .translate('form.step1.address_section.luggage'),
                         value: provider.formData.luggageCount >= 0 &&
                                 provider.hasSelectedLuggage
                             ? provider.formData.luggageCount.toString()
@@ -214,7 +218,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Preis:',
+                          localizations
+                              .translate('form.step1.price_section.price'),
                           style: TextStyle(
                             color: AppColors.textLight,
                             fontWeight: FontWeight.w700,
@@ -291,7 +296,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Weiter',
+                            localizations.translate('form.step1.button.next'),
                             style:
                                 AppTextStyles.buttonText.copyWith(fontSize: 18),
                           ),

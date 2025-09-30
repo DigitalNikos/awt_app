@@ -80,6 +80,11 @@
           "person": "Person",
           "luggage": "Luggage"
         },
+        "flight_information_section": {
+          "flight_information_title": "Flight Information",
+          "flight_from": "Flight From",
+          "flight_number": "Flight Number"
+        },
         "contact_section": {
           "contact_title": "Contact",
           "name": "Name",
