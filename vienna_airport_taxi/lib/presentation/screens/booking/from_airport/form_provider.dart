@@ -6,6 +6,7 @@ import 'package:vienna_airport_taxi/data/services/form_validation_service.dart';
 import 'package:vienna_airport_taxi/presentation/screens/success/success_screen.dart';
 import 'package:vienna_airport_taxi/presentation/screens/error/error_screen.dart';
 import 'package:vienna_airport_taxi/data/services/auth_service.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class FromAirportFormProvider with ChangeNotifier {
   // Instance of AuthService
@@ -375,28 +376,30 @@ class FromAirportFormProvider with ChangeNotifier {
   }
 
   // Validation
-  bool validateStep(int step) {
-    _validationErrors.clear();
+  bool validateStep(int step, BuildContext context) {
+    // _validationErrors.clear();
+    final localizations = AppLocalizations.of(context);
 
     switch (step) {
       case 0: // Step 1 validation
-        return _validateStep1();
+        return _validateStep1(localizations);
       case 1: // Step 2 validation
-        return _validateStep2();
+        return _validateStep2(localizations);
       case 2: // Step 3 validation
-        return _validateStep3();
+        return _validateStep3(localizations);
       default:
         return false;
     }
   }
 
   // Step 1 validation - still requires all fields for form submission
-  bool _validateStep1() {
+  bool _validateStep1(AppLocalizations localizations) {
     bool isValid = true;
+    _validationErrors.clear();
 
     // Date validation - REQUIRED for form submission
     final dateValidation =
-        FormValidationService.validateDate(_formData.pickupDate);
+        FormValidationService.validateDate(_formData.pickupDate, localizations);
     if (!dateValidation.isValid) {
       _validationErrors['date'] = dateValidation.errorMessage;
       isValid = false;
@@ -504,14 +507,15 @@ class FromAirportFormProvider with ChangeNotifier {
     return isValid;
   }
 
-  bool _validateStep2() {
+  bool _validateStep2(AppLocalizations localizations) {
     bool isValid = true;
+    _validationErrors.clear();
 
     // If return trip is enabled, validate return trip fields
     if (_formData.roundTrip) {
       // Return date validation
-      final returnDateValidation =
-          FormValidationService.validateDate(_formData.returnDate);
+      final returnDateValidation = FormValidationService.validateDate(
+          _formData.returnDate, localizations);
       if (!returnDateValidation.isValid) {
         _validationErrors['returnDate'] = returnDateValidation.errorMessage;
         isValid = false;
@@ -548,8 +552,9 @@ class FromAirportFormProvider with ChangeNotifier {
     return isValid;
   }
 
-  bool _validateStep3() {
+  bool _validateStep3(AppLocalizations localizations) {
     bool isValid = true;
+    _validationErrors.clear();
 
     // This validation is handled by the terms checkbox widget
     // The checkbox must be checked before proceeding
@@ -566,7 +571,7 @@ class FromAirportFormProvider with ChangeNotifier {
 // Update the submitForm method
   Future<bool> submitForm(BuildContext context) async {
     // Final validation
-    if (!validateStep(2)) {
+    if (!validateStep(2, context)) {
       return false;
     }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class FormValidationService {
   // Validation rules
@@ -30,10 +31,27 @@ class FormValidationService {
   }
 
   // Validation functions for specific fields
-  static ValidationResult validateDate(DateTime? date) {
+  static ValidationResult validateDate(
+      DateTime? date, AppLocalizations localizations) {
     if (date == null) {
-      return ValidationResult(isValid: false, errorMessage: 'Datum auswählen');
+      return ValidationResult(
+          isValid: false,
+          errorMessage: localizations.translate(
+              'form.step1.date_time_section.error_messages.date_required'));
     }
+
+    // Check if date is in the past (allow today)
+    final today = DateTime.now();
+    final dateOnly = DateTime(date.year, date.month, date.day);
+    final todayOnly = DateTime(today.year, today.month, today.day);
+
+    if (dateOnly.isBefore(todayOnly)) {
+      return ValidationResult(
+          isValid: false,
+          errorMessage: localizations.translate(
+              'form.step1.date_time_section.error_messages.date_past'));
+    }
+
     return ValidationResult(isValid: true);
   }
 

@@ -270,7 +270,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                         flex: 2,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (provider.validateStep(1)) {
+                            if (provider.validateStep(1, context)) {
                               provider.nextStep();
                             } else {
                               // Scroll to first error when validation fails

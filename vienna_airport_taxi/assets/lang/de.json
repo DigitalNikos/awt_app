@@ -74,7 +74,11 @@
           "select_time": "Uhrzeit auswählen",
           "hours": "Stunden",
           "minutes": "Minuten",
-          "confirm_time": "Uhrzeit bestätigen"
+          "confirm_time": "Uhrzeit bestätigen",
+          "error_messages":{
+            "date_required": "Datum ist erforderlich",
+            "date_past": "Datum kann nicht in der Vergangenheit liegen"
+          }
         },
         "address_section": {
           "address_title": "Zieladresse",

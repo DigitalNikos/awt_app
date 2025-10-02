@@ -276,7 +276,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (provider.validateStep(0)) {
+                        if (provider.validateStep(0, context)) {
                           provider.nextStep();
                         } else {
                           // Scroll to first error when validation fails

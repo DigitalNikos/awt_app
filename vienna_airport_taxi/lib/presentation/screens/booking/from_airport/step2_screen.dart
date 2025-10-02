@@ -185,7 +185,7 @@ class Step2Screen extends StatelessWidget {
                         flex: 2,
                         child: ElevatedButton(
                           onPressed: () {
-                            if (provider.validateStep(1)) {
+                            if (provider.validateStep(1, context)) {
                               provider.nextStep();
                             } else {
                               // Show validation error if needed

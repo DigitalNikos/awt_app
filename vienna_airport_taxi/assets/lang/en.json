@@ -74,7 +74,11 @@
           "select_time": "Select Time",
           "hours": "Hours",
           "minutes": "Minutes",
-          "confirm_time": "Confirm Time"
+          "confirm_time": "Confirm Time",
+          "error_messages":{
+            "date_required": "Date is required",
+            "date_past": "Date cannot be in the past"
+          }
         },
         "address_section": {
           "address_title": "Destination Address",
