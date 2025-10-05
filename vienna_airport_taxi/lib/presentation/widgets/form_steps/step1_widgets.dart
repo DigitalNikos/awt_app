@@ -18,6 +18,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
   final Function(String) onTimeSelected;
   final String? dateError;
   final String? timeError;
+  final String? reservationTimeError;
 
   const DateTimeSelectionWidget({
     Key? key,
@@ -27,6 +28,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
     required this.onTimeSelected,
     this.dateError,
     this.timeError,
+    this.reservationTimeError,
   }) : super(key: key);
 
   @override
@@ -75,6 +77,39 @@ class DateTimeSelectionWidget extends StatelessWidget {
             ),
           ],
         ),
+        // ADD THE RESERVATION ERROR DISPLAY HERE:
+        if (reservationTimeError != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.error.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.error,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      reservationTimeError!,
+                      style: TextStyle(
+                        color: AppColors.error,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }

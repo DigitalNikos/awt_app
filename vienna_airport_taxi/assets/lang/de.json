@@ -77,7 +77,11 @@
           "confirm_time": "Uhrzeit bestätigen",
           "error_messages":{
             "date_required": "Datum ist erforderlich",
-            "date_past": "Datum kann nicht in der Vergangenheit liegen"
+            "date_past": "Datum kann nicht in der Vergangenheit liegen",
+            "time_required": "Uhrzeit auswählen",
+            "time_invalid": "Ungültiges Zeitformat",
+            "time_invalid_time": "Ungültige Zeit",
+            "time_past": "Uhrzeit darf nicht vergangen sein"
           }
         },
         "address_section": {

@@ -55,18 +55,26 @@ class FormValidationService {
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validateTime(String? time) {
+  static ValidationResult validateTime(
+      String? time, AppLocalizations t, DateTime? selectedDate) {
+    // Check if time is null or empty
     if (time == null || time.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Uhrzeit auswählen');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.date_time_section.error_messages.time_required'));
     }
 
+    //Check time format
     final regex = RegExp(r'^(\d{1,2}):(\d{1,2})$');
     if (!regex.hasMatch(time)) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Ungültiges Zeitformat');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.date_time_section.error_messages.time_invalid'));
     }
 
+    //Parse and validate time range
     final parts = time.split(':');
     final hours = int.tryParse(parts[0]);
     final minutes = int.tryParse(parts[1]);
@@ -77,7 +85,31 @@ class FormValidationService {
         minutes == null ||
         minutes < 0 ||
         minutes > 59) {
-      return ValidationResult(isValid: false, errorMessage: 'Ungültige Zeit');
+      return ValidationResult(
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.date_time_section.error_messages.time_invalid_time'));
+    }
+
+    //Check if time is in the past (only if date is today)
+    if (selectedDate != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final dateOnly =
+          DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
+
+      // Only check past time if selected date is today
+      if (dateOnly.isAtSameMomentAs(today)) {
+        final selectedDateTime = DateTime(selectedDate.year, selectedDate.month,
+            selectedDate.day, hours, minutes);
+
+        if (selectedDateTime.isBefore(now)) {
+          return ValidationResult(
+              isValid: false,
+              errorMessage: t.translate(
+                  'form.step1.date_time_section.error_messages.time_past'));
+        }
+      }
     }
 
     return ValidationResult(isValid: true);
@@ -192,13 +224,13 @@ class FormValidationService {
       final now = DateTime.now();
       final timeDifference = pickupDateTime.difference(now);
 
-      // Check if pickup is in the past
-      if (timeDifference.isNegative) {
-        return ValidationResult(
-            isValid: false,
-            errorMessage:
-                'Abfahrtszeit darf nicht in der Vergangenheit liegen');
-      }
+      // // Check if pickup is in the past
+      // if (timeDifference.isNegative) {
+      //   return ValidationResult(
+      //       isValid: false,
+      //       errorMessage:
+      //           'Abfahrtszeit darf nicht in der Vergangenheit liegen');
+      // }
 
       // Check reservation time requirements
       if (hours >= 22 || hours < 6) {

@@ -101,6 +101,8 @@ class _Step1ScreenState extends State<Step1Screen> {
                   onTimeSelected: provider.updatePickupTime,
                   dateError: provider.validationErrors['date'],
                   timeError: provider.validationErrors['time'],
+                  reservationTimeError:
+                      provider.validationErrors['reservationTime'],
                 ),
               ),
 

@@ -77,7 +77,11 @@
           "confirm_time": "Confirm Time",
           "error_messages":{
             "date_required": "Date is required",
-            "date_past": "Date cannot be in the past"
+            "date_past": "Date cannot be in the past",
+            "time_required": "Select Time",
+            "time_invalid": "Invalid Time Format",
+            "time_invalid_time": "Invalid Time",
+            "time_past": "Time cannot be in the past"
           }
         },
         "address_section": {

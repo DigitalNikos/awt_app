@@ -406,8 +406,8 @@ class FromAirportFormProvider with ChangeNotifier {
     }
 
     // Time validation - REQUIRED for form submission
-    final timeValidation =
-        FormValidationService.validateTime(_formData.pickupTime);
+    final timeValidation = FormValidationService.validateTime(
+        _formData.pickupTime, localizations, _formData.pickupDate);
     if (!timeValidation.isValid) {
       _validationErrors['time'] = timeValidation.errorMessage;
       isValid = false;
@@ -522,8 +522,8 @@ class FromAirportFormProvider with ChangeNotifier {
       }
 
       // Return time validation
-      final returnTimeValidation =
-          FormValidationService.validateTime(_formData.returnTime);
+      final returnTimeValidation = FormValidationService.validateTime(
+          _formData.returnTime, localizations, _formData.returnDate);
       if (!returnTimeValidation.isValid) {
         _validationErrors['returnTime'] = returnTimeValidation.errorMessage;
         isValid = false;

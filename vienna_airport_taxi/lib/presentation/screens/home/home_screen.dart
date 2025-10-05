@@ -3,20 +3,51 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'hero_section.dart';
 import 'booking_steps_section.dart';
-import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
-import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
-import 'package:vienna_airport_taxi/presentation/screens/auth/login_screen.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/bottom_navbar.dart';
 import 'package:vienna_airport_taxi/core/localization/language_provider.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/floating_action_buttons.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showFloatingButtons = false;
+
+  // Approximate height where hero section ends (adjust based on your hero section height)
+  static const double _heroSectionHeight = 400.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final bool shouldShowButtons =
+        _scrollController.offset > _heroSectionHeight;
+    if (shouldShowButtons != _showFloatingButtons) {
+      setState(() {
+        _showFloatingButtons = shouldShowButtons;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context);
     final languageProvider = Provider.of<LanguageProvider>(context);
 
     return Scaffold(
@@ -45,6 +76,7 @@ class HomeScreen extends StatelessWidget {
           // Main content - scrollable with proper layout
           SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Column(
                 children: [
                   // Hero Section (this will be positioned behind the yellow circle)
@@ -210,6 +242,15 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 80),
                 ],
               ),
+            ),
+          ),
+
+          // Floating Action Buttons
+          Positioned(
+            right: 0,
+            bottom: 0,
+            child: FloatingActionButtons(
+              isVisible: _showFloatingButtons,
             ),
           ),
 
