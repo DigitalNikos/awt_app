@@ -50,6 +50,10 @@ class FromAirportFormProvider with ChangeNotifier {
   final Map<String, String?> _validationErrors = {};
   Map<String, String?> get validationErrors => Map.from(_validationErrors);
 
+  // Track stopover panel state
+  bool _hasOpenStopoverPanel = false;
+  bool get hasOpenStopoverPanel => _hasOpenStopoverPanel;
+
   FromAirportFormProvider() {
     // Use copyWith to set the tripType to 'from_airport'
     _formData = _formData.copyWith(tripType: 'from_airport');
@@ -275,6 +279,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Stopover management
   void addStopover(String postalCode, String address) {
+    _clearFieldError('stopover'); // Clear stopover error when adding
     final newStopover = StopoverLocation(
       postalCode: postalCode,
       address: address,
@@ -286,6 +291,7 @@ class FromAirportFormProvider with ChangeNotifier {
   }
 
   void removeStopover(int index) {
+    _clearFieldError('stopover'); // Clear stopover error when removing
     if (index >= 0 && index < _formData.stops.length) {
       final updatedStops = [..._formData.stops];
       updatedStops.removeAt(index);
@@ -298,6 +304,80 @@ class FromAirportFormProvider with ChangeNotifier {
   void clearStopovers() {
     _formData = _formData.copyWith(stops: []);
     _debouncePriceCalculation();
+    notifyListeners();
+  }
+
+  // Methods to track Zwischenstopp panel state
+  void setStopoverPanelOpen(bool isOpen) {
+    _hasOpenStopoverPanel = isOpen;
+    if (!isOpen) {
+      _clearFieldError('stopover'); // Clear error when panel is closed
+    }
+    notifyListeners();
+  }
+
+  void validateStopoverPanel(bool hasUnaddedData) {
+    if (hasUnaddedData) {
+      _validationErrors['stopover'] =
+          'Bitte fügen Sie den Zwischenstopp zur Liste hinzu oder schließen Sie das Panel.';
+      // Clear individual field errors when showing panel-level error
+      _clearFieldError('stopoverAddress');
+      _clearFieldError('stopoverPostalCode');
+    } else {
+      _clearFieldError('stopover');
+      _clearFieldError('stopoverAddress');
+      _clearFieldError('stopoverPostalCode');
+    }
+    notifyListeners();
+  }
+
+  // Method to validate individual stopover fields
+  void validateStopoverFields(String? postalCode, String address,
+      [BuildContext? context]) {
+    // Handle special clear error cases
+    if (postalCode == 'clear_errors' && address == 'clear_errors') {
+      // Clear all stopover field errors
+      _clearFieldError('stopoverAddress');
+      _clearFieldError('stopoverPostalCode');
+      notifyListeners();
+      return;
+    }
+
+    if (postalCode == 'clear_address_error' &&
+        address == 'clear_address_error') {
+      // Clear only address error
+      _clearFieldError('stopoverAddress');
+      notifyListeners();
+      return;
+    }
+
+    if (postalCode == 'clear_plz_error' && address == 'clear_plz_error') {
+      // Clear only PLZ error
+      _clearFieldError('stopoverPostalCode');
+      notifyListeners();
+      return;
+    }
+
+    // Clear previous field errors for normal validation
+    _clearFieldError('stopoverAddress');
+    _clearFieldError('stopoverPostalCode');
+
+    // Validate postal code
+    if (postalCode == null || postalCode.isEmpty) {
+      _validationErrors['stopoverPostalCode'] = context != null
+          ? AppLocalizations.of(context).translate(
+              'form.step2.stopover_section.error_messages.postal_code_required')
+          : 'PLZ ist erforderlich';
+    }
+
+    // Validate address
+    if (address.isEmpty) {
+      _validationErrors['stopoverAddress'] = context != null
+          ? AppLocalizations.of(context).translate(
+              'form.step2.stopover_section.error_messages.address_required')
+          : 'Adresse ist erforderlich';
+    }
+
     notifyListeners();
   }
 
@@ -424,7 +504,8 @@ class FromAirportFormProvider with ChangeNotifier {
     }
 
     // City validation - REQUIRED for both price calculation and form submission
-    final cityValidation = FormValidationService.validateCity(_formData.city);
+    final cityValidation =
+        FormValidationService.validateCity(_formData.city, localizations);
     if (!cityValidation.isValid) {
       _validationErrors['city'] = cityValidation.errorMessage;
       isValid = false;
@@ -440,7 +521,7 @@ class FromAirportFormProvider with ChangeNotifier {
 
     // Address validation - REQUIRED for form submission
     final addressValidation =
-        FormValidationService.validateAddress(_formData.address);
+        FormValidationService.validateAddress(_formData.address, localizations);
     if (!addressValidation.isValid) {
       _validationErrors['address'] = addressValidation.errorMessage;
       isValid = false;
@@ -448,21 +529,23 @@ class FromAirportFormProvider with ChangeNotifier {
 
     // Passenger validation - REQUIRED (must be > 0)
     if (_formData.passengerCount <= 0) {
-      _validationErrors['passengers'] =
-          'Bitte wählen Sie die Anzahl der Personen';
+      _validationErrors['passengers'] = localizations.translate(
+          'form.step1.address_section.error_messages.passenger_required');
       isValid = false;
     }
 
     // Luggage validation - REQUIRED (must be explicitly selected)
     if (!_hasSelectedLuggage) {
-      _validationErrors['luggage'] = 'Bitte wählen Sie die Anzahl der Koffer';
+      _validationErrors['luggage'] = localizations.translate(
+          'form.step1.address_section.error_messages.luggage_required');
       isValid = false;
     }
 
     // Flight information validation (FROM AIRPORT SPECIFIC - in Step 1)
     final flightFromValidation = FormValidationService.validateRequiredField(
         _formData.flightFrom,
-        fieldName: 'Abflugort');
+        fieldName: localizations.translate(
+            'form.step1.flight_information_section.error_messages.flight_name_from'));
     if (!flightFromValidation.isValid) {
       _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
       isValid = false;
@@ -471,7 +554,8 @@ class FromAirportFormProvider with ChangeNotifier {
     // Flight number validation (FROM AIRPORT SPECIFIC - in Step 1)
     final flightNumberValidation = FormValidationService.validateRequiredField(
         _formData.flightNumber,
-        fieldName: 'Flugnummer');
+        fieldName: localizations.translate(
+            'form.step1.flight_information_section.error_messages.flight_number_from'));
     if (!flightNumberValidation.isValid) {
       _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
       isValid = false;
@@ -480,24 +564,24 @@ class FromAirportFormProvider with ChangeNotifier {
     // Contact information validation (only for non-authenticated users)
     if (_authService.currentUser == null) {
       // Name validation
-      final nameValidation =
-          FormValidationService.validateName(_formData.customerName);
+      final nameValidation = FormValidationService.validateName(
+          _formData.customerName, localizations);
       if (!nameValidation.isValid) {
         _validationErrors['name'] = nameValidation.errorMessage;
         isValid = false;
       }
 
       // Email validation
-      final emailValidation =
-          FormValidationService.validateEmail(_formData.customerEmail);
+      final emailValidation = FormValidationService.validateEmail(
+          _formData.customerEmail, localizations);
       if (!emailValidation.isValid) {
         _validationErrors['email'] = emailValidation.errorMessage;
         isValid = false;
       }
 
       // Phone validation
-      final phoneValidation =
-          FormValidationService.validatePhone(_formData.customerPhone);
+      final phoneValidation = FormValidationService.validatePhone(
+          _formData.customerPhone, localizations);
       if (!phoneValidation.isValid) {
         _validationErrors['phone'] = phoneValidation.errorMessage;
         isValid = false;
@@ -532,7 +616,8 @@ class FromAirportFormProvider with ChangeNotifier {
       // Flight from validation
       final flightFromValidation = FormValidationService.validateRequiredField(
           _formData.flightFrom,
-          fieldName: 'Abflugort');
+          fieldName: localizations
+              .translate('form.step1.error_messages.flight_name_from'));
       if (!flightFromValidation.isValid) {
         _validationErrors['flightFrom'] = flightFromValidation.errorMessage;
         isValid = false;
@@ -541,11 +626,23 @@ class FromAirportFormProvider with ChangeNotifier {
       // Flight number validation
       final flightNumberValidation =
           FormValidationService.validateRequiredField(_formData.flightNumber,
-              fieldName: 'Flugnummer');
+              fieldName: localizations
+                  .translate('form.step1.error_messages.flight_number_from'));
       if (!flightNumberValidation.isValid) {
         _validationErrors['flightNumber'] = flightNumberValidation.errorMessage;
         isValid = false;
       }
+    }
+
+    // ZWISCHENSTOPP PANEL VALIDATION (Check for open panel with unfilled data)
+    if (_hasOpenStopoverPanel && _formData.city == 'Wien') {
+      _validationErrors['stopover'] =
+          'Bitte fügen Sie den Zwischenstopp zur Liste hinzu oder schließen Sie das Panel.';
+
+      // Do NOT show individual field errors when panel is open with data
+      // Only show the panel-level message
+
+      isValid = false;
     }
 
     notifyListeners();
@@ -587,8 +684,9 @@ class FromAirportFormProvider with ChangeNotifier {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => SuccessScreen(
-              bookingId: response.bookingId ??
-                  'TB-${DateTime.now().millisecondsSinceEpoch}',
+              bookingId: response.bookingId.isNotEmpty
+                  ? response.bookingId
+                  : 'TB-${DateTime.now().millisecondsSinceEpoch}',
               userEmail: _formData.customerEmail,
             ),
           ),
@@ -599,8 +697,9 @@ class FromAirportFormProvider with ChangeNotifier {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ErrorScreen(
-              errorMessage:
-                  response.message ?? 'Ein unbekannter Fehler ist aufgetreten.',
+              errorMessage: response.message.isNotEmpty
+                  ? response.message
+                  : 'Ein unbekannter Fehler ist aufgetreten.',
               onRetry: () {
                 Navigator.of(context).pop(); // Go back to form
                 submitForm(context); // Try again

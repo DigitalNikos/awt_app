@@ -90,18 +90,36 @@
           "address": "Adresse",
           "postal_code": "PLZ",
           "person": "Personen",
-          "luggage": "Koffer"
+          "luggage": "Koffer",
+          "error_messages":{
+            "city_required": "Ort auswählen",
+            "postal_code_required": "PLZ auswählen",
+            "address_required": "Adresse auswählen",
+            "passenger_required": "Personenanzahl wählen",
+            "luggage_required": "Kofferanzahl wählen"
+          }
         },
         "flight_information_section": {
           "flight_information_title": "Fluginformationen",
           "flight_from": "Abflugort",
-          "flight_number": "Flug-Nr."
+          "flight_number": "Flug-Nr.",
+          "error_messages": {
+            "flight_name_from": "Abflugort auswählen",
+            "flight_number_from": "Flugnummer auswählen"
+          }
         },
         "contact_section": {
           "contact_title": "Kontakt",
           "name": "Name",
           "email": "Email",
-          "phone": "Telefon"
+          "phone": "Telefon",
+          "error_messages":{
+            "name_required": "Name auswählen",
+            "email_required": "Email auswählen",
+            "email_invalid": "Ungültige Email-Adresse",
+            "phone_required": "Telefon auswählen",
+            "phone_invalid": "Ungültige Telefonnummer"
+          }
         }
       },
       "step2":{
@@ -116,7 +134,11 @@
           "flight_information_title": "Fluginformationen",
           "return_trip_flight_from": "Abflugort",
           "return_trip_flight_number": "Flug-Nr.",
-          "return_trip_info_message": "Wir holen Sie pünktlich zu Ihrem Flug ab."
+          "return_trip_info_message": "Wir holen Sie pünktlich zu Ihrem Flug ab.",
+          "error_messages": {
+            "flight_name_from": "Abflugort auswählen",
+            "flight_number_from": "Flugnummer auswählen"
+          }
         },
         "stopover_section": {
           "stopover_title": "Zwischenstopps",
@@ -125,6 +147,10 @@
           "stopover_input_placeholder": "Stopover Adresse",
           "stopover_plz": "PLZ",
           "stopover_new_butrton": "Zwischenstopp hinzufügen",
+          "error_messages": {
+            "address_required": "Adresse ist erforderlich",
+            "postal_code_required": "PLZ ist erforderlich"
+          },
           "stopover_add_another_button": "Weiteren Zwischenstopp hinzufügen",
           "stopover_info_message": {
             "start": "Sie können noch",
@@ -167,5 +193,37 @@
         "previous": "Zurück",
         "book": "Buchen"
       }
+    },
+    "footer": {
+      "copyright": "© 2025 Airport Wien Taxi. Alle Rechte vorbehalten.",
+      "company_label": "Firma:",
+      "company_name": "AWT Transfer OG",
+      "company_info": "Professioneller Flughafen Transfer Service",
+      "company_address": "Kundratstraße 16/3/73,",
+      "company_zipcode": "1100",
+      "company_city": "Wien",
+      "company_full_address": "Kundratstraße 16/3/73, 1100 Wien",
+      "uid_number": "ATU80384013",
+      "navigation_title": "Navigation",
+      "useful_links_title": "Nützliche Links",
+      "contact_title": "Kontakt",
+      "contact_intro": "Wenn Sie Fragen haben, können Sie uns telefonisch oder per E-Mail kontaktieren.",
+      "faq": "F.A.Q.",
+      "about_us": "Über uns",
+      "terms": "AGB",
+      "privacy": "Datenschutz",
+      "imprint": "Impressum",
+      "vienna_airport": "Flughafen Wien",
+      "arrivals": "Aktuelle Ankünfte",
+      "departures": "Aktuelle Abflüge",
+      "airlines": "Fluglinien",
+      "airport_info": "Flughafen Information",
+      "airport_map": "Flughafen Karte",
+      "phone": "+43 676 394 19 49",
+      "email": "office@airport-wien-taxi.com",
+      "website": "www.airport-wien-taxi.com",
+      "facebook_label": "Besuchen Sie unsere Facebook-Seite",
+      "instagram_label": "Folgen Sie uns auf Instagram",
+      "whatsapp_label": "Kontaktieren Sie uns über WhatsApp"
     }
 }

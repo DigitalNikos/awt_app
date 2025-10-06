@@ -5,7 +5,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/option_card.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/option_panel.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step1_widgets.dart';
-import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/custom_dropdown.dart';
 import 'package:vienna_airport_taxi/data/models/booking_form_data.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_date_picker.dart';
@@ -20,7 +20,8 @@ class StopoverWidget extends StatefulWidget {
   final String? stopoverError;
   final Function(bool isOpen)? onPanelStateChanged;
   final Function(bool hasUnaddedData)? onValidatePanelData;
-  final Function(String? postalCode, String address)? onValidateFields;
+  final Function(String? postalCode, String address, BuildContext? context)?
+      onValidateFields;
   final String? addressError;
   final String? postalCodeError;
 
@@ -44,6 +45,7 @@ class StopoverWidget extends StatefulWidget {
 
 class _StopoverWidgetState extends State<StopoverWidget> {
   bool _isInputPanelVisible = false;
+  bool _hasEverAddedStopover = false; // Track if user has ever added a stopover
   String? _selectedPostalCode;
   String _address = '';
   final TextEditingController _addressController = TextEditingController();
@@ -54,6 +56,36 @@ class _StopoverWidgetState extends State<StopoverWidget> {
       ((_selectedPostalCode != null && _selectedPostalCode!.isNotEmpty) ||
           _address.isNotEmpty);
 
+  // Helper method to get district name from postal code
+  String _getDistrictName(String postalCode) {
+    const Map<String, String> districts = {
+      '1010': 'Innere Stadt',
+      '1020': 'Leopoldstadt',
+      '1030': 'Landstraße',
+      '1040': 'Wieden',
+      '1050': 'Margareten',
+      '1060': 'Mariahilf',
+      '1070': 'Neubau',
+      '1080': 'Josefstadt',
+      '1090': 'Alsergrund',
+      '1100': 'Favoriten',
+      '1110': 'Simmering',
+      '1120': 'Meidling',
+      '1130': 'Hietzing',
+      '1140': 'Penzing',
+      '1150': 'Rudolfsheim-Fünfhaus',
+      '1160': 'Ottakring',
+      '1170': 'Hernals',
+      '1180': 'Währing',
+      '1190': 'Döbling',
+      '1200': 'Brigittenau',
+      '1210': 'Floridsdorf',
+      '1220': 'Donaustadt',
+      '1230': 'Liesing',
+    };
+    return districts[postalCode] ?? '';
+  }
+
   @override
   void dispose() {
     _addressController.dispose();
@@ -61,16 +93,71 @@ class _StopoverWidgetState extends State<StopoverWidget> {
   }
 
   void _addStopover() {
-    if (_selectedPostalCode != null && _address.isNotEmpty) {
+    // Validate fields before adding
+    bool hasErrors = false;
+
+    if (_selectedPostalCode == null || _selectedPostalCode!.isEmpty) {
+      widget.onValidateFields?.call(null, _address, context);
+      hasErrors = true;
+    }
+
+    if (_address.isEmpty) {
+      widget.onValidateFields?.call(_selectedPostalCode, '', context);
+      hasErrors = true;
+    }
+
+    // If both fields are empty, validate both
+    if ((_selectedPostalCode == null || _selectedPostalCode!.isEmpty) &&
+        _address.isEmpty) {
+      widget.onValidateFields?.call(null, '', context);
+      hasErrors = true;
+    }
+
+    // Only add if no errors
+    if (!hasErrors && _selectedPostalCode != null && _address.isNotEmpty) {
       widget.onAddStopover(_selectedPostalCode!, _address);
+
+      // Clear any existing field errors after successful add
+      widget.onValidateFields?.call('clear_errors', 'clear_errors', context);
+
       setState(() {
         _selectedPostalCode = null;
         _address = '';
         _addressController.clear();
         _isInputPanelVisible = false; // Hide input panel after adding
+        _hasEverAddedStopover = true; // Mark that user has added a stopover
       });
       widget.onPanelStateChanged?.call(false);
     }
+  }
+
+  // Method to close panel and clear all stopovers (main X button)
+  void _closeAllAndClearStopovers() {
+    // Clear all stopovers first
+    for (int i = widget.currentStopovers.length - 1; i >= 0; i--) {
+      widget.onRemoveStopover(i);
+    }
+
+    // Then close the panel
+    setState(() {
+      _isInputPanelVisible = false;
+      _selectedPostalCode = null;
+      _address = '';
+      _addressController.clear();
+      _hasEverAddedStopover = false; // Reset the flag
+    });
+    widget.onPanelStateChanged?.call(false);
+  }
+
+  // Method to just close input panel (input X button)
+  void _closeInputPanel() {
+    setState(() {
+      _isInputPanelVisible = false;
+      _selectedPostalCode = null;
+      _address = '';
+      _addressController.clear();
+    });
+    widget.onPanelStateChanged?.call(false);
   }
 
   @override
@@ -97,6 +184,10 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                   'form.step2.stopover_section.stopover_description'),
               isExpanded: false,
               onTap: () {
+                // Clear any existing field errors when opening panel for first time
+                widget.onValidateFields
+                    ?.call('clear_errors', 'clear_errors', context);
+
                 setState(() {
                   _isInputPanelVisible = true;
                 });
@@ -114,15 +205,8 @@ class _StopoverWidgetState extends State<StopoverWidget> {
               helperText: widget.stopoverError != null
                   ? widget.stopoverError!
                   : '${localizations.translate('form.step2.stopover_section.stopover_info_message.start')} ${maxStopovers - currentCount} ${currentCount == maxStopovers - 1 ? localizations.translate('form.step2.stopover_section.stopover_info_message.single') : localizations.translate('form.step2.stopover_section.stopover_info_message.multiple')} ${localizations.translate('form.step2.stopover_section.stopover_info_message.end')}',
-              onClose: () {
-                setState(() {
-                  _isInputPanelVisible = false;
-                  _selectedPostalCode = null;
-                  _address = '';
-                  _addressController.clear();
-                });
-                widget.onPanelStateChanged?.call(false);
-              },
+              onClose:
+                  _closeAllAndClearStopovers, // Main X button - closes all and clears stopovers
               content: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -195,20 +279,15 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                             fontSize: 18,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close, size: 24),
-                          onPressed: () {
-                            setState(() {
-                              _isInputPanelVisible = false;
-                              _selectedPostalCode = null;
-                              _address = '';
-                              _addressController.clear();
-                            });
-                            widget.onPanelStateChanged?.call(false);
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                        ),
+                        // Only show input X button if user has previously added a stopover
+                        if (_hasEverAddedStopover || currentCount > 0)
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 24),
+                            onPressed:
+                                _closeInputPanel, // Input X button - only closes input fields
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
                       ],
                     ),
 
@@ -225,9 +304,14 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                         setState(() {
                           _address = value;
                         });
-                        // Validate individual fields and panel data
-                        widget.onValidateFields
-                            ?.call(_selectedPostalCode, value);
+
+                        // Clear address error immediately when user starts typing
+                        if (value.isNotEmpty) {
+                          widget.onValidateFields?.call('clear_address_error',
+                              'clear_address_error', context);
+                        }
+
+                        // Only validate panel data (for unsaved data warning), not individual fields
                         widget.onValidatePanelData
                             ?.call(hasUnaddedStopoverData);
                       },
@@ -235,12 +319,13 @@ class _StopoverWidgetState extends State<StopoverWidget> {
 
                     const SizedBox(height: 16),
 
-                    DropdownFieldWithSvgIcon(
+                    CustomDropdown(
                       svgIconPath: 'assets/icons/inputs/postal-code.svg',
                       hintText: localizations.translate(
                           'form.step2.stopover_section.stopover_plz'),
-                      value: _selectedPostalCode,
-                      errorText: widget.postalCodeError,
+                      value: _selectedPostalCode != null
+                          ? '$_selectedPostalCode - ${_getDistrictName(_selectedPostalCode!)}'
+                          : null,
                       items: const [
                         '1010 - Innere Stadt',
                         '1020 - Leopoldstadt',
@@ -266,18 +351,24 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                         '1220 - Donaustadt',
                         '1230 - Liesing',
                       ],
-                      onChanged: (value) {
+                      onChanged: (fullValue) {
                         // Extract just the postal code (first 4 digits)
-                        final postalCode =
-                            value != null ? value.split(' - ')[0] : null;
+                        final postalCode = fullValue.split(' - ')[0];
                         setState(() {
                           _selectedPostalCode = postalCode;
                         });
-                        // Validate individual fields and panel data
-                        widget.onValidateFields?.call(postalCode, _address);
+
+                        // Clear PLZ error immediately when user selects a value
+                        if (postalCode.isNotEmpty) {
+                          widget.onValidateFields?.call(
+                              'clear_plz_error', 'clear_plz_error', context);
+                        }
+
+                        // Only validate panel data (for unsaved data warning), not individual fields
                         widget.onValidatePanelData
                             ?.call(hasUnaddedStopoverData);
                       },
+                      errorText: widget.postalCodeError,
                     ),
 
                     const SizedBox(height: 24),
@@ -297,13 +388,13 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.add_location,
-                              size: 18, color: Colors.white),
+                              size: 18, color: Colors.black),
                           const SizedBox(width: 12),
                           Text(
                             localizations.translate(
                                 'form.step2.stopover_section.stopover_new_butrton'),
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -320,6 +411,10 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                     const SizedBox(height: 8),
                     ElevatedButton(
                       onPressed: () {
+                        // Clear any existing field errors when opening panel for second+ stopover
+                        widget.onValidateFields
+                            ?.call('clear_errors', 'clear_errors', context);
+
                         setState(() {
                           _isInputPanelVisible = true;
                         });

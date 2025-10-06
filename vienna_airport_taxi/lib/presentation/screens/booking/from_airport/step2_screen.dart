@@ -8,15 +8,75 @@ import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/fo
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
-class Step2Screen extends StatelessWidget {
+class Step2Screen extends StatefulWidget {
   const Step2Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Step2Screen> createState() => _Step2ScreenState();
+}
+
+class _Step2ScreenState extends State<Step2Screen> {
+  final ScrollController _scrollController = ScrollController();
+
+  // GlobalKeys for each section to enable scrolling
+  final GlobalKey _returnTripKey = GlobalKey();
+  final GlobalKey _stopoverKey = GlobalKey();
+  final GlobalKey _childSeatKey = GlobalKey();
+  final GlobalKey _nameplateKey = GlobalKey();
+  final GlobalKey _paymentKey = GlobalKey();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // Method to scroll to the first error field
+  void _scrollToFirstError(Map<String, String?> errors) {
+    // Define the order of fields and their corresponding keys
+    final Map<String, GlobalKey> fieldKeys = {
+      'returnDate': _returnTripKey,
+      'returnTime': _returnTripKey,
+      'flightFrom': _returnTripKey,
+      'flightNumber': _returnTripKey,
+      'returnDateTime': _returnTripKey,
+      'returnReservationTime': _returnTripKey,
+      'stopover': _stopoverKey,
+      'stopoverAddress': _stopoverKey,
+      'stopoverPostalCode': _stopoverKey,
+    };
+
+    // Find the first error in the defined order
+    for (String fieldName in fieldKeys.keys) {
+      if (errors.containsKey(fieldName) && errors[fieldName] != null) {
+        final key = fieldKeys[fieldName]!;
+        final context = key.currentContext;
+        if (context != null) {
+          Scrollable.ensureVisible(
+            context,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+          break;
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     return Consumer<FromAirportFormProvider>(
       builder: (context, provider, child) {
+        // Scroll to first error when validation errors change
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (provider.validationErrors.isNotEmpty) {
+            _scrollToFirstError(provider.validationErrors);
+          }
+        });
+
         return CustomScrollView(
+          controller: _scrollController,
           slivers: [
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -33,48 +93,72 @@ class Step2Screen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   // Return trip widget
-                  ReturnTripWidget(
-                    isReturnTripActive: provider.formData.roundTrip,
-                    returnDate: provider.formData.returnDate,
-                    returnTime: provider.formData.returnTime,
-                    onReturnTripChanged: provider.updateRoundTrip,
-                    onReturnDateChanged: provider.updateReturnDate,
-                    onReturnTimeChanged: provider.updateReturnTime,
+                  Container(
+                    key: _returnTripKey,
+                    child: ReturnTripWidget(
+                      isReturnTripActive: provider.formData.roundTrip,
+                      returnDate: provider.formData.returnDate,
+                      returnTime: provider.formData.returnTime,
+                      onReturnTripChanged: provider.updateRoundTrip,
+                      onReturnDateChanged: provider.updateReturnDate,
+                      onReturnTimeChanged: provider.updateReturnTime,
+                    ),
                   ),
 
                   const SizedBox(height: 2),
 
                   // Child seat widget
-                  ChildSeatWidget(
-                    selectedChildSeat: provider.formData.childSeat,
-                    onChildSeatChanged: provider.updateChildSeat,
+                  Container(
+                    key: _childSeatKey,
+                    child: ChildSeatWidget(
+                      selectedChildSeat: provider.formData.childSeat,
+                      onChildSeatChanged: provider.updateChildSeat,
+                    ),
                   ),
 
                   const SizedBox(height: 2),
 
                   // Nameplate widget (ALWAYS visible for FROM AIRPORT)
-                  NameSignWidget(
-                    isReturnTripActive: true, // Always show for from_airport
-                    nameplateService: provider.formData.nameplateService,
-                    onNameplateServiceChanged: provider.updateNameplateService,
+                  Container(
+                    key: _nameplateKey,
+                    child: NameSignWidget(
+                      isReturnTripActive: true, // Always show for from_airport
+                      nameplateService: provider.formData.nameplateService,
+                      onNameplateServiceChanged:
+                          provider.updateNameplateService,
+                    ),
                   ),
 
                   const SizedBox(height: 2),
 
                   // Stopover widget (only visible for Vienna)
-                  StopoverWidget(
-                    isViennaSelected: provider.formData.city == 'Wien',
-                    currentStopovers: provider.formData.stops,
-                    onAddStopover: provider.addStopover,
-                    onRemoveStopover: provider.removeStopover,
+                  Container(
+                    key: _stopoverKey,
+                    child: StopoverWidget(
+                      isViennaSelected: provider.formData.city == 'Wien',
+                      currentStopovers: provider.formData.stops,
+                      onAddStopover: provider.addStopover,
+                      onRemoveStopover: provider.removeStopover,
+                      stopoverError: provider.validationErrors['stopover'],
+                      onPanelStateChanged: provider.setStopoverPanelOpen,
+                      onValidatePanelData: provider.validateStopoverPanel,
+                      onValidateFields: provider.validateStopoverFields,
+                      addressError:
+                          provider.validationErrors['stopoverAddress'],
+                      postalCodeError:
+                          provider.validationErrors['stopoverPostalCode'],
+                    ),
                   ),
 
                   const SizedBox(height: 2),
 
                   // Payment method widget
-                  PaymentMethodWidget(
-                    paymentMethod: provider.formData.paymentMethod,
-                    onPaymentMethodChanged: provider.updatePaymentMethod,
+                  Container(
+                    key: _paymentKey,
+                    child: PaymentMethodWidget(
+                      paymentMethod: provider.formData.paymentMethod,
+                      onPaymentMethodChanged: provider.updatePaymentMethod,
+                    ),
                   ),
 
                   const SizedBox(height: 2),
@@ -217,7 +301,8 @@ class Step2Screen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              const Icon(Icons.arrow_forward, size: 20),
+                              const Icon(Icons.arrow_forward,
+                                  size: 20, color: Colors.black),
                             ],
                           ),
                         ),

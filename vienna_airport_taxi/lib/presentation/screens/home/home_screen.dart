@@ -8,6 +8,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/bottom_navbar.dart';
 import 'package:vienna_airport_taxi/core/localization/language_provider.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/floating_action_buttons.dart';
+import 'package:vienna_airport_taxi/presentation/widgets/footer/app_footer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -237,6 +238,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+
+                  // Footer
+                  const AppFooter(),
 
                   // Add bottom padding to account for floating navbar
                   const SizedBox(height: 80),

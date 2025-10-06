@@ -90,18 +90,36 @@
           "address": "Address",
           "postal_code": "Postal Code",
           "person": "Person",
-          "luggage": "Luggage"
+          "luggage": "Luggage",
+          "error_messages":{
+            "city_required": "City is required",
+            "postal_code_required": "Postal Code is required",
+            "address_required": "Address is required",
+            "passenger_required": "Passenger is required",
+            "luggage_required": "Luggage is required"
+          }
         },
         "flight_information_section": {
-          "flight_information_title": "Flight Information",
+          "flight_information_title": "Flight Information",          
           "flight_from": "Flight From",
-          "flight_number": "Flight Nr."
+          "flight_number": "Flight Nr.",
+          "error_messages": {
+            "flight_name_from": "Departure required",
+            "flight_number_from": "Flight Nr. required"
+          }
         },
         "contact_section": {
           "contact_title": "Contact",
           "name": "Name",
           "email": "Email",
-          "phone": "Phone"
+          "phone": "Phone",
+          "error_messages":{
+            "name_required": "Name is required",
+            "email_required": "Email is required",
+            "email_invalid": "Invalid Email Address",
+            "phone_required": "Phone is required",
+            "phone_invalid": "Invalid Phone Number"
+          }
         }
       },
       "step2":{
@@ -116,7 +134,11 @@
           "flight_information_title": "Flight Information",
           "return_trip_flight_from": "Flight From",
           "return_trip_flight_number": "Flight Nr.",
-          "return_trip_info_message": "We will pick you up punctually for your flight."
+          "return_trip_info_message": "We will pick you up punctually for your flight.",
+          "error_messages": {
+            "flight_name_from": "Flight From is required",
+            "flight_number_from": "Flight Number is required"
+          }
         },
         "stopover_section": {
           "stopover_title": "Stopovers",
@@ -125,6 +147,10 @@
           "stopover_input_placeholder": "Stopover Address",
           "stopover_plz": "Postal Code",
           "stopover_new_butrton": "Add Stopover",
+          "error_messages": {
+            "address_required": "Address is required",
+            "postal_code_required": "Postal Code is required"
+          },
           "stopover_add_another_button": "Add Another Stopover",
           "stopover_info_message": {
             "start": "You can add",
@@ -166,5 +192,37 @@
         "previous": "Previous",
         "book": "Book"
       }
+    },
+    "footer": {
+      "copyright": "© 2025 Airport Wien Taxi. All rights reserved.",
+      "company_label": "Company:",
+      "company_name": "Airport Wien Taxi",
+      "company_info": "Professional Airport Transfer Service",
+      "company_address": "Kundratstraße 16/3/73,",
+      "company_zipcode": "1100",
+      "company_city": "Wien",
+      "company_full_address": "Kundratstraße 16/3/73, 1100 Wien",
+      "uid_number": "ATU80384013",
+      "navigation_title": "Navigation",
+      "useful_links_title": "Useful Links",
+      "contact_title": "Contact",
+      "contact_intro": "If you have any questions, you can contact us by phone or email.",
+      "faq": "F.A.Q.",
+      "about_us": "About Us",
+      "terms": "Terms & Conditions",
+      "privacy": "Privacy Policy",
+      "imprint": "Imprint",
+      "vienna_airport": "Vienna Airport",
+      "arrivals": "Current Arrivals",
+      "departures": "Current Departures",
+      "airlines": "Airlines",
+      "airport_info": "Airport Information",
+      "airport_map": "Airport Map",
+      "phone": "+43 676 394 19 49",
+      "email": "office@airport-wien-taxi.com",
+      "website": "www.airport-wien-taxi.com",
+      "facebook_label": "Visit our Facebook page",
+      "instagram_label": "Follow us on Instagram",
+      "whatsapp_label": "Contact us via WhatsApp"
     }
 }

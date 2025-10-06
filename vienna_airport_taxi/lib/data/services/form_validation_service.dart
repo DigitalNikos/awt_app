@@ -115,9 +115,12 @@ class FormValidationService {
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validateCity(String? city) {
+  static ValidationResult validateCity(String? city, AppLocalizations t) {
     if (city == null || city.trim().isEmpty) {
-      return ValidationResult(isValid: false, errorMessage: 'Ort auswählen');
+      return ValidationResult(
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.address_section.error_messages.city_required'));
     }
     return ValidationResult(isValid: true);
   }
@@ -129,45 +132,57 @@ class FormValidationService {
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validateAddress(String? address) {
+  static ValidationResult validateAddress(String? address, AppLocalizations t) {
     if (address == null || address.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Adresse erforderlich');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.address_section.error_messages.address_required'));
     }
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validateName(String? name) {
+  static ValidationResult validateName(String? name, AppLocalizations t) {
     if (name == null || name.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Name erforderlich');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.contact_section.error_messages.name_required'));
     }
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validateEmail(String? email) {
+  static ValidationResult validateEmail(String? email, AppLocalizations t) {
     if (email == null || email.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Email erforderlich');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.contact_section.error_messages.email_required'));
     }
 
     if (!isValidEmail(email)) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Ungültige Email-Adresse');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.contact_section.error_messages.email_invalid'));
     }
 
     return ValidationResult(isValid: true);
   }
 
-  static ValidationResult validatePhone(String? phone) {
+  static ValidationResult validatePhone(String? phone, AppLocalizations t) {
     if (phone == null || phone.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Telefonnummer erforderlich');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.contact_section.error_messages.phone_required'));
     }
 
     if (!isValidPhone(phone)) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Ungültige Telefonnummer');
+          isValid: false,
+          errorMessage: t.translate(
+              'form.step1.contact_section.error_messages.phone_invalid'));
     }
 
     return ValidationResult(isValid: true);
@@ -177,7 +192,7 @@ class FormValidationService {
   static ValidationResult validateFlightFrom(String? flightFrom) {
     if (flightFrom == null || flightFrom.trim().isEmpty) {
       return ValidationResult(
-          isValid: false, errorMessage: 'Abflugort erforderlich');
+          isValid: false, errorMessage: 'Abflugorttttt erforderlich');
     }
     return ValidationResult(isValid: true);
   }
@@ -192,9 +207,9 @@ class FormValidationService {
 
   static ValidationResult validateRequiredField(String? value,
       {required String fieldName}) {
+    print('fieldName MALAKIA: $fieldName');
     if (value == null || value.trim().isEmpty) {
-      return ValidationResult(
-          isValid: false, errorMessage: '$fieldName erforderlich');
+      return ValidationResult(isValid: false, errorMessage: '$fieldName');
     }
     return ValidationResult(isValid: true);
   }
