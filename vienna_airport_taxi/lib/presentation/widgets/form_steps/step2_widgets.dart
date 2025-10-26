@@ -940,8 +940,16 @@ class _CommentWidgetState extends State<CommentWidget> {
   @override
   void didUpdateWidget(CommentWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.comment != oldWidget.comment) {
-      _commentController.text = widget.comment ?? '';
+    if (widget.comment != oldWidget.comment && widget.comment != _commentController.text) {
+      // Preserve cursor position when updating text
+      final int cursorPosition = _commentController.selection.baseOffset;
+      final String newText = widget.comment ?? '';
+      _commentController.value = _commentController.value.copyWith(
+        text: newText,
+        selection: TextSelection.collapsed(
+          offset: cursorPosition.clamp(0, newText.length),
+        ),
+      );
       _isExpanded = widget.comment != null && widget.comment!.isNotEmpty;
     }
   }

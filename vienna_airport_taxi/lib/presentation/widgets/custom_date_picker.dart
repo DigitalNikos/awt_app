@@ -148,8 +148,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     final now = DateTime.now();
     final firstDayOfMonth =
         DateTime(tempSelectedDate.year, tempSelectedDate.month, 1);
-    final startDate =
-        firstDayOfMonth.subtract(Duration(days: firstDayOfMonth.weekday - 1));
+    // Calculate start date: DateTime.weekday is 1 (Monday) to 7 (Sunday)
+    // We want Monday to be day 0, so we subtract 1, but handle Sunday (7) specially
+    final daysToSubtract = firstDayOfMonth.weekday == 7 ? 6 : firstDayOfMonth.weekday - 1;
+    final startDate = firstDayOfMonth.subtract(Duration(days: daysToSubtract));
 
     return Column(
       children: [
@@ -239,12 +241,17 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           }).toList(),
         ),
 
-        // Calendar grid
-        ...List.generate(5, (weekIndex) {
+        // Calendar grid - generate 6 weeks to handle all edge cases
+        ...List.generate(6, (weekIndex) {
           return Row(
             children: List.generate(7, (dayIndex) {
-              final date =
-                  startDate.add(Duration(days: weekIndex * 7 + dayIndex));
+              // Use proper date arithmetic to avoid DST issues
+              final dayOffset = weekIndex * 7 + dayIndex;
+              final date = DateTime(
+                startDate.year,
+                startDate.month,
+                startDate.day + dayOffset,
+              );
               final isCurrentMonth = date.month == tempSelectedDate.month;
               final isSelected = date.day == tempSelectedDate.day &&
                   date.month == tempSelectedDate.month &&
@@ -276,30 +283,29 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                               // Auto-confirm selection after brief delay
                               Future.delayed(const Duration(milliseconds: 200),
                                   () {
+                                if (!context.mounted) return;
                                 widget.onConfirm(tempSelectedDate);
                                 Navigator.of(context).pop();
                               });
                             }
                           : null,
-                      child: Container(
-                        child: Center(
-                          child: Text(
-                            date.day.toString(),
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: isPastDate
-                                  ? Colors.grey.shade300
-                                  : !isCurrentMonth
-                                      ? Colors.grey.shade400
-                                      : isSelected
-                                          ? Colors.black
-                                          : isToday
-                                              ? AppColors.primary
-                                              : Colors.black87,
-                              fontWeight: isSelected || isToday
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                              fontSize: 14,
-                            ),
+                      child: Center(
+                        child: Text(
+                          date.day.toString(),
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: isPastDate
+                                ? Colors.grey.shade300
+                                : !isCurrentMonth
+                                    ? Colors.grey.shade400
+                                    : isSelected
+                                        ? Colors.black
+                                        : isToday
+                                            ? AppColors.primary
+                                            : Colors.black87,
+                            fontWeight: isSelected || isToday
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            fontSize: 14,
                           ),
                         ),
                       ),

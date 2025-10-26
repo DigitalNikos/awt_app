@@ -477,8 +477,16 @@ class _InputFieldWithIconState extends State<InputFieldWithIcon> {
   @override
   void didUpdateWidget(InputFieldWithIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value) {
-      _controller.text = widget.value ?? '';
+    if (widget.value != oldWidget.value && widget.value != _controller.text) {
+      // Preserve cursor position when updating text
+      final int cursorPosition = _controller.selection.baseOffset;
+      final String newText = widget.value ?? '';
+      _controller.value = _controller.value.copyWith(
+        text: newText,
+        selection: TextSelection.collapsed(
+          offset: cursorPosition.clamp(0, newText.length),
+        ),
+      );
     }
   }
 
@@ -696,8 +704,16 @@ class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
   @override
   void didUpdateWidget(InputFieldWithSvgIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value) {
-      _controller.text = widget.value ?? '';
+    if (widget.value != oldWidget.value && widget.value != _controller.text) {
+      // Preserve cursor position when updating text
+      final int cursorPosition = _controller.selection.baseOffset;
+      final String newText = widget.value ?? '';
+      _controller.value = _controller.value.copyWith(
+        text: newText,
+        selection: TextSelection.collapsed(
+          offset: cursorPosition.clamp(0, newText.length),
+        ),
+      );
     }
   }
 
