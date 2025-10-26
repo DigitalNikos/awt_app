@@ -8,15 +8,17 @@ class FormValidationService {
   }
 
   static bool isValidEmail(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return true; // Allow empty if not required
+    }
     final regex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
     return regex.hasMatch(value);
   }
 
   static bool isValidPhone(String? value) {
-    if (value == null || value.trim().isEmpty)
+    if (value == null || value.trim().isEmpty) {
       return true; // Allow empty if not required
+    }
     final regex = RegExp(r'^[0-9\s+()-]{8,}$');
     return regex.hasMatch(value);
   }
@@ -207,9 +209,8 @@ class FormValidationService {
 
   static ValidationResult validateRequiredField(String? value,
       {required String fieldName}) {
-    print('fieldName MALAKIA: $fieldName');
     if (value == null || value.trim().isEmpty) {
-      return ValidationResult(isValid: false, errorMessage: '$fieldName');
+      return ValidationResult(isValid: false, errorMessage: fieldName);
     }
     return ValidationResult(isValid: true);
   }

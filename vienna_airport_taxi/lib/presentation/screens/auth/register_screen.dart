@@ -6,7 +6,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -50,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 20),
 
                   // Header
-                  Text(
+                  const Text(
                     'Konto erstellen',
                     style: AppTextStyles.heading1,
                     textAlign: TextAlign.center,
@@ -212,7 +212,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
                         authProvider.errorMessage!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.error,
                           fontSize: 14,
                         ),
@@ -277,7 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text(
+                        child: const Text(
                           'Anmelden',
                           style: TextStyle(
                             color: AppColors.primary,

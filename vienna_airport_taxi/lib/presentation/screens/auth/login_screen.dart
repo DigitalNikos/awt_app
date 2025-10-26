@@ -7,7 +7,7 @@ import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 import 'package:vienna_airport_taxi/presentation/screens/auth/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 20),
 
                   // Header
-                  Text(
+                  const Text(
                     'Willkommen zurück!',
                     style: AppTextStyles.heading1,
                     textAlign: TextAlign.center,
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Text(
                         authProvider.errorMessage!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.error,
                           fontSize: 14,
                         ),
@@ -194,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
-                        child: Text(
+                        child: const Text(
                           'Registrieren',
                           style: TextStyle(
                             color: AppColors.primary,

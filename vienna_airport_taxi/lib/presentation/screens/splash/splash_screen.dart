@@ -8,14 +8,14 @@ import 'package:vienna_airport_taxi/presentation/screens/home/home_screen.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/animations/animated_taxi.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool _showAnimation = true;
+  final bool _showAnimation = true;
 
   @override
   void initState() {
@@ -72,7 +72,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } catch (e) {
       // Handle any parsing errors
-      print('Animation message parsing error: $e');
     }
   }
 
@@ -83,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -92,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
               AppColors.primaryLight,
               AppColors.primaryHover,
             ],
-            stops: const [0.0, 0.5, 1.0],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(

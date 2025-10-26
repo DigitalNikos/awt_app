@@ -1,4 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet permission - Required for API calls to backend server -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Network state permission - Check if device has internet connection -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- Location permissions - For getting user's current location for pickup address -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
     <application
         android:label="vienna_airport_taxi"
         android:name="${applicationName}"

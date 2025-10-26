@@ -7,7 +7,6 @@ import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 import 'dart:ui' as ui show TextDirection;
 import 'package:vienna_airport_taxi/presentation/widgets/custom_time_picker.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_date_picker.dart';
-import 'package:vienna_airport_taxi/presentation/widgets/dropdown_field_with_svg_icon.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/custom_dropdown.dart';
 import 'package:vienna_airport_taxi/presentation/widgets/phone_input_field.dart';
 
@@ -21,7 +20,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
   final String? reservationTimeError;
 
   const DateTimeSelectionWidget({
-    Key? key,
+    super.key,
     required this.selectedDate,
     required this.selectedTime,
     required this.onDateSelected,
@@ -29,7 +28,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
     this.dateError,
     this.timeError,
     this.reservationTimeError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,13 +83,13 @@ class DateTimeSelectionWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.error.withOpacity(0.1),
+                color: AppColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.warning_amber_rounded,
                     color: AppColors.error,
                     size: 20,
@@ -99,7 +98,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   Expanded(
                     child: Text(
                       reservationTimeError!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.error,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -168,7 +167,7 @@ class AddressSelectionWidget extends StatelessWidget {
   final String? addressError;
 
   const AddressSelectionWidget({
-    Key? key,
+    super.key,
     required this.selectedCity,
     required this.selectedPostalCode,
     required this.address,
@@ -178,7 +177,7 @@ class AddressSelectionWidget extends StatelessWidget {
     this.cityError,
     this.postalCodeError,
     this.addressError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -315,14 +314,14 @@ class PassengerAndLuggageWidget extends StatelessWidget {
   final String? luggageError;
 
   const PassengerAndLuggageWidget({
-    Key? key,
+    super.key,
     required this.passengerCount,
     required this.luggageCount,
     required this.onPassengerCountChanged,
     required this.onLuggageCountChanged,
     this.passengerError,
     this.luggageError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -336,7 +335,7 @@ class PassengerAndLuggageWidget extends StatelessWidget {
             hintText:
                 localizations.translate('form.step1.address_section.person'),
             value: passengerCount > 0 ? passengerCount.toString() : '1',
-            items: ['1', '2', '3', '4', '5', '6', '7', '8'],
+            items: const ['1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
               onPassengerCountChanged(int.parse(value));
             },
@@ -353,7 +352,7 @@ class PassengerAndLuggageWidget extends StatelessWidget {
             hintText:
                 localizations.translate('form.step1.address_section.luggage'),
             value: luggageCount.toString(),
-            items: ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
+            items: const ['0', '1', '2', '3', '4', '5', '6', '7', '8'],
             onChanged: (value) {
               onLuggageCountChanged(int.parse(value));
             },
@@ -377,7 +376,7 @@ class ContactInformationWidget extends StatelessWidget {
   final String? phoneError;
 
   const ContactInformationWidget({
-    Key? key,
+    super.key,
     required this.name,
     required this.email,
     required this.phone,
@@ -387,7 +386,7 @@ class ContactInformationWidget extends StatelessWidget {
     this.nameError,
     this.emailError,
     this.phoneError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +450,7 @@ class InputFieldWithIcon extends StatefulWidget {
   final String? errorText;
 
   const InputFieldWithIcon({
-    Key? key,
+    super.key,
     required this.icon,
     required this.hintText,
     this.value,
@@ -460,7 +459,7 @@ class InputFieldWithIcon extends StatefulWidget {
     this.readOnly = false,
     this.keyboardType = TextInputType.text,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   State<InputFieldWithIcon> createState() => _InputFieldWithIconState();
@@ -515,7 +514,7 @@ class _InputFieldWithIconState extends State<InputFieldWithIcon> {
             textDirection: ui.TextDirection.ltr,
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
+              hintStyle: const TextStyle(color: AppColors.textLight),
               // COMPLETELY REMOVE ALL BORDERS FROM TEXTFORMFIELD
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -548,7 +547,7 @@ class _InputFieldWithIconState extends State<InputFieldWithIcon> {
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
               widget.errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 12,
               ),
@@ -568,14 +567,14 @@ class DropdownFieldWithIcon extends StatelessWidget {
   final String? errorText;
 
   const DropdownFieldWithIcon({
-    Key? key,
+    super.key,
     required this.icon,
     required this.hintText,
     required this.value,
     required this.items,
     required this.onChanged,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -598,7 +597,7 @@ class DropdownFieldWithIcon extends StatelessWidget {
             value: value,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
+              hintStyle: const TextStyle(color: AppColors.textLight),
               // COMPLETELY REMOVE ALL BORDERS FROM DROPDOWN
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -646,7 +645,7 @@ class DropdownFieldWithIcon extends StatelessWidget {
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
               errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 12,
               ),
@@ -670,7 +669,7 @@ class InputFieldWithSvgIcon extends StatefulWidget {
   final String? errorText;
 
   const InputFieldWithSvgIcon({
-    Key? key,
+    super.key,
     required this.svgIconPath,
     required this.hintText,
     this.value,
@@ -679,7 +678,7 @@ class InputFieldWithSvgIcon extends StatefulWidget {
     this.readOnly = false,
     this.keyboardType = TextInputType.text,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   State<InputFieldWithSvgIcon> createState() => _InputFieldWithSvgIconState();
@@ -734,7 +733,7 @@ class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
             textDirection: ui.TextDirection.ltr,
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
+              hintStyle: const TextStyle(color: AppColors.textLight),
               // COMPLETELY REMOVE ALL BORDERS FROM TEXTFORMFIELD
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -774,7 +773,7 @@ class _InputFieldWithSvgIconState extends State<InputFieldWithSvgIcon> {
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
               widget.errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 12,
               ),
@@ -794,14 +793,14 @@ class FlightInformationWidget extends StatelessWidget {
   final String? flightNumberError;
 
   const FlightInformationWidget({
-    Key? key,
+    super.key,
     required this.flightFrom,
     required this.flightNumber,
     required this.onFlightFromChanged,
     required this.onFlightNumberChanged,
     this.flightFromError,
     this.flightNumberError,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -848,7 +847,7 @@ class FlightInformationWidget extends StatelessWidget {
 }
 
 class SectionDivider extends StatelessWidget {
-  const SectionDivider({Key? key}) : super(key: key);
+  const SectionDivider({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -856,9 +855,9 @@ class SectionDivider extends StatelessWidget {
       width: 192,
       height: 3,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          stops: const [0.0, 1.0],
-          colors: [AppColors.primary, const Color.fromARGB(0, 255, 255, 255)],
+        gradient: const LinearGradient(
+          stops: [0.0, 1.0],
+          colors: [AppColors.primary, Color.fromARGB(0, 255, 255, 255)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),

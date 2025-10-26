@@ -2,13 +2,8 @@ class AppConstants {
   // App name
   static const String appName = "Vienna Airport Taxi";
 
-  // API base URL (replace with your actual API URL)
-  static const String apiBaseUrl = "http://localhost:3000/api";
-
-  // Endpoints
-  static const String loginEndpoint = "/auth/login";
-  static const String registerEndpoint = "/auth/register";
-  static const String bookingEndpoint = "/bookings";
+  // Note: API configuration is now managed in lib/core/config/environment.dart
+  // Use Environment.apiBaseUrl to get the correct URL based on the current environment
 
   // Shared Preferences Keys
   static const String tokenKey = "auth_token";

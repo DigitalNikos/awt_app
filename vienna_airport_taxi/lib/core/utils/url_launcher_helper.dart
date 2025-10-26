@@ -28,10 +28,8 @@ class UrlLauncherHelper {
       if (await canLaunchUrl(uri)) {
         return await launchUrl(uri);
       }
-      print('Could not launch $uri');
       return false;
     } catch (e) {
-      print('Error launching $uri: $e');
       return false;
     }
   }

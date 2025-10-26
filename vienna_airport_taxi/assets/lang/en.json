@@ -184,6 +184,14 @@
           "nameplate_description": "Pickup with Nameplate"
         }
       },
+      "step3":{
+        "terms_acceptance":{
+          "text_before": "I accept the ",
+          "terms_link": "Terms & Conditions",
+          "text_middle": " and ",
+          "privacy_link": "Privacy Policy"
+        }
+      },
       "price_section": {
         "price": "Price"
       },

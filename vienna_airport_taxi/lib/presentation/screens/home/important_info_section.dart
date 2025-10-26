@@ -6,7 +6,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class ImportantInfoSection extends StatelessWidget {
-  const ImportantInfoSection({Key? key}) : super(key: key);
+  const ImportantInfoSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -132,12 +132,12 @@ class _MobileInfoLayout extends StatelessWidget {
 class _InfoCardsColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         _InfoCard(cardNumber: 1),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         _InfoCard(cardNumber: 2),
-        const SizedBox(height: 20),
+        SizedBox(height: 20),
         _InfoCard(cardNumber: 3),
       ],
     );
@@ -161,11 +161,11 @@ class _InfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
@@ -186,7 +186,7 @@ class _InfoCard extends StatelessWidget {
                   cardData['icon']!,
                   width: 40,
                   height: 40,
-                  colorFilter: ColorFilter.mode(
+                  colorFilter: const ColorFilter.mode(
                     AppColors.primary,
                     BlendMode.srcIn,
                   ),
@@ -300,11 +300,11 @@ class _AirportMapCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
@@ -329,11 +329,11 @@ class _AirportMapCard extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: AppColors.shadow,
                   blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, 4),
                   spreadRadius: 0,
                 ),
               ],
@@ -353,14 +353,14 @@ class _AirportMapCard extends StatelessWidget {
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppColors.border.withOpacity(0.3),
+                        color: AppColors.border.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.map,
                           size: 60,
                           color: AppColors.primary,

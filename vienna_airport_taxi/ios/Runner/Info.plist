@@ -33,6 +33,10 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to calculate taxi fare and provide accurate pickup address for your airport transfer.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to calculate taxi fare and provide accurate pickup address for your airport transfer.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

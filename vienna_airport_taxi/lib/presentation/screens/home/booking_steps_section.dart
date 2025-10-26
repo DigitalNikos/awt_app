@@ -6,7 +6,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class BookingStepsSection extends StatelessWidget {
-  const BookingStepsSection({Key? key}) : super(key: key);
+  const BookingStepsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -88,13 +88,13 @@ class _DesktopStepsLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxWidth: 1440),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: _StepCard(stepNumber: 1)),
-          const SizedBox(width: 32),
+          SizedBox(width: 32),
           Expanded(child: _StepCard(stepNumber: 2)),
-          const SizedBox(width: 32),
+          SizedBox(width: 32),
           Expanded(child: _StepCard(stepNumber: 3)),
         ],
       ),
@@ -105,12 +105,12 @@ class _DesktopStepsLayout extends StatelessWidget {
 class _MobileStepsLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         _StepCard(stepNumber: 1),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         _StepCard(stepNumber: 2),
-        const SizedBox(height: 24),
+        SizedBox(height: 24),
         _StepCard(stepNumber: 3),
       ],
     );
@@ -137,7 +137,7 @@ class _StepCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withOpacity(0.1),
+            color: AppColors.textPrimary.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -157,7 +157,7 @@ class _StepCard extends StatelessWidget {
               fit: BoxFit.contain,
               placeholderBuilder: (context) => Container(
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

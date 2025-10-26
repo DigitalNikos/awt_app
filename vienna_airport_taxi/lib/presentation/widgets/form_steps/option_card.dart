@@ -16,7 +16,7 @@ class OptionCard extends StatefulWidget {
   final String? selectedValue;
 
   const OptionCard({
-    Key? key,
+    super.key,
     this.icon,
     this.svgIcon,
     required this.title,
@@ -26,8 +26,7 @@ class OptionCard extends StatefulWidget {
     this.isExpanded = false,
     this.selectedValue,
   })  : assert(icon != null || svgIcon != null,
-            'Either icon or svgIcon must be provided'),
-        super(key: key);
+            'Either icon or svgIcon must be provided');
 
   @override
   State<OptionCard> createState() => _OptionCardState();
@@ -72,8 +71,8 @@ class _OptionCardState extends State<OptionCard>
           boxShadow: [
             BoxShadow(
               color: _isHovered
-                  ? AppColors.primary.withOpacity(0.15)
-                  : Colors.black.withOpacity(0.05),
+                  ? AppColors.primary.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: 0.05),
               blurRadius: _isHovered ? 8 : 5,
               spreadRadius: _isHovered ? 0 : 1,
               offset: Offset(0, _isHovered ? 0 : 2),
@@ -119,7 +118,7 @@ class _OptionCardState extends State<OptionCard>
                         width: 15,
                         height: 15,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -149,7 +148,7 @@ class _OptionCardState extends State<OptionCard>
                       const SizedBox(height: 2),
                       Text(
                         widget.selectedValue!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.success,
                           fontSize: 13, // Slightly smaller
                           fontWeight: FontWeight.w600,

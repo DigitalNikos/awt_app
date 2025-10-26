@@ -7,7 +7,7 @@ import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class AppFooter extends StatelessWidget {
-  const AppFooter({Key? key}) : super(key: key);
+  const AppFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -188,6 +188,24 @@ class AppFooter extends StatelessWidget {
 
   Widget _buildNavigationColumn(
       BuildContext context, AppLocalizations? localizations) {
+    // Get current language code
+    final locale = Localizations.localeOf(context);
+    final isEnglish = locale.languageCode == 'en';
+
+    // Base URL for website
+    const baseUrl = 'https://www.airport-wien-taxi.com';
+
+    // Build language-specific URLs
+    final termsUrl = isEnglish
+        ? '$baseUrl/en/terms-and-conditions'
+        : '$baseUrl/agb';
+    final privacyUrl = isEnglish
+        ? '$baseUrl/en/privacy-policy'
+        : '$baseUrl/datenschutz';
+    final imprintUrl = isEnglish
+        ? '$baseUrl/en/imprint'
+        : '$baseUrl/impressum';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -204,24 +222,16 @@ class AppFooter extends StatelessWidget {
           () => Navigator.pushNamed(context, '/from-airport'),
         ),
         _buildFooterLink(
-          localizations?.translate('footer.faq') ?? 'F.A.Q.',
-          () => Navigator.pushNamed(context, '/faq'),
-        ),
-        _buildFooterLink(
-          localizations?.translate('footer.about_us') ?? 'Über uns',
-          () => Navigator.pushNamed(context, '/about'),
-        ),
-        _buildFooterLink(
           localizations?.translate('footer.terms') ?? 'AGB',
-          () => Navigator.pushNamed(context, '/terms'),
+          () => _launchUrl(termsUrl),
         ),
         _buildFooterLink(
           localizations?.translate('footer.privacy') ?? 'Datenschutz',
-          () => Navigator.pushNamed(context, '/privacy'),
+          () => _launchUrl(privacyUrl),
         ),
         _buildFooterLink(
           localizations?.translate('footer.imprint') ?? 'Impressum',
-          () => Navigator.pushNamed(context, '/imprint'),
+          () => _launchUrl(imprintUrl),
         ),
       ],
     );
@@ -333,10 +343,10 @@ class AppFooter extends StatelessWidget {
           width: 48,
           height: 4,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [
                 AppColors.primary,
-                const Color.fromARGB(0, 255, 255, 255)
+                Color.fromARGB(0, 255, 255, 255)
               ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -378,13 +388,13 @@ class AppFooter extends StatelessWidget {
               width: 16,
               height: 16,
               colorFilter: ColorFilter.mode(
-                const Color(0xFF666666).withOpacity(0.7),
+                const Color(0xFF666666).withValues(alpha: 0.7),
                 BlendMode.srcIn,
               ),
               placeholderBuilder: (context) => Icon(
                 Icons.language,
                 size: 16,
-                color: const Color(0xFF666666).withOpacity(0.7),
+                color: const Color(0xFF666666).withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -425,13 +435,13 @@ class AppFooter extends StatelessWidget {
               width: 20,
               height: 20,
               colorFilter: ColorFilter.mode(
-                const Color(0xFF666666).withOpacity(0.7),
+                const Color(0xFF666666).withValues(alpha: 0.7),
                 BlendMode.srcIn,
               ),
               placeholderBuilder: (context) => Icon(
                 _getIconForPath(iconPath),
                 size: 20,
-                color: const Color(0xFF666666).withOpacity(0.7),
+                color: const Color(0xFF666666).withValues(alpha: 0.7),
               ),
             ),
           ),

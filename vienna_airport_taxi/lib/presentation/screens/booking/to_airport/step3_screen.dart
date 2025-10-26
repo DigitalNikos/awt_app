@@ -1,7 +1,9 @@
 // lib/presentation/screens/booking/to_airport/step3_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
@@ -10,7 +12,7 @@ import 'package:vienna_airport_taxi/data/models/booking_form_data.dart'; // Add 
 import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widgets.dart'; // For SectionDivider
 
 class Step3Screen extends StatelessWidget {
-  const Step3Screen({Key? key}) : super(key: key);
+  const Step3Screen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class Step3Screen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // Section title
-                  Text(
+                  const Text(
                     'Überblick',
                     style: AppTextStyles.heading2,
                   ),
@@ -197,25 +199,33 @@ class Step3Screen extends StatelessWidget {
                             Expanded(
                               child: RichText(
                                 text: TextSpan(
-                                  text: 'Ich akzeptiere die ',
+                                  text: localizations.translate('form.step3.terms_acceptance.text_before') ?? 'Ich akzeptiere die ',
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     color: AppColors.textPrimary,
                                   ),
                                   children: [
                                     TextSpan(
-                                      text: 'AGB',
-                                      style: TextStyle(
+                                      text: localizations.translate('form.step3.terms_acceptance.terms_link') ?? 'AGB',
+                                      style: const TextStyle(
                                         color: AppColors.primary,
                                         decoration: TextDecoration.underline,
                                       ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _launchTermsUrl(context);
+                                        },
                                     ),
-                                    const TextSpan(text: ' und die '),
+                                    TextSpan(text: localizations.translate('form.step3.terms_acceptance.text_middle') ?? ' und die '),
                                     TextSpan(
-                                      text: 'Datenschutzerklärung',
-                                      style: TextStyle(
+                                      text: localizations.translate('form.step3.terms_acceptance.privacy_link') ?? 'Datenschutzerklärung',
+                                      style: const TextStyle(
                                         color: AppColors.primary,
                                         decoration: TextDecoration.underline,
                                       ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          _launchPrivacyUrl(context);
+                                        },
                                     ),
                                   ],
                                 ),
@@ -237,7 +247,7 @@ class Step3Screen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.backgroundLight,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border(
+                      border: const Border(
                         left: BorderSide(
                           color: AppColors.primary,
                           width: 4,
@@ -245,7 +255,7 @@ class Step3Screen extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 5,
                           spreadRadius: 1,
                         ),
@@ -254,7 +264,7 @@ class Step3Screen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Preis:',
                           style: TextStyle(
                             color: AppColors.textLight,
@@ -287,7 +297,7 @@ class Step3Screen extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.backgroundLight,
                             foregroundColor: AppColors.textSecondary,
-                            side: BorderSide(color: AppColors.border),
+                            side: const BorderSide(color: AppColors.border),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -467,7 +477,7 @@ class Step3Screen extends StatelessWidget {
                             width: 8,
                             height: 8,
                             margin: const EdgeInsets.only(top: 6, right: 8),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),
@@ -499,6 +509,36 @@ class Step3Screen extends StatelessWidget {
         return 'Babyschale';
       default:
         return 'Ohne';
+    }
+  }
+
+  // Helper function to launch Terms & Conditions URL
+  void _launchTermsUrl(BuildContext context) async {
+    final locale = Localizations.localeOf(context);
+    final isEnglish = locale.languageCode == 'en';
+
+    final url = isEnglish
+        ? 'https://www.airport-wien-taxi.com/en/terms-and-conditions'
+        : 'https://www.airport-wien-taxi.com/agb';
+
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  // Helper function to launch Privacy Policy URL
+  void _launchPrivacyUrl(BuildContext context) async {
+    final locale = Localizations.localeOf(context);
+    final isEnglish = locale.languageCode == 'en';
+
+    final url = isEnglish
+        ? 'https://www.airport-wien-taxi.com/en/privacy-policy'
+        : 'https://www.airport-wien-taxi.com/datenschutz';
+
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 }

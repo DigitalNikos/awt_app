@@ -9,7 +9,7 @@ import 'package:vienna_airport_taxi/presentation/widgets/form_steps/step2_widget
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class Step2Screen extends StatefulWidget {
-  const Step2Screen({Key? key}) : super(key: key);
+  const Step2Screen({super.key});
 
   @override
   State<Step2Screen> createState() => _Step2ScreenState();
@@ -179,7 +179,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                     decoration: BoxDecoration(
                       color: AppColors.backgroundLight,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border(
+                      border: const Border(
                         left: BorderSide(
                           color: AppColors.primary,
                           width: 4,
@@ -187,7 +187,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 5,
                           spreadRadius: 1,
                         ),
@@ -198,7 +198,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                       children: [
                         Text(
                           localizations.translate('form.price_section.price'),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.accent,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -245,7 +245,7 @@ class _Step2ScreenState extends State<Step2Screen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.backgroundLight,
                             foregroundColor: AppColors.textSecondary,
-                            side: BorderSide(color: AppColors.border),
+                            side: const BorderSide(color: AppColors.border),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

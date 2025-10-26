@@ -11,7 +11,7 @@ import 'package:vienna_airport_taxi/presentation/widgets/floating_action_buttons
 import 'package:vienna_airport_taxi/presentation/widgets/footer/app_footer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -199,14 +199,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: AppColors.backgroundLight,
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: AppColors.border.withOpacity(0.3),
+                                    color: AppColors.border.withValues(alpha: 0.3),
                                     width: 1,
                                   ),
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.map,
                                       size: 60,
                                       color: AppColors.primary,
@@ -286,7 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -341,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );

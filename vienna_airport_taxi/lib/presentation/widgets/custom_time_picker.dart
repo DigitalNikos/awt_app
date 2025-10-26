@@ -11,10 +11,10 @@ class CustomTimePicker extends StatefulWidget {
   final Function(String) onConfirm;
 
   const CustomTimePicker({
-    Key? key,
+    super.key,
     this.initialTime,
     required this.onConfirm,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTimePicker> createState() => _CustomTimePickerState();
@@ -126,7 +126,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () => Navigator.of(context).pop(),
-                    child: Container(
+                    child: const SizedBox(
                       width: 40,
                       height: 40,
                       child: Icon(
@@ -190,7 +190,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                               height: 50,
                               margin: const EdgeInsets.symmetric(horizontal: 8),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.15),
+                                color: AppColors.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(12),
                                 // Removed border completely
                               ),
@@ -221,7 +221,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                             Container(
                               width: 40,
                               alignment: Alignment.center,
-                              child: Text(
+                              child: const Text(
                                 ':',
                                 style: TextStyle(
                                   fontSize: 28,
@@ -259,7 +259,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
           // Modern single OK button
           Container(
             padding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
@@ -281,7 +281,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                 child: Text(
                   localizations
                       .translate('form.step1.date_time_section.confirm_time'),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,

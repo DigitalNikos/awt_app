@@ -26,7 +26,7 @@ class StopoverWidget extends StatefulWidget {
   final String? postalCodeError;
 
   const StopoverWidget({
-    Key? key,
+    super.key,
     required this.isViennaSelected,
     required this.currentStopovers,
     required this.onAddStopover,
@@ -37,7 +37,7 @@ class StopoverWidget extends StatefulWidget {
     this.onValidateFields,
     this.addressError,
     this.postalCodeError,
-  }) : super(key: key);
+  });
 
   @override
   State<StopoverWidget> createState() => _StopoverWidgetState();
@@ -164,7 +164,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
   Widget build(BuildContext context) {
     if (!widget.isViennaSelected) return const SizedBox.shrink();
 
-    final maxStopovers = 3;
+    const maxStopovers = 3;
     final currentCount = widget.currentStopovers.length;
     final canAddMore = currentCount < maxStopovers;
     final hasInitialCard = currentCount == 0;
@@ -224,7 +224,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                             decoration: BoxDecoration(
                               color: AppColors.backgroundLight,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border(
+                              border: const Border(
                                 left: BorderSide(
                                   color: AppColors.primary,
                                   width: 3,
@@ -240,7 +240,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.delete_outline,
                                     color: AppColors.error,
                                     size: 20,
@@ -387,13 +387,13 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_location,
+                          const Icon(Icons.add_location,
                               size: 18, color: Colors.black),
                           const SizedBox(width: 12),
                           Text(
                             localizations.translate(
                                 'form.step2.stopover_section.stopover_new_butrton'),
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -423,7 +423,7 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         foregroundColor: AppColors.textPrimary,
-                        side: BorderSide(
+                        side: const BorderSide(
                           color: AppColors.primary,
                           style: BorderStyle.solid,
                           width: 1.5,
@@ -437,13 +437,13 @@ class _StopoverWidgetState extends State<StopoverWidget> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_location,
+                          const Icon(Icons.add_location,
                               size: 18, color: AppColors.primary),
                           const SizedBox(width: 12),
                           Text(
                             localizations.translate(
                                 'form.step2.stopover_section.stopover_add_another_button'),
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -481,7 +481,7 @@ class ReturnTripWidget extends StatefulWidget {
   final String? returnDateTimeError;
 
   const ReturnTripWidget({
-    Key? key,
+    super.key,
     required this.isReturnTripActive,
     required this.returnDate,
     required this.returnTime,
@@ -497,7 +497,7 @@ class ReturnTripWidget extends StatefulWidget {
     this.flightFromError,
     this.flightNumberError,
     this.returnDateTimeError,
-  }) : super(key: key);
+  });
 
   @override
   State<ReturnTripWidget> createState() => _ReturnTripWidgetState();
@@ -658,7 +658,7 @@ class _ReturnTripWidgetState extends State<ReturnTripWidget> {
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       widget.returnDateTimeError!,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColors.error,
                         fontSize: 12,
                       ),
@@ -678,10 +678,10 @@ class ChildSeatWidget extends StatelessWidget {
   final Function(String) onChildSeatChanged;
 
   const ChildSeatWidget({
-    Key? key,
+    super.key,
     required this.selectedChildSeat,
     required this.onChildSeatChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -780,7 +780,7 @@ class ChildSeatWidget extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   child: Material(
                     color: isSelected
-                        ? AppColors.primary.withOpacity(0.1)
+                        ? AppColors.primary.withValues(alpha: 0.1)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     child: ListTile(
@@ -795,7 +795,7 @@ class ChildSeatWidget extends StatelessWidget {
                         ),
                       ),
                       trailing: isSelected
-                          ? Icon(Icons.check,
+                          ? const Icon(Icons.check,
                               color: AppColors.primary, size: 20)
                           : null,
                       onTap: () {
@@ -805,7 +805,7 @@ class ChildSeatWidget extends StatelessWidget {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
 
               const SizedBox(height: 16),
             ],
@@ -822,11 +822,11 @@ class NameSignWidget extends StatelessWidget {
   final Function(bool) onNameplateServiceChanged;
 
   const NameSignWidget({
-    Key? key,
+    super.key,
     required this.isReturnTripActive,
     required this.nameplateService,
     required this.onNameplateServiceChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -841,7 +841,7 @@ class NameSignWidget extends StatelessWidget {
             .translate('form.step2.nameplate_section.nameplate_title'),
         description: localizations
             .translate('form.step2.nameplate_section.nameplate_description'),
-        indicator: Container(
+        indicator: SizedBox(
           width: 24,
           height: 24,
           child: Checkbox(
@@ -867,10 +867,10 @@ class PaymentMethodWidget extends StatelessWidget {
   final Function(String) onPaymentMethodChanged;
 
   const PaymentMethodWidget({
-    Key? key,
+    super.key,
     required this.paymentMethod,
     required this.onPaymentMethodChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -896,7 +896,7 @@ class PaymentMethodWidget extends StatelessWidget {
                     .translate('form.step2.payment_section.payment_method_cash')
                 : localizations.translate(
                     'form.step2.payment_section.payment_method_card'),
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.success,
               fontWeight: FontWeight.w600,
               fontSize: 14, // Ensure proper font size
@@ -917,10 +917,10 @@ class CommentWidget extends StatefulWidget {
   final Function(String?) onCommentChanged;
 
   const CommentWidget({
-    Key? key,
+    super.key,
     required this.comment,
     required this.onCommentChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -1069,17 +1069,17 @@ class _CommentWidgetState extends State<CommentWidget> {
                 decoration: InputDecoration(
                   hintText: localizations.translate(
                       'form.step2.notes_section.notes_input_placeholder'),
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     color: AppColors.textLight,
                     fontSize: 14,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppColors.border),
+                    borderSide: const BorderSide(color: AppColors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppColors.primary),
+                    borderSide: const BorderSide(color: AppColors.primary),
                   ),
                   filled: true,
                   fillColor: Colors.white,
@@ -1098,7 +1098,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 }
 
 class SectionDivider extends StatelessWidget {
-  const SectionDivider({Key? key}) : super(key: key);
+  const SectionDivider({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1106,9 +1106,9 @@ class SectionDivider extends StatelessWidget {
       width: 192,
       height: 3,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          stops: const [0.0, 1.0],
-          colors: [AppColors.primary, const Color.fromARGB(0, 255, 255, 255)],
+        gradient: const LinearGradient(
+          stops: [0.0, 1.0],
+          colors: [AppColors.primary, Color.fromARGB(0, 255, 255, 255)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),

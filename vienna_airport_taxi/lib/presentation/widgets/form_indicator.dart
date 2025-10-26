@@ -8,11 +8,11 @@ class FormIndicator extends StatelessWidget {
   final String iconAsset;
 
   const FormIndicator({
-    Key? key,
+    super.key,
     required this.title,
     required this.destination,
     required this.iconAsset,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class FormIndicator extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 5,
                   spreadRadius: 1,
                 ),
@@ -50,7 +50,7 @@ class FormIndicator extends StatelessWidget {
                   width: 60,
                   height: 60,
                   padding: const EdgeInsets.all(8),
-                  child: Icon(
+                  child: const Icon(
                     Icons.flight_takeoff,
                     size: 32,
                     color: AppColors.primary,
@@ -67,7 +67,7 @@ class FormIndicator extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
@@ -78,7 +78,7 @@ class FormIndicator extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.25),
+                    color: AppColors.primary.withValues(alpha: 0.25),
                     blurRadius: 10,
                     spreadRadius: 0,
                     offset: const Offset(0, 3),
@@ -87,7 +87,7 @@ class FormIndicator extends StatelessWidget {
               ),
               child: Text(
                 destination,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,

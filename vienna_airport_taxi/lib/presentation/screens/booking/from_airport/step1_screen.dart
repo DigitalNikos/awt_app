@@ -9,7 +9,7 @@ import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
 
 class Step1Screen extends StatefulWidget {
-  const Step1Screen({Key? key}) : super(key: key);
+  const Step1Screen({super.key});
 
   @override
   State<Step1Screen> createState() => _Step1ScreenState();
@@ -216,7 +216,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                     decoration: BoxDecoration(
                       color: AppColors.backgroundLight,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border(
+                      border: const Border(
                         left: BorderSide(
                           color: AppColors.primary,
                           width: 4,
@@ -224,7 +224,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 5,
                           spreadRadius: 1,
                         ),
@@ -235,7 +235,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                       children: [
                         Text(
                           localizations.translate('form.price_section.price'),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.textLight,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
@@ -276,7 +276,7 @@ class _Step1ScreenState extends State<Step1Screen> {
                       padding: const EdgeInsets.only(top: 8),
                       child: Text(
                         provider.priceErrorMessage!,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.warning,
                           fontSize: 12,
                         ),

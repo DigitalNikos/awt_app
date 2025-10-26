@@ -184,7 +184,14 @@
           "nameplate_description": "Abholung mit Namensschild"
         }
       },
-     
+      "step3":{
+        "terms_acceptance":{
+          "text_before": "Ich akzeptiere die ",
+          "terms_link": "AGB",
+          "text_middle": " und die ",
+          "privacy_link": "Datenschutzerklärung"
+        }
+      },
       "price_section": {
         "price": "Preis"
       },
@@ -194,6 +201,7 @@
         "book": "Buchen"
       }
     },
+    
     "footer": {
       "copyright": "© 2025 Airport Wien Taxi. Alle Rechte vorbehalten.",
       "company_label": "Firma:",

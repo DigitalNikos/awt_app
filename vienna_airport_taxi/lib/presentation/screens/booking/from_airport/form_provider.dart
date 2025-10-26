@@ -109,13 +109,9 @@ class FromAirportFormProvider with ChangeNotifier {
   // City changes trigger price calculation
   void updateCity(String? city) {
     _clearFieldError('city');
-    print('updateCity called with: $city');
-    print('Previous city was: ${_formData.city}');
-    print('Previous price was: ${_formData.price}');
 
     if (city != 'Wien') {
-      print(
-          'Non-Vienna city selected, clearing postal code and calculating price');
+      // Non-Vienna city selected, clearing postal code and calculating price
       _formData = _formData.copyWith(
         city: city,
         postalCode: null,
@@ -123,7 +119,6 @@ class FromAirportFormProvider with ChangeNotifier {
       // For non-Vienna cities, calculate price immediately
       _debouncePriceCalculation();
     } else {
-      print('Vienna selected, clearing postal code and price');
       // For Vienna, create a new BookingFormData with null price
       _formData = BookingFormData(
         tripType: _formData.tripType,
@@ -154,7 +149,6 @@ class FromAirportFormProvider with ChangeNotifier {
       // Cancel any pending price calculation
       _priceCalculationTimer?.cancel();
 
-      print('After clearing - price is now: ${_formData.price}');
     }
 
     notifyListeners();
@@ -163,7 +157,6 @@ class FromAirportFormProvider with ChangeNotifier {
   // Postal code changes trigger price calculation
   void updatePostalCode(String? postalCode) {
     _clearFieldError('postalCode');
-    print('updatePostalCode called with: $postalCode');
     _formData = _formData.copyWith(postalCode: postalCode);
     _debouncePriceCalculation(); // Calculate price when postal code changes
     notifyListeners();
@@ -383,14 +376,12 @@ class FromAirportFormProvider with ChangeNotifier {
 
   // Price calculation
   void _debouncePriceCalculation() {
-    print('_debouncePriceCalculation called');
 
     // Cancel existing timer
     _priceCalculationTimer?.cancel();
 
     // Start new timer
     _priceCalculationTimer = Timer(const Duration(milliseconds: 500), () {
-      print('Debounce timer expired, checking if we can calculate price...');
       if (_canCalculatePrice()) {
         calculatePrice();
       }
@@ -400,9 +391,6 @@ class FromAirportFormProvider with ChangeNotifier {
   // Price calculation logic - only requires city/postal code
   bool _canCalculatePrice() {
     // Debug logging
-    print('_canCalculatePrice check:');
-    print('  city: ${_formData.city}');
-    print('  postalCode: ${_formData.postalCode}');
 
     // Only require city (+ postal code if Vienna)
     final canCalculate = _formData.city != null &&
@@ -410,33 +398,27 @@ class FromAirportFormProvider with ChangeNotifier {
         (_formData.city != 'Wien' ||
             (_formData.postalCode != null && _formData.postalCode!.isNotEmpty));
 
-    print('  result: $canCalculate');
     return canCalculate;
   }
 
   Future<void> calculatePrice() async {
-    print('calculatePrice called');
     if (_isCalculatingPrice) {
-      print('Already calculating price, returning');
       return;
     }
 
     if (!_canCalculatePrice()) {
-      print('Cannot calculate price, setting to null');
       _formData = _formData.copyWith(price: null);
       _priceErrorMessage = null;
       notifyListeners();
       return;
     }
 
-    print('Starting price calculation...');
     _isCalculatingPrice = true;
     _priceErrorMessage = null;
     notifyListeners();
 
     try {
       final price = await _apiService.calculatePrice(_formData);
-      print('Price calculated: $price');
       _formData = _formData.copyWith(price: price);
 
       // If price is 0 and it's Wien, it might be a missing price in database
@@ -445,7 +427,6 @@ class FromAirportFormProvider with ChangeNotifier {
             'Preis für diese PLZ nicht verfügbar. Bitte kontaktieren Sie uns.';
       }
     } catch (e) {
-      print('Error calculating price: $e');
       // Keep the last valid price if there's an error
       _priceErrorMessage =
           'Fehler bei der Preisberechnung. Bitte versuchen Sie es erneut.';

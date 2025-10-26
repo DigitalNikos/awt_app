@@ -9,9 +9,9 @@ class FloatingActionButtons extends StatefulWidget {
   final bool isVisible;
 
   const FloatingActionButtons({
-    Key? key,
+    super.key,
     required this.isVisible,
-  }) : super(key: key);
+  });
 
   @override
   State<FloatingActionButtons> createState() => _FloatingActionButtonsState();
@@ -195,7 +195,7 @@ class _RoundFloatingButtonState extends State<_RoundFloatingButton>
             child: Material(
               elevation: _isPressed ? 8 : 6,
               shape: const CircleBorder(),
-              shadowColor: Colors.black.withOpacity(0.3),
+              shadowColor: Colors.black.withValues(alpha: 0.3),
               child: Container(
                 width: 56,
                 height: 56,
@@ -204,7 +204,7 @@ class _RoundFloatingButtonState extends State<_RoundFloatingButton>
                   color: AppColors.primary,
                   border: Border.all(
                     color: _isPressed
-                        ? Colors.white.withOpacity(0.3)
+                        ? Colors.white.withValues(alpha: 0.3)
                         : Colors.transparent,
                     width: 2,
                   ),

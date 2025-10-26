@@ -7,8 +7,18 @@ import 'package:vienna_airport_taxi/core/localization/language_provider.dart';
 import 'package:vienna_airport_taxi/core/theme/app_theme.dart';
 import 'package:vienna_airport_taxi/presentation/screens/splash/splash_screen.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
+import 'package:vienna_airport_taxi/core/config/environment.dart';
 
 void main() {
+  // Initialize environment configuration
+  // IMPORTANT: Change this based on where you're running:
+  // - Use EnvironmentType.development when testing locally with your local backend
+  // - Use EnvironmentType.production when building for App Store/Play Store
+  Environment.init(EnvironmentType.development);
+
+  // Print current configuration (only in development/staging)
+  Environment.printConfig();
+
   runApp(
     MultiProvider(
       providers: [
@@ -21,7 +31,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {

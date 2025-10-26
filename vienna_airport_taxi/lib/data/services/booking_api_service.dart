@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:vienna_airport_taxi/data/models/booking_form_data.dart';
+import 'package:vienna_airport_taxi/core/config/environment.dart';
+import 'package:vienna_airport_taxi/core/utils/app_logger.dart';
 
 class BookingApiService {
-  // API endpoints - matching your JavaScript configuration
-  // static const String _baseUrl = 'https://awt.eu.pythonanywhere.com/';
-  static const String _baseUrl = 'http://localhost:5001';
-
-  static const String _ordersEndpoint = '$_baseUrl/orders';
-  static const String _priceEndpoint = '$_baseUrl/public_calculate_price';
+  // API endpoints - using Environment configuration
+  // The actual URL will be determined by the environment (development/staging/production)
+  String get _ordersEndpoint => Environment.ordersEndpoint;
+  String get _priceEndpoint => Environment.priceEndpoint;
 
   // Timeout settings
-  static const Duration _timeout = Duration(seconds: 30);
+  Duration get _timeout => Environment.apiTimeout;
 
   // Retry settings
-  static const int _maxRetries = 3;
-  static const int _retryDelayMs = 1000;
+  int get _maxRetries => Environment.maxRetries;
+  int get _retryDelayMs => Environment.retryDelayMs;
 
   /// Calculate the price for the booking
   Future<double> calculatePrice(BookingFormData formData) async {
@@ -91,16 +91,16 @@ class BookingApiService {
         // Handle error responses with more details
         try {
           final errorData = jsonDecode(response.body);
-          print('API Error: $errorData');
+          AppLogger.error('API Error', data: errorData);
           throw Exception(
               errorData['message'] ?? 'Server error: ${response.statusCode}');
         } catch (e) {
-          print('Failed to parse error response: $e');
+          AppLogger.error('Failed to parse error response', error: e);
           throw Exception(
               'Server error: ${response.statusCode} ${response.reasonPhrase}');
         }
       } catch (e) {
-        print('Request error: $e');
+        AppLogger.error('Request error', error: e);
         if (e is http.ClientException ||
             e.toString().contains('Failed to fetch')) {
           if (retries < _maxRetries - 1) {

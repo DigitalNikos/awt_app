@@ -13,14 +13,14 @@ class OptionPanel extends StatelessWidget {
   final bool isError;
 
   const OptionPanel({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     required this.onClose,
     this.helperText,
     required this.isVisible,
     this.isError = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class OptionPanel extends StatelessWidget {
             border: Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -85,7 +85,7 @@ class OptionPanel extends StatelessWidget {
                     right: 8,
                     top: 4,
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.close,
                         color: Colors.black,
                         size: 20,
@@ -104,7 +104,7 @@ class OptionPanel extends StatelessWidget {
                       width: 20,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -123,9 +123,9 @@ class OptionPanel extends StatelessWidget {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.backgroundLight,
-                    borderRadius: const BorderRadius.only(
+                    borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(12),
                       bottomRight: Radius.circular(12),
                     ),

@@ -13,13 +13,13 @@ class CustomDatePicker extends StatefulWidget {
   final String title;
 
   const CustomDatePicker({
-    Key? key,
+    super.key,
     this.initialDate,
     required this.onConfirm,
     this.firstDate,
     this.lastDate,
     this.title = 'Datum auswählen',
-  }) : super(key: key);
+  });
 
   @override
   State<CustomDatePicker> createState() => _CustomDatePickerState();
@@ -114,7 +114,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () => Navigator.of(context).pop(),
-                    child: Container(
+                    child: const SizedBox(
                       width: 40,
                       height: 40,
                       child: Icon(
@@ -171,7 +171,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                           tempSelectedDate.year, tempSelectedDate.month - 1, 1);
                     });
                   },
-                  child: Container(
+                  child: SizedBox(
                     width: 44,
                     height: 44,
                     child: Icon(
@@ -204,7 +204,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                           tempSelectedDate.year, tempSelectedDate.month + 1, 1);
                     });
                   },
-                  child: Container(
+                  child: SizedBox(
                     width: 44,
                     height: 44,
                     child: Icon(
@@ -222,7 +222,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         Row(
           children: _getLocalizedWeekdays(context).map((day) {
             return Expanded(
-              child: Container(
+              child: SizedBox(
                 height: 32,
                 child: Center(
                   child: Text(
@@ -263,7 +263,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                     color: isSelected
                         ? AppColors.primary
                         : isToday
-                            ? AppColors.primary.withOpacity(0.1)
+                            ? AppColors.primary.withValues(alpha: 0.1)
                             : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:vienna_airport_taxi/core/constants/app_constants.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
@@ -14,7 +13,7 @@ import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/st
 import 'package:vienna_airport_taxi/presentation/widgets/bottom_navbar.dart';
 
 class FromAirportScreen extends StatelessWidget {
-  const FromAirportScreen({Key? key}) : super(key: key);
+  const FromAirportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class FromAirportScreen extends StatelessWidget {
 }
 
 class _FromAirportScreenContent extends StatelessWidget {
-  const _FromAirportScreenContent({Key? key}) : super(key: key);
+  const _FromAirportScreenContent();
 
   List<String> _getLocalizedSteps(BuildContext context) {
     final localizations = AppLocalizations.of(context);
@@ -99,7 +98,7 @@ class _FromAirportScreenContent extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
@@ -110,14 +109,14 @@ class _FromAirportScreenContent extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.25),
+                        color: AppColors.primary.withValues(alpha: 0.25),
                         blurRadius: 10,
                         spreadRadius: 0,
                         offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: const Text(
                     'Wien-Schwechat',
                     style: TextStyle(
                       fontSize: 12,

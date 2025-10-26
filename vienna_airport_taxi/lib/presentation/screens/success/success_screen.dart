@@ -9,10 +9,10 @@ class SuccessScreen extends StatelessWidget {
   final String? userEmail;
 
   const SuccessScreen({
-    Key? key,
+    super.key,
     required this.bookingId,
     this.userEmail,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +36,10 @@ class SuccessScreen extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.1),
+                color: AppColors.success.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check_circle,
                 size: 60,
                 color: AppColors.success,
@@ -152,7 +152,7 @@ class SuccessScreen extends StatelessWidget {
                   foregroundColor: AppColors.textPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: AppColors.border),
+                    side: const BorderSide(color: AppColors.border),
                   ),
                   elevation: 1,
                 ),

@@ -14,14 +14,14 @@ class DropdownFieldWithSvgIcon extends StatefulWidget {
   final String? errorText;
 
   const DropdownFieldWithSvgIcon({
-    Key? key,
+    super.key,
     required this.svgIconPath,
     required this.hintText,
     required this.value,
     required this.items,
     required this.onChanged,
     this.errorText,
-  }) : super(key: key);
+  });
 
   @override
   State<DropdownFieldWithSvgIcon> createState() =>
@@ -30,7 +30,6 @@ class DropdownFieldWithSvgIcon extends StatefulWidget {
 
 class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
   void _showModalBottomSheet() {
-    print('DEBUG: Showing modal for ${widget.hintText}');
 
     // Determine if this is a number picker (Personen, Koffer) or list picker
     // Use SVG icon path instead of text to support multiple languages
@@ -73,7 +72,6 @@ class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
         // Main dropdown container (same styling as inputs)
         GestureDetector(
           onTap: () {
-            print('DEBUG: Tapping ${widget.hintText} dropdown');
             _showModalBottomSheet();
           },
           behavior: HitTestBehavior.opaque,
@@ -126,7 +124,7 @@ class _DropdownFieldWithSvgIconState extends State<DropdownFieldWithSvgIcon> {
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
               widget.errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 12,
               ),

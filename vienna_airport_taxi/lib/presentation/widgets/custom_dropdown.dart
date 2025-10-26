@@ -17,7 +17,7 @@ class CustomDropdown extends StatefulWidget {
   final bool enabled;
 
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.svgIconPath,
     required this.hintText,
     required this.value,
@@ -25,7 +25,7 @@ class CustomDropdown extends StatefulWidget {
     required this.onChanged,
     this.errorText,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomDropdown> createState() => _CustomDropdownState();
@@ -108,7 +108,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           Navigator.of(context).pop();
                           _closeDropdown();
                         },
-                        child: Container(
+                        child: const SizedBox(
                           width: 40,
                           height: 40,
                           child: Icon(
@@ -208,7 +208,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: isSelected
-                              ? AppColors.textPrimary.withOpacity(0.8)
+                              ? AppColors.textPrimary.withValues(alpha: 0.8)
                               : Colors.grey.shade600,
                         ),
                         maxLines: 1,
@@ -352,7 +352,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
             padding: const EdgeInsets.only(top: 4, left: 4),
             child: Text(
               widget.errorText!,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.error,
                 fontSize: 12,
               ),

@@ -12,13 +12,13 @@ class CustomListPicker extends StatelessWidget {
   final void Function(String) onChanged;
 
   const CustomListPicker({
-    Key? key,
+    super.key,
     required this.title,
     required this.svgIconPath,
     required this.items,
     required this.selectedValue,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class CustomListPicker extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(20),
                     onTap: () => Navigator.of(context).pop(),
-                    child: Container(
+                    child: const SizedBox(
                       width: 40,
                       height: 40,
                       child: Icon(

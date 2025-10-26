@@ -1,7 +1,6 @@
 // lib/presentation/screens/home/hero_section.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import 'package:vienna_airport_taxi/core/constants/text_styles.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/core/localization/app_localizations.dart';
@@ -9,7 +8,7 @@ import 'package:vienna_airport_taxi/presentation/screens/booking/to_airport/to_a
 import 'package:vienna_airport_taxi/presentation/screens/booking/from_airport/from_airport_screen.dart';
 
 class HeroSection extends StatelessWidget {
-  const HeroSection({Key? key}) : super(key: key);
+  const HeroSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +106,6 @@ class _HeroButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Loading SVG asset: $svgAsset');
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(

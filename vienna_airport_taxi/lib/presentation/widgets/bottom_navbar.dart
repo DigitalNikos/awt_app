@@ -3,14 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vienna_airport_taxi/core/constants/colors.dart';
 import 'package:vienna_airport_taxi/presentation/providers/auth_provider.dart';
-import 'package:vienna_airport_taxi/presentation/screens/auth/login_screen.dart';
 import 'package:vienna_airport_taxi/core/utils/url_launcher_helper.dart';
 import 'package:vienna_airport_taxi/core/localization/language_provider.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final LanguageProvider? languageProvider;
 
-  const CustomBottomNavBar({Key? key, this.languageProvider}) : super(key: key);
+  const CustomBottomNavBar({super.key, this.languageProvider});
 
   @override
   _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
@@ -30,13 +29,13 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       height: 85,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
+        border: const Border(
           top: BorderSide(
-              color: const Color.fromARGB(218, 224, 224, 224), width: 1),
+              color: Color.fromARGB(218, 224, 224, 224), width: 1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),

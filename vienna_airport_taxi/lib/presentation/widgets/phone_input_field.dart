@@ -12,12 +12,12 @@ class PhoneInputField extends StatefulWidget {
   final String hintText;
 
   const PhoneInputField({
-    Key? key,
+    super.key,
     this.value,
     required this.onChanged,
     this.errorText,
     this.hintText = 'Telefonnummer',
-  }) : super(key: key);
+  });
 
   @override
   State<PhoneInputField> createState() => _PhoneInputFieldState();
@@ -110,7 +110,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
             ],
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: TextStyle(color: AppColors.textLight),
+              hintStyle: const TextStyle(color: AppColors.textLight),
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
