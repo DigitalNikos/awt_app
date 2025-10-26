@@ -75,10 +75,15 @@ class _Step1ScreenState extends State<Step1Screen> {
     final isAuthenticated = authProvider.isAuthenticated;
     final localizations = AppLocalizations.of(context);
 
-    return SingleChildScrollView(
-      controller: _scrollController,
-      padding: const EdgeInsets.all(16),
-      child: Consumer<FromAirportFormProvider>(
+    return GestureDetector(
+      onTap: () {
+        // Dismiss keyboard when tapping outside text fields
+        FocusScope.of(context).unfocus();
+      },
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(16),
+        child: Consumer<FromAirportFormProvider>(
         builder: (context, provider, child) {
           // Pre-fill contact information if user is authenticated
           if (isAuthenticated && authProvider.currentUser != null) {
@@ -325,6 +330,7 @@ class _Step1ScreenState extends State<Step1Screen> {
             ],
           );
         },
+      ),
       ),
     );
   }

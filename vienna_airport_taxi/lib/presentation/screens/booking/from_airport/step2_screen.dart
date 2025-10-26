@@ -66,16 +66,21 @@ class _Step2ScreenState extends State<Step2Screen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
-    return Consumer<FromAirportFormProvider>(
-      builder: (context, provider, child) {
-        // Scroll to first error when validation errors change
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (provider.validationErrors.isNotEmpty) {
-            _scrollToFirstError(provider.validationErrors);
-          }
-        });
+    return GestureDetector(
+      onTap: () {
+        // Dismiss keyboard when tapping outside text fields
+        FocusScope.of(context).unfocus();
+      },
+      child: Consumer<FromAirportFormProvider>(
+        builder: (context, provider, child) {
+          // Scroll to first error when validation errors change
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (provider.validationErrors.isNotEmpty) {
+              _scrollToFirstError(provider.validationErrors);
+            }
+          });
 
-        return CustomScrollView(
+          return CustomScrollView(
           controller: _scrollController,
           slivers: [
             SliverPadding(
@@ -316,8 +321,9 @@ class _Step2ScreenState extends State<Step2Screen> {
               ),
             ),
           ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

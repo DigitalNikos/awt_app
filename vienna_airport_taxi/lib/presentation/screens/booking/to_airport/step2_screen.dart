@@ -70,9 +70,14 @@ class _Step2ScreenState extends State<Step2Screen> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
-    return Consumer<ToAirportFormProvider>(
-      builder: (context, provider, child) {
-        return CustomScrollView(
+    return GestureDetector(
+      onTap: () {
+        // Dismiss keyboard when tapping outside text fields
+        FocusScope.of(context).unfocus();
+      },
+      child: Consumer<ToAirportFormProvider>(
+        builder: (context, provider, child) {
+          return CustomScrollView(
           controller: _scrollController,
           slivers: [
             SliverPadding(
@@ -314,8 +319,9 @@ class _Step2ScreenState extends State<Step2Screen> {
               ),
             ),
           ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
