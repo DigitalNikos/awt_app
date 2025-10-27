@@ -241,8 +241,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           }).toList(),
         ),
 
-        // Calendar grid - generate 6 weeks to handle all edge cases
-        ...List.generate(6, (weekIndex) {
+        // Calendar grid - generate 5 weeks to show only current month
+        ...List.generate(5, (weekIndex) {
           return Row(
             children: List.generate(7, (dayIndex) {
               // Use proper date arithmetic to avoid DST issues

@@ -159,14 +159,13 @@ class _InfoCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 720),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
-            offset: Offset(0, 4),
-            spreadRadius: 0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -298,14 +297,13 @@ class _AirportMapCard extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 720),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 12,
-            offset: Offset(0, 4),
-            spreadRadius: 0,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -324,59 +322,94 @@ class _AirportMapCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Airport Map
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: const [
-                BoxShadow(
-                  color: AppColors.shadow,
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/important_section/airport_plan.webp',
-                width: double.infinity,
-                height: 280,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 280,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppColors.border.withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.map,
-                          size: 60,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Airport Map',
-                          style: AppTextStyles.bodyLarge.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
+          // Airport Map - Clickable to zoom
+          GestureDetector(
+            onTap: () {
+              _showZoomableMap(context);
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/important_section/airport_plan.png',
+                      width: double.infinity,
+                      height: 280,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: double.infinity,
+                        height: 280,
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundLight,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.border.withValues(alpha: 0.3),
+                            width: 1,
                           ),
                         ),
-                      ],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.map,
+                              size: 60,
+                              color: AppColors.textSecondary
+                                  .withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              t.translate('map_title'),
+                              style: AppTextStyles.bodyLarge.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  // Zoom indicator overlay
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.zoom_in,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Click to zoom',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -395,6 +428,58 @@ class _AirportMapCard extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
+      ),
+    );
+  }
+
+  void _showZoomableMap(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Stack(
+          children: [
+            // Zoomable map
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.asset(
+                  'assets/images/important_section/airport_plan.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            // Close button
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Material(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                elevation: 4,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.black,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
